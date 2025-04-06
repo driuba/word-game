@@ -1,12 +1,14 @@
-import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
+import type {AllMiddlewareArgs, SlackEventMiddlewareArgs} from '@slack/bolt';
 
-const appHomeOpenedCallback = async ({
+async function appHomeOpenedCallback({
   client,
   event,
-  logger,
-}: AllMiddlewareArgs & SlackEventMiddlewareArgs<'app_home_opened'>) => {
+  logger
+}: AllMiddlewareArgs & SlackEventMiddlewareArgs<'app_home_opened'>) {
   // Ignore the `app_home_opened` event for anything but the Home tab
-  if (event.tab !== 'home') return;
+  if (event.tab !== 'home') {
+    return;
+  }
 
   try {
     await client.views.publish({
@@ -18,18 +20,18 @@ const appHomeOpenedCallback = async ({
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: `*Welcome home, <@${event.user}> :house:*`,
-            },
+              text: `*Welcome home, <@${event.user}> :house:*`
+            }
           },
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: 'Learn how home tabs can be more useful and interactive <https://api.slack.com/surfaces/tabs/using|*in the documentation*>.',
-            },
-          },
-        ],
-      },
+              text: 'Learn how home tabs can be more useful and interactive <https://api.slack.com/surfaces/tabs/using|*in the documentation*>.'
+            }
+          }
+        ]
+      }
     });
   } catch (error) {
     logger.error(error);

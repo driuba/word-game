@@ -1,5 +1,5 @@
-import { App, LogLevel } from '@slack/bolt';
-import { config } from 'dotenv';
+import {App, LogLevel} from '@slack/bolt';
+import {config} from 'dotenv';
 import registerListeners from './listeners';
 
 config();
@@ -15,58 +15,58 @@ const app = new App({
   stateSecret: 'my-state-secret',
   scopes: ['channels:history', 'chat:write', 'commands'],
   installationStore: {
-    storeInstallation: async (installation) => {
+    storeInstallation(installation) {
       // Org-wide installation
       if (installation.isEnterpriseInstall && installation.enterprise !== undefined) {
         tempDB.set(installation.enterprise.id, installation);
-        return;
+        return Promise.resolve();
       }
       // Single team installation
       if (installation.team !== undefined) {
         tempDB.set(installation.team.id, installation);
-        return;
+        return Promise.resolve();
       }
-      throw new Error('Failed saving installation data to installationStore');
+      return Promise.reject(new Error('Failed saving installation data to installationStore'));
     },
-    fetchInstallation: async (installQuery) => {
+    fetchInstallation(installQuery) {
       // Org-wide installation lookup
       if (installQuery.isEnterpriseInstall && installQuery.enterpriseId !== undefined) {
-        return tempDB.get(installQuery.enterpriseId);
+        return Promise.resolve(tempDB.get(installQuery.enterpriseId));
       }
       // Single team installation lookup
       if (installQuery.teamId !== undefined) {
-        return tempDB.get(installQuery.teamId);
+        return Promise.resolve(tempDB.get(installQuery.teamId));
       }
-      throw new Error('Failed fetching installation');
+      return Promise.reject(new Error('Failed fetching installation'));
     },
-    deleteInstallation: async (installQuery) => {
+    deleteInstallation(installQuery) {
       // Org-wide installation deletion
       if (installQuery.isEnterpriseInstall && installQuery.enterpriseId !== undefined) {
         tempDB.delete(installQuery.enterpriseId);
-        return;
+        return Promise.resolve();
       }
       // Single team installation deletion
       if (installQuery.teamId !== undefined) {
         tempDB.delete(installQuery.teamId);
-        return;
+        return Promise.resolve();
       }
-      throw new Error('Failed to delete installation');
-    },
+      return Promise.reject(new Error('Failed to delete installation'));
+    }
   },
   installerOptions: {
     // If true, /slack/install redirects installers to the Slack Authorize URL
     // without rendering the web page with "Add to Slack" button
-    directInstall: false,
-  },
+    directInstall: false
+  }
 });
 
 /** Register Listeners */
 registerListeners(app);
 
 /** Start Bolt App */
-(async () => {
+await (async () => {
   try {
-    await app.start(process.env.PORT || 3000);
+    await app.start(process.env.PORT ?? 3000);
     app.logger.info('⚡️ Bolt app is running! ⚡️');
   } catch (error) {
     app.logger.error('Unable to start App', error);

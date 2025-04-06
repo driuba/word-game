@@ -1,13 +1,13 @@
-import type { AllMiddlewareArgs, SlackShortcutMiddlewareArgs } from '@slack/bolt';
+import type {AllMiddlewareArgs, SlackShortcutMiddlewareArgs} from '@slack/bolt';
 
-const sampleShortcutCallback = async ({
+async function sampleShortcutCallback({
   shortcut,
   ack,
   client,
-  logger,
-}: AllMiddlewareArgs & SlackShortcutMiddlewareArgs) => {
+  logger
+}: AllMiddlewareArgs & SlackShortcutMiddlewareArgs) {
   try {
-    const { trigger_id } = shortcut;
+    const {trigger_id} = shortcut;
 
     await ack();
     await client.views.open({
@@ -17,56 +17,56 @@ const sampleShortcutCallback = async ({
         callback_id: 'sample_view_id',
         title: {
           type: 'plain_text',
-          text: 'Sample modal title',
+          text: 'Sample modal title'
         },
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: 'Click the button to update the modal',
+              text: 'Click the button to update the modal'
             },
             accessory: {
               type: 'button',
               text: {
                 type: 'plain_text',
-                text: 'Update modal',
+                text: 'Update modal'
               },
-              action_id: 'sample_action_id',
-            },
+              action_id: 'sample_action_id'
+            }
           },
           {
             type: 'input',
             block_id: 'input_block_id',
             label: {
               type: 'plain_text',
-              text: 'What are your hopes and dreams?',
+              text: 'What are your hopes and dreams?'
             },
             element: {
               type: 'plain_text_input',
               action_id: 'sample_input_id',
-              multiline: true,
-            },
+              multiline: true
+            }
           },
           {
             block_id: 'select_channel_block_id',
             type: 'input',
             label: {
               type: 'plain_text',
-              text: 'Select a channel to message the result to',
+              text: 'Select a channel to message the result to'
             },
             element: {
               type: 'conversations_select',
               action_id: 'sample_dropdown_id',
-              response_url_enabled: true,
-            },
-          },
+              response_url_enabled: true
+            }
+          }
         ],
         submit: {
           type: 'plain_text',
-          text: 'Submit',
-        },
-      },
+          text: 'Submit'
+        }
+      }
     });
   } catch (error) {
     logger.error(error);

@@ -1,7 +1,7 @@
 import type { App } from '@slack/bolt';
 import sampleCommandCallback from './sample-command';
 
-const register = (app: App) => {
+function register(app: App) {
   app.command('/sample-command', sampleCommandCallback);
 };
 

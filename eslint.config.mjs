@@ -1,0 +1,24 @@
+// @ts-check
+
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  eslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['eslint.config.mjs']
+        },
+        tsconfigRootDir: import.meta.dirname
+      }
+    },
+    rules: {
+      indent: ['warn', 2],
+      quotes: ['warn', 'single', {avoidEscape: true}]
+    }
+  }
+);

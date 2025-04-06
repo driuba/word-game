@@ -1,17 +1,17 @@
 import type { AllMiddlewareArgs, BlockAction, SlackActionMiddlewareArgs } from '@slack/bolt';
 
-const sampleActionCallback = async ({
+async function sampleActionCallback({
   ack,
   client,
   body,
   logger,
-}: AllMiddlewareArgs & SlackActionMiddlewareArgs<BlockAction>) => {
+}: AllMiddlewareArgs & SlackActionMiddlewareArgs<BlockAction>) {
   try {
     await ack();
     await client.views.update({
-      // biome-ignore lint/style/noNonNullAssertion: view may be undefined, depending on the source of this action(did it come from an action within a conversation message or a modal?). take care!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       view_id: body.view!.id,
-      // biome-ignore lint/style/noNonNullAssertion: view may be undefined, depending on the source of this action(did it come from an action within a conversation message or a modal?). take care!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       hash: body.view!.hash,
       view: {
         type: 'modal',
