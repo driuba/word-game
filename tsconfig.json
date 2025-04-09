@@ -14,5 +14,8 @@
     "moduleResolution": "node16",
     "rootDir": "src",
     "outDir": "dist"
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

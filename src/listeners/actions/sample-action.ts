@@ -69,6 +69,6 @@ async function sampleActionCallback({
   } catch (error) {
     logger.error(error);
   }
-};
+}
 
 export default sampleActionCallback;

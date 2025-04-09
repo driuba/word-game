@@ -1,4 +1,4 @@
-import type {AllMiddlewareArgs, SlackEventMiddlewareArgs} from '@slack/bolt';
+import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 
 async function appHomeOpenedCallback({
   client,
@@ -36,6 +36,6 @@ async function appHomeOpenedCallback({
   } catch (error) {
     logger.error(error);
   }
-};
+}
 
 export default appHomeOpenedCallback;

@@ -1,4 +1,4 @@
-import type {AllMiddlewareArgs, SlackShortcutMiddlewareArgs} from '@slack/bolt';
+import type { AllMiddlewareArgs, SlackShortcutMiddlewareArgs } from '@slack/bolt';
 
 async function sampleShortcutCallback({
   shortcut,
@@ -7,7 +7,7 @@ async function sampleShortcutCallback({
   logger
 }: AllMiddlewareArgs & SlackShortcutMiddlewareArgs) {
   try {
-    const {trigger_id} = shortcut;
+    const { trigger_id } = shortcut;
 
     await ack();
     await client.views.open({
@@ -71,6 +71,6 @@ async function sampleShortcutCallback({
   } catch (error) {
     logger.error(error);
   }
-};
+}
 
 export default sampleShortcutCallback;

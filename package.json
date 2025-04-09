@@ -1,7 +1,7 @@
 {
-  "name": "bolt-ts-starter-template",
-  "version": "1.0.0",
-  "description": "A scaffold template for Slack apps",
+  "name": "word-game",
+  "version": "0.1.0",
+  "description": "Word game for your slack word game needs",
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc",
@@ -10,21 +10,12 @@
     "lint:fix": "npx eslint --fix .",
     "test": "npm run build && npm run lint"
   },
-  "author": "Slack Technologies, LLC",
-  "license": "MIT",
+  "author": "Andrius Andrikonis",
+  "license": "GPL-3.0-or-later",
   "keywords": [
-    "slack",
-    "bolt",
-    "slackapi",
-    "typescript"
+    "word-game",
+    "word game"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/slack-samples/bolt-ts-starter-template.git"
-  },
-  "bugs": {
-    "url": "https://github.com/slack-samples/bolt-ts-starter-template/issues"
-  },
   "dependencies": {
     "@slack/bolt": "^4.2.1",
     "dotenv": "~16.4.7"
@@ -32,6 +23,7 @@
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@slack/cli-hooks": "^1.2.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
     "eslint": "^9.24.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.0"

@@ -10,11 +10,11 @@ async function sampleViewCallback({ ack, view, body, client, logger }: AllMiddle
 
     await client.chat.postMessage({
       channel: sampleConvoValue ?? body.user.id,
-      text: `<@${body.user.id}> submitted the following :sparkles: hopes and dreams :sparkles:: \n\n ${sampleInputValue}`,
+      text: `<@${body.user.id}> submitted the following :sparkles: hopes and dreams :sparkles:: \n\n ${sampleInputValue ?? ''}`,
     });
   } catch (error) {
     logger.error(error);
   }
-};
+}
 
 export default sampleViewCallback;
