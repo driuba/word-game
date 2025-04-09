@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 
-async function sampleMessageCallback({
+export default async function sampleMessageCallback({
   context,
   say,
   logger
@@ -12,5 +12,3 @@ async function sampleMessageCallback({
     logger.error(error);
   }
 }
-
-export default sampleMessageCallback;
