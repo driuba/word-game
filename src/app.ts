@@ -16,7 +16,7 @@ const app = new App({
 registerListeners(app);
 
 /** Start Bolt App */
-await (async () => {
+void (async () => {
   try {
     await app.start(process.env.PORT ?? 3000);
     app.logger.info('⚡️ Bolt app is running! ⚡️');
