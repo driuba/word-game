@@ -1,35 +1,41 @@
 {
-  "name": "word-game",
-  "version": "0.1.0",
-  "description": "Word game for your slack word game needs",
-  "main": "dist/app.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "npm run build && node ./dist/app.js",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint --fix .",
-    "test": "npm run build && npm run lint"
-  },
   "author": "Andrius Andrikonis",
-  "license": "GPL-3.0-or-later",
-  "keywords": [
-    "word-game",
-    "word game"
-  ],
   "dependencies": {
     "@slack/bolt": "^4.2.1",
-    "dotenv": "~16.4.7"
+    "dotenv": "^16.5.0",
+    "reflect-metadata": "^0.2.2",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.22"
   },
+  "description": "Word game for your slack word game needs",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@slack/cli-hooks": "^1.2.0",
-    "@stylistic/eslint-plugin": "^4.2.0",
+    "@stylistic/eslint-plugin-ts": "^4.2.0",
+    "@types/node": "^22.14.1",
     "eslint": "^9.24.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.29.0"
+    "typescript-eslint": "^8.29.1"
   },
   "engines": {
     "node": "^23.11.0",
     "npm": "^11.2.0"
-  }
+  },
+  "keywords": [
+    "word-game",
+    "word game"
+  ],
+  "license": "GPL-3.0-or-later",
+  "main": "dist/app.js",
+  "name": "word-game",
+  "scripts": {
+    "build": "tsc",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "start": "npm run build && node ./dist/app.js",
+    "test": "npm run build && npm run lint",
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
+  },
+  "version": "0.1.0"
 }
