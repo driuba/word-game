@@ -11,7 +11,7 @@
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@slack/cli-hooks": "^1.2.0",
-    "@stylistic/eslint-plugin-ts": "^4.2.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
     "@types/node": "^22.14.1",
     "eslint": "^9.24.0",
     "ts-node": "^10.9.2",
@@ -27,13 +27,13 @@
     "word game"
   ],
   "license": "GPL-3.0-or-later",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "name": "word-game",
   "scripts": {
     "build": "tsc",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "start": "npm run build && node ./dist/app.js",
+    "start": "npm run build && node ./dist/index.js",
     "test": "npm run build && npm run lint",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
   },

@@ -2,7 +2,7 @@
 
 import eslint from '@eslint/js';
 import { globalIgnores } from 'eslint/config';
-import stylistic from '@stylistic/eslint-plugin-ts';
+import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -22,7 +22,7 @@ export default tseslint.config(
       }
     },
     plugins: {
-      '@stylistic/ts': stylistic
+      '@stylistic': stylistic
     },
     rules: {
       indent: [
@@ -35,8 +35,10 @@ export default tseslint.config(
         }
       ],
       quotes: ['warn', 'single', { avoidEscape: true }],
-      '@stylistic/ts/object-curly-spacing': ['error', 'always'],
-      '@stylistic/ts/semi': ['warn', 'always']
+      '@stylistic/comma-dangle': ['warn', 'never'],
+      '@stylistic/no-trailing-spaces': 'warn',
+      '@stylistic/object-curly-spacing': ['error', 'always'],
+      '@stylistic/semi': ['warn', 'always']
     }
   }
 );

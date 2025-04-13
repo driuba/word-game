@@ -3,56 +3,31 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import Channel from './channel';
-import User from './user';
 
 @Entity({ name: 'Words' })
 export default class Word extends BaseEntity {
-  @JoinColumn({ name: 'ChannelId' })
-  @ManyToOne(
-    () => Channel,
-    c => c.words,
-    {
-      nullable: false,
-      onDelete: 'CASCADE'
-    }
-  )
-  channel!: Channel;
+  @Column({
+    length: 50,
+    name: 'ChannelId',
+    nullable: false,
+    update: false
+  })
+  @Index()
+  readonly channelId!: string;
 
   @CreateDateColumn({
     name: 'Created',
-    nullable: false
+    nullable: false,
+    update: false
   })
-  created!: Date;
-
-  @JoinColumn({ name: 'UserIdCreator' })
-  @ManyToOne(
-    () => User,
-    u => u.wordsCreated,
-    {
-      nullable: false,
-      onDelete: 'CASCADE'
-    }
-  )
-  creator!: User;
-
-  @JoinColumn({ name: 'UserIdGuesser' })
-  @ManyToOne(
-    () => User,
-    u => u.wordsGuessed,
-    {
-      onDelete: 'SET NULL'
-    }
-  )
-  guesser?: User;
+  readonly created!: Date;
 
   @PrimaryGeneratedColumn({ name: 'Id' })
-  id!: number;
+  readonly id!: number;
 
   @Column({
     default: 0,
@@ -62,11 +37,28 @@ export default class Word extends BaseEntity {
   score!: number;
 
   @UpdateDateColumn({ name: 'Modified' })
-  modified?: Date;
+  readonly modified?: Date;
+
+  @Column({
+    length: 50,
+    name: 'UserIdCreator',
+    nullable: false,
+    update: false
+  })
+  @Index()
+  readonly userIdCreator!: string;
+
+  @Column({
+    length: 50,
+    name: 'UserIdGuesser'
+  })
+  @Index()
+  userIdGuesser?: string;
 
   @Column({
     name: 'Word',
-    nullable: false
+    nullable: false,
+    update: false
   })
-  word!: string;
+  readonly word!: string;
 }

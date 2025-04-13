@@ -11,12 +11,23 @@
     "module": "nodenext",
     "moduleResolution": "node16",
     "outDir": "dist",
+    "paths": {
+      "entities": [
+        "./src/entities"
+      ],
+      "listeners": [
+        "./src/listeners"
+      ]
+    },
     "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,
     "target": "es2024"
   },
   "display": "word-game",
+  "exclude": [
+    "src/migrations/**/*"
+  ],
   "include": [
     "src/**/*"
   ]
