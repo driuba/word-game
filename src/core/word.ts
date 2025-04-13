@@ -1,6 +1,6 @@
 import { IsNull } from 'typeorm';
-import { Word } from 'entities';
-import { wordValidationPattern, ApplicationError } from 'utils';
+import { Word } from '~/entities';
+import { wordValidationPattern, ApplicationError } from '~/utils';
 
 export function getCurrentWord(channelId: string) {
   return Word.findOneBy({
@@ -10,8 +10,6 @@ export function getCurrentWord(channelId: string) {
 }
 
 export async function setWord(channelId: string, userId: string, word: string) {
-  word = word.trim();
-
   if (wordValidationPattern.test(word)) {
     throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
   }

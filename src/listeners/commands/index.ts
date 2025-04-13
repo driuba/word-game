@@ -1,6 +1,7 @@
 import type { App } from '@slack/bolt';
-import sampleCommandCallback from './sample-command';
+import filterChannel from './filterChannel';
+import setWordHandler from './setWord';
 
-export function register(app: App) {
-  app.command('/sample-command', sampleCommandCallback);
+export default function register(app: App) {
+  app.command('/wg-set-word', filterChannel, setWordHandler);
 }

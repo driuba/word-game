@@ -2,39 +2,33 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "_version": "23.0.0",
   "compilerOptions": {
+    "baseUrl": "./src",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "lib": [
-      "es2024"
+      "ES2024"
     ],
-    "module": "nodenext",
+    "module": "Node16",
     "moduleResolution": "node16",
-    "outDir": "dist",
+    "outDir": "./dist",
     "paths": {
-      "core": [
-        "./src/core"
-      ],
-      "entities": [
-        "./src/entities"
-      ],
-      "listeners": [
-        "./src/listeners"
-      ],
-      "utils": [
-        "./src/utils"
+      "~/*": [
+        "./*"
       ]
     },
-    "rootDir": "src",
+    "resolveJsonModule": true,
+    "rootDir": "./src",
     "skipLibCheck": true,
+    "sourceMap": true,
     "strict": true,
-    "target": "es2024"
+    "target": "ES2024"
   },
   "display": "word-game",
   "exclude": [
-    "src/migrations/**/*"
+    "./src/migrations/**/*"
   ],
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ]
 }

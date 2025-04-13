@@ -1,16 +1,17 @@
-export const errorCodes = {
-  userInvalid: 'USER_INVALID',
-  wordInvalid: 'WORD_INVALID'
-} as const;
+import { errorMessages } from '~/resources';
 
-type ErrorCode = typeof errorCodes[keyof typeof errorCodes];
+type ErrorCode = keyof typeof errorMessages;
+
+export function getErrorMessage(error: unknown) {
+  return error instanceof ApplicationError ? errorMessages[error.code] : errorMessages.UNDEFINED;
+}
 
 export class ApplicationError extends Error {
-  code?: ErrorCode | null;
+  code: ErrorCode;
 
   constructor(message: string, code?: ErrorCode) {
     super(message);
 
-    this.code = code;
+    this.code = code ?? 'UNDEFINED';
   }
 }

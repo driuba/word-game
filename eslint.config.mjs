@@ -12,11 +12,11 @@ export default tseslint.config(
   globalIgnores(['dist/'], 'Ignore build directory.'),
   globalIgnores(['src/migrations'], 'Ignore migration directory.'),
   {
-    files: ['src/**/*', 'eslint.config.mjs'],
+    files: ['src/**/*', 'eslint.config.mjs', 'webpack.config.mts'],
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['eslint.config.mjs']
+          allowDefaultProject: ['eslint.config.mjs', 'webpack.config.mts']
         },
         tsconfigRootDir: import.meta.dirname
       }
@@ -35,10 +35,29 @@ export default tseslint.config(
           ]
         }
       ],
-      quotes: ['warn', 'single', { avoidEscape: true }],
+      '@typescript-eslint/consistent-type-exports': [
+        'error',
+        {
+          fixMixedExportsWithInlineTypeSpecifier: false
+        }
+      ],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          fixStyle: 'separate-type-imports',
+          prefer: 'type-imports'
+        }],
       '@stylistic/comma-dangle': ['warn', 'never'],
       '@stylistic/no-trailing-spaces': 'warn',
       '@stylistic/object-curly-spacing': ['warn', 'always'],
+      '@stylistic/quotes': [
+        'warn',
+        'single',
+        {
+          allowTemplateLiterals: 'avoidEscape',
+          avoidEscape: true
+        }
+      ],
       '@stylistic/semi': ['warn', 'always']
     }
   }

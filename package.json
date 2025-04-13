@@ -13,10 +13,15 @@
     "@slack/cli-hooks": "^1.2.0",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@types/node": "^22.14.1",
+    "@types/webpack-node-externals": "^3.0.4",
     "eslint": "^9.24.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.29.1"
+    "typescript-eslint": "^8.29.1",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "webpack": "^5.99.5",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
   },
   "engines": {
     "node": "^23.11.0",
@@ -27,13 +32,13 @@
     "word game"
   ],
   "license": "GPL-3.0-or-later",
-  "main": "dist/index.js",
+  "main": "dist/app.js",
   "name": "word-game",
   "scripts": {
-    "build": "tsc",
+    "build": "webpack -c webpack.config.mts",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "start": "npm run build && node ./dist/index.js",
+    "start": "npm run build && slack run",
     "test": "npm run build && npm run lint",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
   },
