@@ -25,6 +25,7 @@ export default tseslint.config(
       '@stylistic': stylistic
     },
     rules: {
+      curly: ['warn', 'all'],
       indent: [
         'warn',
         2,
@@ -37,7 +38,7 @@ export default tseslint.config(
       quotes: ['warn', 'single', { avoidEscape: true }],
       '@stylistic/comma-dangle': ['warn', 'never'],
       '@stylistic/no-trailing-spaces': 'warn',
-      '@stylistic/object-curly-spacing': ['error', 'always'],
+      '@stylistic/object-curly-spacing': ['warn', 'always'],
       '@stylistic/semi': ['warn', 'always']
     }
   }

@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
-import Word from './word';
+import { Word } from './word';
 
-export { default as Word } from './word';
+export * from './word';
 
 export default new DataSource({
   database: 'local.sqlite3',

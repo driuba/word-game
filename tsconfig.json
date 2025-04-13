@@ -12,11 +12,17 @@
     "moduleResolution": "node16",
     "outDir": "dist",
     "paths": {
+      "core": [
+        "./src/core"
+      ],
       "entities": [
         "./src/entities"
       ],
       "listeners": [
         "./src/listeners"
+      ],
+      "utils": [
+        "./src/utils"
       ]
     },
     "rootDir": "src",

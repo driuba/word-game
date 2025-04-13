@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'Words' })
-export default class Word extends BaseEntity {
+export class Word extends BaseEntity {
   @Column({
     length: 50,
     name: 'ChannelId',
@@ -50,7 +50,8 @@ export default class Word extends BaseEntity {
 
   @Column({
     length: 50,
-    name: 'UserIdGuesser'
+    name: 'UserIdGuesser',
+    nullable: true
   })
   @Index()
   userIdGuesser?: string;
