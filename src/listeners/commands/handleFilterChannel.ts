@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 
-export default async function filterChannel(
+export default async function handleFilterChannel(
   {
     ack,
     client,

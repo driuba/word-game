@@ -2,7 +2,7 @@ import { errorMessages } from '~/resources';
 
 type ErrorCode = keyof typeof errorMessages;
 
-export function getErrorMessage(error: unknown) {
+export function getErrorMessage(error?: unknown) {
   return error instanceof ApplicationError ? errorMessages[error.code] : errorMessages.UNDEFINED;
 }
 

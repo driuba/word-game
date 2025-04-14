@@ -47,6 +47,7 @@ export default tseslint.config(
           fixStyle: 'separate-type-imports',
           prefer: 'type-imports'
         }],
+      '@typescript-eslint/no-unused-vars': 'warn',
       '@stylistic/comma-dangle': ['warn', 'never'],
       '@stylistic/no-trailing-spaces': 'warn',
       '@stylistic/object-curly-spacing': ['warn', 'always'],

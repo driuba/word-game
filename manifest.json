@@ -15,6 +15,10 @@
     },
     "slash_commands": [
       {
+        "command": "/wg-check",
+        "description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
+      },
+      {
         "command": "/wg-set-word",
         "description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!"
       }
@@ -28,7 +32,8 @@
         "commands",
         "groups:read",
         "im:read",
-        "mpim:read"
+        "mpim:read",
+        "users.profile:read"
       ]
     }
   },
