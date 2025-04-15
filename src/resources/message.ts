@@ -3,10 +3,15 @@ import { default as messages } from './messages.json';
 
 export default {
   ...messages,
+  currentWordGuessed,
   currentWordHolder,
   currentWordSet,
   setWordSuccess
 };
+
+function currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
+  return replace(messages.currentWordGuessed, values);
+}
 
 function currentWordHolder(values: { displayName: string }) {
   return replace(messages.currentWordHolder, values);

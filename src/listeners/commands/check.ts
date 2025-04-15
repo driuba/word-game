@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getCurrentWord } from '~/core';
+import { getCurrent as getCurrentWord } from '~/core';
 import { messages } from '~/resources';
 import { getErrorMessage } from '~/utils';
 
@@ -37,6 +37,8 @@ export default async function handleCheck(
           word: word.word
         })
       });
+
+      return;
     }
 
     const { profile } = await client.users.profile.get({ user: word.userIdCreator });
@@ -48,6 +50,8 @@ export default async function handleCheck(
           displayName: profile.display_name ?? profile.real_name ?? ''
         })
       });
+
+      return;
     }
 
     await respond({

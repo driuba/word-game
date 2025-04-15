@@ -1,6 +1,7 @@
 import type { App } from '@slack/bolt';
-import sampleMessageCallback from './sample-message';
+import filterMessageHandler from './filterMessage';
+import messageHandler from './message';
 
 export default function register(app: App) {
-  app.message(/^(hi|hello|hey).*/, sampleMessageCallback);
+  app.message(filterMessageHandler, messageHandler);
 }
