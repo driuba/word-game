@@ -26,6 +26,7 @@ export default tseslint.config(
     },
     rules: {
       curly: ['warn', 'all'],
+      eqeqeq: ['error', 'always'],
       indent: [
         'warn',
         2,

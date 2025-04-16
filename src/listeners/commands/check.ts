@@ -29,13 +29,22 @@ export default async function handleCheck(
       return;
     }
 
-    if (userId === word.userIdCreator && !word.userIdGuesser) {
+    if (!word.userIdGuesser && userId === word.userIdCreator) {
       await respond({
         response_type: 'ephemeral',
         text: messages.currentWordSet({
           score: word.score.toString(),
           word: word.word
         })
+      });
+
+      return;
+    }
+
+    if (userId === word.userIdGuesser) {
+      await respond({
+        response_type: 'ephemeral',
+        text: messages.currentWordSetterMe
       });
 
       return;
@@ -49,7 +58,7 @@ export default async function handleCheck(
       await respond({
         response_type: 'ephemeral',
         text: message({
-          displayName: profile.display_name ?? profile.real_name ?? ''
+          displayName: profile.display_name ?? profile.real_name ?? '*_insert user name?_*'
         })
       });
 
