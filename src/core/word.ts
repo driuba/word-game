@@ -19,7 +19,7 @@ export async function checkCurrent(channelId: string, userId: string, text?: str
 
   const pattern = wordGuessPattern(word.word);
 
-  if (!pattern.test(text)) {
+  if (!text.match(pattern)?.length) {
     return;
   }
 
@@ -52,10 +52,10 @@ export function getLatest(channelId: string) {
   });
 }
 
-export async function set(channelId: string, userId: string, word: string) {
-  word = word.trim();
+export async function set(channelId: string, userId: string, text: string) {
+  text = text.trim();
 
-  if (!wordValidationPattern.test(word)) {
+  if (!text.match(wordValidationPattern)?.length) {
     throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
   }
 
@@ -67,8 +67,8 @@ export async function set(channelId: string, userId: string, word: string) {
 
   const newWord = Word.create({
     channelId,
-    word,
-    userIdCreator: userId
+    userIdCreator: userId,
+    word: text
   });
 
   await newWord.save();

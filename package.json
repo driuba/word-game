@@ -42,5 +42,5 @@
     "test": "npm run build && npm run lint",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
   },
-  "version": "0.9.0"
+  "version": "0.9.1"
 }
