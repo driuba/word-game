@@ -2,7 +2,6 @@ import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import type { GenericMessageEvent } from '@slack/types';
 import { checkCurrent as checkCurrentWord } from '~/core';
 import { messages } from '~/resources';
-import type { Logger } from "@slack/logger";
 
 export default async function handleMessage(
   {
@@ -18,7 +17,7 @@ export default async function handleMessage(
       user: userId
     } = message as GenericMessageEvent;
 
-    const word = await checkCurrentWord(logger, channelId, userId, text);
+    const word = await checkCurrentWord(channelId, userId, text);
 
     if (word?.userIdGuesser !== userId) {
       return;

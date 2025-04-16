@@ -6,6 +6,7 @@ export default {
   currentWordGuessed,
   currentWordHolder,
   currentWordSet,
+  currentWordSetter,
   setWordSuccess
 };
 
@@ -19,6 +20,10 @@ function currentWordHolder(values: { displayName: string }) {
 
 function currentWordSet(values: { score: string, word: string }) {
   return replace(messages.currentWordSet, values);
+}
+
+function currentWordSetter(values: { displayName: string }) {
+  return replace(messages.currentWordSetter, values);
 }
 
 function setWordSuccess(values: { word: string }) {

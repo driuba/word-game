@@ -5,27 +5,19 @@ import {
   wordValidationPattern,
   ApplicationError
 } from '~/utils';
-import type { Logger } from "@slack/logger";
 
-
-export async function checkCurrent(logger: Logger, channelId: string, userId: string, text?: string) {
-  logger.info(text);
-
+export async function checkCurrent(channelId: string, userId: string, text?: string) {
   if (!text) {
     return;
   }
 
   const word = await getCurrent(channelId);
 
-  logger.info(word);
-
   if (!word) {
     return;
   }
 
   const pattern = wordGuessPattern(word.word);
-
-  logger.info(pattern);
 
   if (!pattern.test(text)) {
     return;
@@ -49,19 +41,25 @@ export function getCurrent(channelId: string) {
   });
 }
 
-export async function set(channelId: string, userId: string, word: string) {
-  if (!wordValidationPattern.test(word)) {
-    throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
-  }
-
-  const latestWord = await Word.findOne({
+export function getLatest(channelId: string) {
+  return Word.findOne({
     order: {
-      modified: 'desc'
+      created: 'desc'
     },
     where: {
       channelId
     }
   });
+}
+
+export async function set(channelId: string, userId: string, word: string) {
+  word = word.trim();
+
+  if (!wordValidationPattern.test(word)) {
+    throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
+  }
+
+  const latestWord = await getLatest(channelId);
 
   if (latestWord && latestWord.userIdGuesser !== userId) {
     throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');

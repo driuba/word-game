@@ -1,7 +1,8 @@
 {
-  "currentWordGuessed": "Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@{userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
+  "currentWordGuessed": "Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
   "currentWordHolder": "Dabartinis žodžio valdovas yra *${displayName}*. Paklausk, gal pasakys žodį :isdykelis:",
   "currentWordSet": "Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus (tašką? taškų?, kaip man žinot?).",
+  "currentWordSetter": "Dabartinis žodžio valdovas yra *${displayName}*, bet _iterpti kreipinį_ dar nenustatė žodžio. Pajudink _įterpti kreipinį_!",
   "currentWordUnset": "Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!",
   "setWordSuccess": "Sveikinimai! tavo naujasis žodis yra ${word}."
 }

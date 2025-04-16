@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getCurrent as getCurrentWord } from '~/core';
+import { getLatest as getLatestWord } from '~/core';
 import { messages } from '~/resources';
 import { getErrorMessage } from '~/utils';
 
@@ -18,7 +18,7 @@ export default async function handleCheck(
   try {
     await ack();
 
-    const word = await getCurrentWord(channelId);
+    const word = await getLatestWord(channelId);
 
     if (!word) {
       await respond({
@@ -29,7 +29,7 @@ export default async function handleCheck(
       return;
     }
 
-    if (userId === word.userIdCreator) {
+    if (userId === word.userIdCreator && !word.userIdGuesser) {
       await respond({
         response_type: 'ephemeral',
         text: messages.currentWordSet({
@@ -41,12 +41,14 @@ export default async function handleCheck(
       return;
     }
 
-    const { profile } = await client.users.profile.get({ user: word.userIdCreator });
+    const { profile } = await client.users.profile.get({ user: word.userIdGuesser ?? word.userIdCreator });
 
     if (profile) {
+      const message = word.userIdGuesser ? messages.currentWordSetter : messages.currentWordHolder;
+
       await respond({
         response_type: 'ephemeral',
-        text: messages.currentWordHolder({
+        text: message({
           displayName: profile.display_name ?? profile.real_name ?? ''
         })
       });
@@ -59,7 +61,14 @@ export default async function handleCheck(
       text: getErrorMessage()
     });
 
-    logger.error('Profile not found', userId, profile);
+    logger.error(
+      'Profile not found',
+      profile,
+      {
+        creator: word.userIdCreator,
+        guesser: word.userIdGuesser
+      }
+    );
   } catch (error) {
     await respond({
       response_type: 'ephemeral',
