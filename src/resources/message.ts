@@ -14,7 +14,7 @@ function currentWordGuessed(values: { score: string, userIdGuesser: string, user
   return replace(messages.currentWordGuessed, values);
 }
 
-function currentWordHolder(values: { displayName: string }) {
+function currentWordHolder(values: { userId: string }) {
   return replace(messages.currentWordHolder, values);
 }
 
@@ -22,7 +22,7 @@ function currentWordSet(values: { score: string, word: string }) {
   return replace(messages.currentWordSet, values);
 }
 
-function currentWordSetter(values: { displayName: string }) {
+function currentWordSetter(values: { userId: string }) {
   return replace(messages.currentWordSetter, values);
 }
 

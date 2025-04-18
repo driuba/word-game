@@ -1,4 +1,4 @@
-import path from 'path';
+import { resolve } from 'path';
 import nodeExternals from 'webpack-node-externals';
 import type { Configuration } from 'webpack';
 
@@ -19,17 +19,14 @@ export default {
       }
     ]
   },
-  optimization: {
-    minimize: false
-  },
   output: {
     clean: true,
     filename: 'app.js',
-    path: path.resolve(import.meta.dirname, 'dist')
+    path: resolve(import.meta.dirname, 'dist')
   },
   resolve: {
     alias: {
-      '~': path.resolve(import.meta.dirname, 'src')
+      '~': resolve(import.meta.dirname, 'src')
     },
     extensions: ['.ts']
   },
