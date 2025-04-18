@@ -1,5 +1,5 @@
 import { textReplacement } from '~/utils';
-import { default as messages } from './messages.json';
+import messages from './messages.json';
 
 export default {
   ...messages,

@@ -1,11 +1,12 @@
-import { resolve } from 'path';
-import nodeExternals from 'webpack-node-externals';
 import type { Configuration } from 'webpack';
+import { resolve } from 'path';
+import packageInformation from './package.json' with { type: 'json' };
 
 export default {
   devtool: 'source-map',
   entry: './src/index.ts',
-  externals: nodeExternals(),
+  externals: Object.keys(packageInformation.dependencies),
+  externalsType: 'node-commonjs',
   mode: 'development',
   module: {
     rules: [
