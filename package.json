@@ -3,6 +3,7 @@
   "dependencies": {
     "@slack/bolt": "^4.2.1",
     "dotenv": "^16.5.0",
+    "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.22"
@@ -14,12 +15,12 @@
     "@stylistic/eslint-plugin": "^4.2.0",
     "@types/node": "^22.14.1",
     "@types/webpack-node-externals": "^3.0.4",
-    "eslint": "^9.24.0",
+    "eslint": "^9.25.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.30.1",
-    "webpack": "^5.99.5",
+    "webpack": "^5.99.6",
     "webpack-cli": "^6.0.1"
   },
   "engines": {
@@ -37,9 +38,9 @@
     "build": "webpack -c webpack.config.mts",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "start": "npm run build && slack run -a A08N5UESHPT",
+    "start": "npm run build && node ./dist/app.js",
     "test": "npm run build && npm run lint",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
   },
-  "version": "0.9.3"
+  "version": "1.0.0"
 }
