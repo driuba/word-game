@@ -49,7 +49,9 @@ export default tseslint.config(
           prefer: 'type-imports'
         }],
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@stylistic/arrow-parens': ['warn', 'as-needed'],
       '@stylistic/comma-dangle': ['warn', 'never'],
+      '@stylistic/no-extra-parens': 'warn',
       '@stylistic/no-trailing-spaces': 'warn',
       '@stylistic/object-curly-spacing': ['warn', 'always'],
       '@stylistic/quotes': [

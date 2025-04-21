@@ -1,16 +1,13 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { setWord } from '~/core';
+import { getStatistics } from '~/core';
 import { getErrorMessage } from '~/utils';
-import { messages } from '~/resources';
 
-export default async function handleSetWord(
+export default async function handleLeaderboard(
   {
     ack,
     logger,
     payload: {
-      text,
-      channel_id: channelId,
-      user_id: userId
+      channel_id: channelId
     },
     respond
   }: AllMiddlewareArgs & SlackCommandMiddlewareArgs
@@ -18,11 +15,15 @@ export default async function handleSetWord(
   try {
     await ack();
 
-    const { word } = await setWord(channelId, userId, text);
-
     await respond({
       response_type: 'ephemeral',
-      text: messages.setWordSuccess({ word })
+      text: await getStatistics(channelId).then(
+        ss => ss
+          .map(
+            s => `- <@${s.userId}>\n\t- ${s.guessesAll.toFixed()}\n\t- ${s.scoreAll.toFixed()}\n\t- ${s.averageAll.toFixed(2)}\n\t- ${s.maximumAll.toFixed()}`
+          )
+          .join('\n')
+      )
     });
   } catch (error) {
     await respond({

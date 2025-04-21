@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatest as getLatestWord } from '~/core';
+import { getLatestWord } from '~/core';
 import { messages } from '~/resources';
 import { getErrorMessage } from '~/utils';
 

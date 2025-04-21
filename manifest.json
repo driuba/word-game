@@ -19,6 +19,10 @@
         "description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
       },
       {
+        "command": "/wg-leaderboard",
+        "description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim..."
+      },
+      {
         "command": "/wg-set-word",
         "description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!"
       }
