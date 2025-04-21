@@ -3,7 +3,6 @@
   "dependencies": {
     "@slack/bolt": "^4.2.1",
     "dotenv": "^16.5.0",
-    "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.22"
