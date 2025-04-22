@@ -1,12 +1,11 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatest as getLatestWord } from '~/core';
+import { getLatestWord } from '~/core';
 import { messages } from '~/resources';
 import { getErrorMessage } from '~/utils';
 
 export default async function handleCheck(
   {
     ack,
-    client,
     logger,
     payload: {
       channel_id: channelId,
@@ -50,34 +49,12 @@ export default async function handleCheck(
       return;
     }
 
-    const { profile } = await client.users.profile.get({ user: word.userIdGuesser ?? word.userIdCreator });
-
-    if (profile) {
-      const message = word.userIdGuesser ? messages.currentWordSetter : messages.currentWordHolder;
-
-      await respond({
-        response_type: 'ephemeral',
-        text: message({
-          displayName: profile.display_name ?? profile.real_name ?? '*_insert user name?_*'
-        })
-      });
-
-      return;
-    }
-
     await respond({
       response_type: 'ephemeral',
-      text: getErrorMessage()
+      text: (word.userIdGuesser ? messages.currentWordSetter : messages.currentWordHolder)({
+        userId: word.userIdGuesser ?? word.userIdCreator
+      })
     });
-
-    logger.error(
-      'Profile not found',
-      profile,
-      {
-        creator: word.userIdCreator,
-        guesser: word.userIdGuesser
-      }
-    );
   } catch (error) {
     await respond({
       response_type: 'ephemeral',

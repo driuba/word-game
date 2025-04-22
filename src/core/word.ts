@@ -6,12 +6,12 @@ import {
   ApplicationError
 } from '~/utils';
 
-export async function checkCurrent(channelId: string, userId: string, text?: string) {
+export async function checkCurrentWord(channelId: string, userId: string, text?: string) {
   if (!text) {
     return;
   }
 
-  const word = await getCurrent(channelId);
+  const word = await getCurrentWord(channelId);
 
   if (!word) {
     return;
@@ -34,14 +34,14 @@ export async function checkCurrent(channelId: string, userId: string, text?: str
   return word;
 }
 
-export function getCurrent(channelId: string) {
+export function getCurrentWord(channelId: string) {
   return Word.findOneBy({
     channelId,
     userIdGuesser: IsNull()
   });
 }
 
-export function getLatest(channelId: string) {
+export function getLatestWord(channelId: string) {
   return Word.findOne({
     order: {
       created: 'desc'
@@ -52,14 +52,14 @@ export function getLatest(channelId: string) {
   });
 }
 
-export async function set(channelId: string, userId: string, text: string) {
+export async function setWord(channelId: string, userId: string, text: string) {
   text = text.trim();
 
   if (!text.match(wordValidationPattern)?.length) {
     throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
   }
 
-  const latestWord = await getLatest(channelId);
+  const latestWord = await getLatestWord(channelId);
 
   if (latestWord && latestWord.userIdGuesser !== userId) {
     throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');

@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { set as setWord } from '~/core';
+import { setWord } from '~/core';
 import { getErrorMessage } from '~/utils';
 import { messages } from '~/resources';
 
