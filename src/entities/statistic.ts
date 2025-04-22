@@ -83,7 +83,7 @@ function groupGuesses(dataSource: DataSource, from: string) {
   return dataSource
     .createQueryBuilder()
     .select('w.ChannelId')
-    .addSelect('w.UserIdCreator', 'UserId')
+    .addSelect('w.UserIdGuesser', 'UserId')
     .addSelect('COUNT(1)', 'Guesses')
     .from(from, 'w')
     .groupBy('w.ChannelId')
@@ -99,9 +99,8 @@ function groupScores(dataSource: DataSource, from: string) {
     .addSelect('AVG(w.Score)', 'Average')
     .addSelect('MAX(w.Score)', 'Maximum')
     .from(from, 'w')
-    .where('w.UserIdGuesser IS NOT NULL')
     .groupBy('w.ChannelId')
-    .addGroupBy('w.UserIdGuesser');
+    .addGroupBy('w.UserIdCreator');
 }
 
 function selectChannelUsers(dataSource: DataSource) {
