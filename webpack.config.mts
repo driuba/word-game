@@ -7,7 +7,7 @@ export default {
   entry: './src/index.ts',
   externals: Object.keys(packageInformation.dependencies),
   externalsType: 'node-commonjs',
-  mode: 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   module: {
     rules: [
       {

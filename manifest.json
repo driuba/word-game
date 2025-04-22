@@ -16,18 +16,17 @@
     "slash_commands": [
       {
         "command": "/wg-check",
-        "description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi.",
-        "usage_hint": "/wg-check"
+        "description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
       },
       {
         "command": "/wg-leaderboard",
         "description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim...",
-        "usage_hint": "/wg-leaderboard [(*all*|week) [full|*short*]]"
+        "usage_hint": "[(*all*|week) [full|*short*]]"
       },
       {
         "command": "/wg-set-word",
         "description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!",
-        "usage_hint": "/wg-set-word *word*"
+        "usage_hint": "*word*"
       }
     ]
   },
