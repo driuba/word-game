@@ -40,9 +40,7 @@ export default tseslint.config(
           prefer: 'type-imports'
         }],
       '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': ['warn', {
-        ignorePrimitives: true
-      }],
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@stylistic/arrow-parens': ['warn', 'as-needed'],
       '@stylistic/comma-dangle': ['warn', 'never'],
       '@stylistic/indent': [

@@ -33,8 +33,10 @@ export default async function handleLeaderboard(
     inputFormat = inputFormat?.trim();
     inputPeriod = inputPeriod?.trim();
 
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     inputFormat ||= format.short;
     inputPeriod ||= period.all;
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
 
     const statistics = await getStatistics(channelId);
 
