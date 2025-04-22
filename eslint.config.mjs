@@ -27,15 +27,6 @@ export default tseslint.config(
     rules: {
       curly: ['warn', 'all'],
       eqeqeq: ['error', 'always'],
-      indent: [
-        'warn',
-        2,
-        {
-          'ignoredNodes': [
-            'ClassBody.body > PropertyDefinition[decorators.length > 0] > .key'
-          ]
-        }
-      ],
       '@typescript-eslint/consistent-type-exports': [
         'error',
         {
@@ -49,8 +40,21 @@ export default tseslint.config(
           prefer: 'type-imports'
         }],
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/prefer-nullish-coalescing': ['warn', {
+        ignorePrimitives: true
+      }],
       '@stylistic/arrow-parens': ['warn', 'as-needed'],
       '@stylistic/comma-dangle': ['warn', 'never'],
+      '@stylistic/indent': [
+        'warn',
+        2,
+        {
+          SwitchCase: 1,
+          ignoredNodes: [
+            'ClassBody.body > PropertyDefinition[decorators.length > 0] > .key'
+          ]
+        }
+      ],
       '@stylistic/no-extra-parens': 'warn',
       '@stylistic/no-trailing-spaces': 'warn',
       '@stylistic/object-curly-spacing': ['warn', 'always'],
