@@ -1,34 +1,42 @@
 # syntax=docker/dockerfile:1
 
-LABEL org.opencontainers.image.authors=andrius.andrikonis@toughlex.com
-
 ARG NODE_VERSION="23.11.0"
+ARG NPM_VERSION="11.3.0"
 
-FROM node:${NODE_VERSION}-alpine AS build
+FROM node:${NODE_VERSION}-alpine AS base
+
+ARG NPM_VERSION
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --global npm@${NPM_VERSION}
+
+FROM base AS build
+
+USER node:node
 
 WORKDIR /home/node/build
-
-USER node
 
 COPY . .
 
 RUN --mount=type=cache,target=/root/.npm \
-    ["npm", "install-clean", "--include=dev"]
-RUN ["npm", "run", "build"]
+    npm install-clean --include=dev
+RUN npm run build
 
-FROM node:${NODE_VERSION}-alpine
+FROM base
+
+ENV PORT=3000
+
+USER node:node
 
 WORKDIR /home/node/app
-
-USER node
 
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
-    ["npm", "install-clean", "--omit=dev"]
+    npm install-clean --omit=dev
 
-COPY --from=build ./dist/ .
+COPY --from=build /home/node/build/dist/ .
 
-#EXPOSE $PORT
+EXPOSE $PORT
 
-#ENTRYPOINT ["node", "app.js"]
+ENTRYPOINT ["node", "app.js"]
