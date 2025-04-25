@@ -12,19 +12,21 @@ RUN --mount=type=cache,target=/root/.npm \
 
 FROM base AS build
 
+ENV NODE_ENV="development"
+
 USER node:node
 
 WORKDIR /home/node/build
 
-COPY . .
+COPY ./ ./
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install-clean --include=dev
-RUN npm run build
+RUN npm run build:${NODE_ENV}
 
 FROM base
 
-ENV PORT=3000
+ENV PORT="3000"
 
 USER node:node
 
@@ -35,7 +37,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=cache,target=/root/.npm \
     npm install-clean --omit=dev
 
-COPY --from=build /home/node/build/dist/ .
+COPY --from=build /home/node/build/dist/ ./
 
 EXPOSE $PORT
 

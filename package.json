@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "author": "Andrius Andrikonis",
   "dependencies": {
     "@slack/bolt": "^4.2.1",
@@ -34,10 +35,12 @@
   "main": "dist/app.js",
   "name": "word-game",
   "scripts": {
-    "build": "webpack -c webpack.config.mts",
+    "build:development": "webpack build --config webpack.config.mts --mode development",
+    "build:production": "webpack build --config webpack.config.mts --mode production",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "start": "npm run build && node ./dist/app.js",
+    "start:development": "npm run build:development && node ./dist/app.js",
+    "start:production": "npm run build:production && node ./dist/app.js",
     "test": "npm run build && npm run lint",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
   },
