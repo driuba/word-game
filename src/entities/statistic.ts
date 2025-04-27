@@ -5,6 +5,7 @@ import {
   ViewColumn,
   ViewEntity
 } from 'typeorm';
+import { FloatValueTransformer, IntValueTransformer } from './utils';
 import { Word } from './word';
 
 @ViewEntity({
@@ -39,20 +40,32 @@ import { Word } from './word';
   name: 'Statistics'
 })
 export class Statistic extends BaseEntity {
-  @ViewColumn({ name: 'AverageAll' })
+  @ViewColumn({
+    name: 'AverageAll',
+    transformer: new FloatValueTransformer()
+  })
   readonly averageAll!: number;
 
-  @ViewColumn({ name: 'AverageWeek' })
+  @ViewColumn({
+    name: 'AverageWeek',
+    transformer: new FloatValueTransformer()
+  })
   readonly averageWeek!: number;
 
   @Index()
   @ViewColumn({ name: 'ChannelId' })
   readonly channelId!: string;
 
-  @ViewColumn({ name: 'GuessesAll' })
+  @ViewColumn({
+    name: 'GuessesAll',
+    transformer: new IntValueTransformer()
+  })
   readonly guessesAll!: number;
 
-  @ViewColumn({ name: 'GuessesWeek' })
+  @ViewColumn({
+    name: 'GuessesWeek',
+    transformer: new IntValueTransformer()
+  })
   readonly guessesWeek!: number;
 
   @ViewColumn({ name: 'MaximumAll' })
@@ -61,10 +74,16 @@ export class Statistic extends BaseEntity {
   @ViewColumn({ name: 'MaximumWeek' })
   readonly maximumWeek!: number;
 
-  @ViewColumn({ name: 'ScoreAll' })
+  @ViewColumn({
+    name: 'ScoreAll',
+    transformer: new IntValueTransformer()
+  })
   readonly scoreAll!: number;
 
-  @ViewColumn({ name: 'ScoreWeek' })
+  @ViewColumn({
+    name: 'ScoreWeek',
+    transformer: new IntValueTransformer()
+  })
   readonly scoreWeek!: number;
 
   @ViewColumn({ name: 'UserId' })
