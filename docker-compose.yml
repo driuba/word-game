@@ -4,6 +4,7 @@ name: "word-game"
 services:
   app:
     build: "."
+    container_name: "word-game-app"
     environment:
       NODE_ENV:
     env_file:

@@ -4,8 +4,8 @@
   "dependencies": {
     "@slack/bolt": "^4.2.1",
     "dotenv": "^16.5.0",
+    "pg": "^8.15.6",
     "reflect-metadata": "^0.2.2",
-    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.22"
   },
   "description": "Word game for your slack word game needs",
@@ -13,14 +13,15 @@
     "@eslint/js": "^9.24.0",
     "@slack/cli-hooks": "^1.2.0",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.2",
     "@types/webpack-node-externals": "^3.0.4",
-    "eslint": "^9.25.0",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^9.25.1",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1",
-    "webpack": "^5.99.6",
+    "typescript-eslint": "^8.31.0",
+    "webpack": "^5.99.7",
     "webpack-cli": "^6.0.1"
   },
   "engines": {
@@ -37,12 +38,15 @@
   "scripts": {
     "build:development": "webpack build --config webpack.config.mts --mode development",
     "build:production": "webpack build --config webpack.config.mts --mode production",
+    "dotenv:development": "dotenv -c development -- ",
+    "dotenv:production": "dotenv -c production -- ",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
     "start:development": "npm run build:development && node ./dist/app.js",
     "start:production": "npm run build:production && node ./dist/app.js",
     "test": "npm run build && npm run lint",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
+    "typeorm:development": "npm run dotenv:development -- ts-node ./node_modules/typeorm/cli.js --dataSource ./src/entities",
+    "typeorm:production": "npm run dotenv:production -- ts-node ./node_modules/typeorm/cli.js --dataSource ./src/entities"
   },
   "version": "1.0.0"
 }
