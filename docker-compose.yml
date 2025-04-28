@@ -13,6 +13,4 @@ services:
       - path: ".env.${NODE_ENV}.local"
         required: false
     ports:
-      - name: "main"
-        host_ip: "127.0.0.1"
-        target: "${PORT}"
+      - "${PORT}"
