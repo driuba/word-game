@@ -3,8 +3,6 @@
 name: "word-game"
 services:
   app:
-    build: "."
-    container_name: "word-game-app"
     environment:
       NODE_ENV:
     env_file:
@@ -12,5 +10,4 @@ services:
       - ".env.${NODE_ENV}"
       - path: ".env.${NODE_ENV}.local"
         required: false
-    ports:
-      - "${PORT}"
+    image: "localhost:5000/word-game-app"
