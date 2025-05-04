@@ -4,7 +4,34 @@ name: "word-game"
 services:
   app:
     build: "."
+    depends_on:
+      - "db"
     extends:
       file: "docker-compose.yml"
       service: "app"
-    pull_policy: "never"
+    profiles:
+      - "main"
+  db:
+    extends:
+      file: "docker-compose.yml"
+      service: "db"
+    profiles:
+      - "main"
+  migration:
+    build:
+      target: "build"
+    command: "typeorm:${NODE_ENV} migration:run"
+    entrypoint: "npm run"
+    extends:
+      file: "docker-compose.yml"
+      service: "app"
+    profiles:
+      - "migration"
+networks:
+  default:
+    external: true
+    name: "word-game_default"
+volumes:
+  db:
+    external: true
+    name: "word-game_db"

@@ -3,12 +3,18 @@
 name: "word-game"
 services:
   app:
-    deploy:
-      endpoint_mode: vip
-      mode: "global"
     extends:
       file: "docker-compose.yml"
       service: "app"
-    init: true
-    ports:
-      - "${PORT}"
+  db:
+    extends:
+      file: "docker-compose.yml"
+      service: "db"
+volumes:
+  db:
+    driver: "local"
+    driver_opts:
+      device: "/mnt/efs/word-game/db"
+      o: "bind"
+      type: "none"
+    name: "word-game_db"

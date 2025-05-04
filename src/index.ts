@@ -1,21 +1,5 @@
 import 'reflect-metadata';
 import { App, LogLevel } from '@slack/bolt';
-import { config } from 'dotenv';
-
-/**
- * The order here is important.
- * Environment setup happens before any of other project imports to ensure
- * that environment variables are properly setup for other modules to use.
- */
-config({
-  path: [
-    '.env',
-    '.env.local',
-    `.env.${process.env.NODE_ENV ?? 'development'}`,
-    `.env.${process.env.NODE_ENV ?? 'development'}.local`
-  ]
-});
-
 import dataSource from '~/entities';
 import registerListeners from '~/listeners';
 

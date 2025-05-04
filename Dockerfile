@@ -7,38 +7,47 @@ FROM node:${NODE_VERSION}-alpine AS base
 
 ARG NPM_VERSION
 
+ENV NODE_ENV="development"
+
 RUN --mount=type=cache,target=/root/.npm \
     npm install --global npm@${NPM_VERSION}
 
-FROM base AS build
-
-ENV NODE_ENV="development"
+FROM base AS dependency-build
 
 USER node:node
 
 WORKDIR /home/node/build
 
+RUN --mount=type=bind,source=package.json,target=package.json,ro \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json,ro \
+    --mount=type=cache,target=/home/node/.npm,uid=1000,gid=1000 \
+    npm install-clean --include=dev 
+
+FROM dependency-build AS build
+
+USER node:node
+
 COPY ./ ./
 
-RUN --mount=type=cache,target=/root/.npm \
-    npm install-clean --include=dev
 RUN npm run build:${NODE_ENV}
 
-FROM base
-
-ENV PORT="3000"
+FROM base AS dependency-deploy
 
 USER node:node
 
 WORKDIR /home/node/app
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
+RUN --mount=type=bind,source=package.json,target=package.json,ro \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json,ro \
+    --mount=type=cache,target=/home/node/.npm,uid=1000,gid=1000 \
     npm install-clean --omit=dev
+
+FROM dependency-deploy AS deploy
+
+USER node:node
 
 COPY --from=build /home/node/build/dist/ ./
 
-EXPOSE $PORT
+ENTRYPOINT ["node", "--env-file-if-exists", ".env.local"]
 
-ENTRYPOINT ["node", "app.js"]
+CMD ["app.js"]
