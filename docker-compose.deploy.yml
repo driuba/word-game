@@ -10,11 +10,21 @@ services:
     extends:
       file: "docker-compose.yml"
       service: "db"
+configs:
+  initdb:
+    file: "./db/init.sql"
+secrets:
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 volumes:
   db:
     driver: "local"
     driver_opts:
-      device: "/mnt/efs/word-game/db"
+      device: "/mnt/efs/word-game/data"
       o: "bind"
       type: "none"
-    name: "word-game_db"
+networks:
+  default:
+    attachable: true

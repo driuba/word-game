@@ -27,11 +27,22 @@ services:
       service: "app"
     profiles:
       - "migration"
-networks:
-  default:
-    external: true
-    name: "word-game_default"
+    secrets:
+      - source: "migration"
+        target: "/home/node/build/.env.local"
+configs:
+  initdb:
+    file: "./db/init.sql"
+secrets:
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 volumes:
   db:
     external: true
     name: "word-game_db"
+networks:
+  default:
+    external: true
+    name: "word-game_default"
