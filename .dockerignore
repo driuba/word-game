@@ -10,8 +10,8 @@ dist/
 # Dependency directories
 node_modules/
 
+# DB scripts
 db/
-pgdata/
 
 # Docker
 .dockerignore
