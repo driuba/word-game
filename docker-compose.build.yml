@@ -3,7 +3,8 @@
 name: "word-game"
 services:
   app:
-    build: "."
+    build:
+      target: "deploy"
     depends_on:
       - "db"
     extends:
@@ -18,13 +19,16 @@ services:
     profiles:
       - "main"
   migration:
+    environment:
+      NODE_ENV:
     build:
+      cache_from:
+        - "registry:80/word-game_app:latest"
       target: "build"
     command: "typeorm:${NODE_ENV} migration:run"
     entrypoint: "npm run"
-    extends:
-      file: "docker-compose.yml"
-      service: "app"
+    image: "registry:80/word-game_migration:latest"
+    init: true
     profiles:
       - "migration"
     secrets:
