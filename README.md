@@ -1,69 +1,183 @@
-# Bolt for JavaScript (TypeScript) Template App
+# Word game
 
-This is a generic Bolt for JavaScript (TypeScript) template app used to build out Slack apps.
+This is my word game interpretation and implementation as a Slack app.
 
-Before getting started, make sure you have a development workspace where you have permissions to install apps. If you don’t have one setup, go ahead and [create one](https://slack.com/create).
+Premise of the game:
 
-## Installation
+1. Someone sets a word for other to guess;
+2. Points are earned by using the word in chat;
+3. When someone guesses the word that person gets to set the new word;
+4. The goal is to earn as many points as possible.
 
-#### Create a Slack App
+## Development
 
-1. Open [https://api.slack.com/apps/new](https://api.slack.com/apps/new) and choose "From an app manifest"
-2. Choose the workspace you want to install the application to
-3. Copy the contents of [manifest.json](./manifest.json) into the text box that says `*Paste your manifest code here*` (within the JSON tab) and click _Next_
-4. Review the configuration and click _Create_
-5. Click _Install to Workspace_ and _Allow_ on the screen that follows. You'll then be redirected to the App Configuration dashboard.
+### Slack SDK / node
 
-#### Environment Variables
+`package.json` is configured with running the app and migrations, however additional setup is required for secrets and database.
 
-Before you can run the app, you'll need to store some environment variables.
+Secrets are configurable via `.env` files.
+Any environment files with `.local` suffix are excluded from git and will be used by the application if present.
 
-1. Copy `env.sample` to `.env`
-2. Open your apps configuration page from [this list](https://api.slack.com/apps), click _OAuth & Permissions_ in the left hand menu, then copy the _Bot User OAuth Token_ into your `.env` file under `SLACK_BOT_TOKEN`
-3. Click _Basic Information_ from the left hand menu and follow the steps in the _App-Level Tokens_ section to create an app-level token with the `connections:write` scope. Copy that token into your `.env` as `SLACK_APP_TOKEN`.
-
-#### Install Dependencies
-
-`npm install`
-
-#### Run Bolt Server
-
-`npm start`
-
-## Project Structure
-
-### `manifest.json`
-
-`manifest.json` is a configuration for Slack apps. With a manifest, you can create an app with a pre-defined configuration, or adjust the configuration of an existing app.
-
-### `index.ts`
-
-`index.ts` is the entry point for the application and is the file you'll run to start the server. This project aims to keep this file as thin as possible, primarily using it as a way to route inbound requests.
-
-### `/listeners`
-
-Every incoming request is routed to a "listener". Inside this directory, we group each listener based on the Slack Platform feature used, so `/listeners/shortcuts` handles incoming [Shortcuts](https://api.slack.com/interactivity/shortcuts) requests, `/listeners/views` handles [View submissions](https://api.slack.com/reference/interaction-payloads/views#view_submission) and so on.
-
-## App Distribution / OAuth
-
-Only implement OAuth if you plan to distribute your application across multiple workspaces. A separate `app-oauth.ts` file can be found with relevant OAuth settings.
-
-When using OAuth, Slack requires a public URL where it can send requests. In this template app, we've used [`ngrok`](https://ngrok.com/download). Checkout [this guide](https://ngrok.com/docs#getting-started-expose) for setting it up.
-
-Start `ngrok` to access the app on an external network and create a redirect URL for OAuth.
-
-```
-ngrok http 3000
+For database a local instance of **postgresql** should be used (set up and configured).
+An init script is in the *./db* directory, passwords may be adjusted.
+Database credentials should be configured in `.local` environment files.
+Once database is initialized migrations can be performed by running:  
+```shell
+npm run typeorm:developmnent migration:run
 ```
 
-This output should include a forwarding address for `http` and `https` (we'll use `https`). It should look something like the following:
+Keep in mind that environment file needs to be updated with *wg-admin* credentials.
 
-```
-Forwarding   https://3cb89939.ngrok.io -> http://localhost:3000
+Running the application in node is done by:  
+```shell
+npm run start:development
 ```
 
-Navigate to **OAuth & Permissions** in your app configuration and click **Add a Redirect URL**. The redirect URL should be set to your `ngrok` forwarding address with the `slack/oauth_redirect` path appended. For example:
+For the command `.env.development.local` file is expected with the following keys:  
+* `DB_PASSWORD`
+* `SLACK_CLIENT_SECRET`
+* `SLACK_SIGNING_SECRET`
+* `SLACK_APP_TOKEN`
+* `SLACK_BOT_TOKEN`
 
+Here Slack related configuration is taken from a local app instance, local app itself may be created with Slack SDK.
+Database password is expected to be for *wg-user*.
+
+### Docker
+
+Local development is also possible (and probably easier) on docker. For this `docker-compose.build.yml` file should be edited such that valid top-level configurations are used.
+Currently, the file is set up for deployment into internal Toughlex infrastructure that uses docker swarm.
+
+The build configuration contains the following configuration that need to be updated.
+
+From:  
+```yaml
+secrets:
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
+volumes:
+  db:
+    external: true
+    name: "word-game_db"
+networks:
+  default:
+    external: true
+    name: "word-game_default"
 ```
-https://3cb89939.ngrok.io/slack/oauth_redirect
+
+To something like:  
+```yaml
+secrets:
+  app:
+    file: ".env.app.local"
+  migration:
+    file: ".env.migration.local"
+volumes:
+  db:
 ```
+
+**All docker compose commands require `NODE_ENV` to be set, e.g. `export NODE_ENV=development` or by prefixing all docker compose command with `NODE_ENV=development`.**
+
+Then docker compose can be run with:  
+```shell
+docker compose -f docker-compose.build.yml --profile main up -d
+```
+
+This will:  
+* Create a network `word-game_default`;
+* Create a volume `word-game_db`;
+* Initialize the database with `db/init.sql`;
+* Start both `db` and `app` services as containers.
+
+For this to work `.env.app.local` file needs to be set up with secrets:  
+* `DB_PASSWORD` for *wg-user*
+* `SLACK_CLIENT_SECRET`
+* `SLACK_SIGNING_SECRET`
+* `SLACK_APP_TOKEN`
+* `SLACK_BOT_TOKEN`
+
+Database migration then can be performed (**only with a running database service**) by running migrate container:  
+```shell
+docker compose -f docker-compose.build.yml --profile migration run --build --rm migration
+docker image rm registry:80/word-game_migration:latest
+```
+
+The migration requires connection to `db` service so it must be running, and it's network must be attachable for migrations to work.
+
+## Deployment
+
+These are general guidelines in regard to normal application deployment into docker swarm.
+As with development notes, all docker commands assume `NODE_ENV` environment variable exists, it is required.
+
+Working with deployment assumes there is a configured location to check out the source code.
+[That includes cleanup configuration](https://askubuntu.com/questions/380238/how-to-clean-tmp) be it automatic [or manual](https://stackoverflow.com/questions/687014/removing-created-temp-files-in-unexpected-bash-exit).
+
+### Build
+
+Built image registry is required for deployment into stack.
+Build compose configuration assumes existence of local swarm registry running on `registry` domain name `80` port.
+
+```shell
+docker compose -f docker-compose.build.yml --profile main build --push
+```
+
+This command builds and pushes `app` image to registry, `db` service does not build and uses *postgresql* image from public registry.
+
+Notable consideration: [additional cleanup for untagged images may be required](https://stackoverflow.com/questions/29802202/docker-registry-2-0-how-to-delete-unused-images).
+
+### Deploy
+
+Deployment is intended to be done by using `docker-compose.deploy.yml` configuration and should be done before initial database migration.  
+Once services are build and pushed into the registry docker stack deployment can be done:  
+```shell
+docker compose -f docker-compose.deploy.yml config | sed 1d | docker stack deploy -c - word-game
+```
+
+Notes:
+
+While configuration expects secret to be accessible as files, that is only necessary if we wish to use secrets just with docker compose, **not stack**.  
+Docker swarm supports external secrets and configs which are shared via internal docker swarm [RAFT](https://en.wikipedia.org/wiki/Raft_(algorithm)) storage.
+As such they can be separately setup with `docker config` and `docker secret` commands and used as external.
+
+E.g. from:  
+```yaml
+secrets:
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
+```
+
+to:  
+```yaml
+secrets:
+  app:
+    external: true
+    name: "word-game_app"
+  migration:
+    external: true
+    name: "word-game_migration"
+```
+
+Network is intentionally configured as attachable for migration image to connect to database when run as compose container instead of swarm service.
+
+```yaml
+networks:
+  default:
+    attachable: true
+```
+
+### Migrate
+
+Once services are deployed migration can be run same as with developments set up.
+
+```shell
+docker compose -f docker-compose.build.yml --profile migration run --build --rm migration
+docker image rm registry:80/word-game_migration:latest
+```
+
+Notes:
+
+Migration image is configured to use `app` build cache and the same `Dockefile` just different stage, so after building the app, migration should use that and not perform redundant builds.
