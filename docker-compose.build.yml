@@ -4,6 +4,8 @@ name: "word-game"
 services:
   app:
     build:
+      args:
+        NODE_ENV: "${NODE_ENV}"
       target: "deploy"
     depends_on:
       - "db"
@@ -22,6 +24,8 @@ services:
     environment:
       NODE_ENV:
     build:
+      args:
+        NODE_ENV: "${NODE_ENV}"
       cache_from:
         - "registry:80/word-game_app:latest"
       target: "build"

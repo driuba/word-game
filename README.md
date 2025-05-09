@@ -21,19 +21,22 @@ Any environment files with `.local` suffix are excluded from git and will be use
 For database a local instance of **postgresql** should be used (set up and configured).
 An init script is in the *./db* directory, passwords may be adjusted.
 Database credentials should be configured in `.local` environment files.
-Once database is initialized migrations can be performed by running:  
+Once database is initialized migrations can be performed by running:
+
 ```shell
 npm run typeorm:developmnent migration:run
 ```
 
 Keep in mind that environment file needs to be updated with *wg-admin* credentials.
 
-Running the application in node is done by:  
+Running the application in node is done by:
+
 ```shell
 npm run start:development
 ```
 
-For the command `.env.development.local` file is expected with the following keys:  
+For the command `.env.development.local` file is expected with the following keys:
+
 * `DB_PASSWORD`
 * `SLACK_CLIENT_SECRET`
 * `SLACK_SIGNING_SECRET`
@@ -50,7 +53,8 @@ Currently, the file is set up for deployment into internal Toughlex infrastructu
 
 The build configuration contains the following configuration that need to be updated.
 
-From:  
+From:
+
 ```yaml
 secrets:
   app:
@@ -67,7 +71,8 @@ networks:
     name: "word-game_default"
 ```
 
-To something like:  
+To something like:
+
 ```yaml
 secrets:
   app:
@@ -80,25 +85,29 @@ volumes:
 
 **All docker compose commands require `NODE_ENV` to be set, e.g. `export NODE_ENV=development` or by prefixing all docker compose command with `NODE_ENV=development`.**
 
-Then docker compose can be run with:  
+Then docker compose can be run with:
+
 ```shell
 docker compose -f docker-compose.build.yml --profile main up -d
 ```
 
-This will:  
+This will:
+
 * Create a network `word-game_default`;
 * Create a volume `word-game_db`;
 * Initialize the database with `db/init.sql`;
 * Start both `db` and `app` services as containers.
 
-For this to work `.env.app.local` file needs to be set up with secrets:  
+For this to work `.env.app.local` file needs to be set up with secrets:
+
 * `DB_PASSWORD` for *wg-user*
 * `SLACK_CLIENT_SECRET`
 * `SLACK_SIGNING_SECRET`
 * `SLACK_APP_TOKEN`
 * `SLACK_BOT_TOKEN`
 
-Database migration then can be performed (**only with a running database service**) by running migrate container:  
+Database migration then can be performed (**only with a running database service**) by running migrate container:
+
 ```shell
 docker compose -f docker-compose.build.yml --profile migration run --build --rm migration
 docker image rm registry:80/word-game_migration:latest
@@ -130,7 +139,8 @@ Notable consideration: [additional cleanup for untagged images may be required](
 ### Deploy
 
 Deployment is intended to be done by using `docker-compose.deploy.yml` configuration and should be done before initial database migration.  
-Once services are build and pushed into the registry docker stack deployment can be done:  
+Once services are build and pushed into the registry docker stack deployment can be done:
+
 ```shell
 docker compose -f docker-compose.deploy.yml config | sed 1d | docker stack deploy -c - word-game
 ```
@@ -141,7 +151,8 @@ While configuration expects secret to be accessible as files, that is only neces
 Docker swarm supports external secrets and configs which are shared via internal docker swarm [RAFT](https://en.wikipedia.org/wiki/Raft_(algorithm)) storage.
 As such they can be separately setup with `docker config` and `docker secret` commands and used as external.
 
-E.g. from:  
+E.g. from:
+
 ```yaml
 secrets:
   app:

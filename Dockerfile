@@ -1,13 +1,15 @@
 # syntax=docker/dockerfile:1
 
+ARG NODE_ENV="development"
 ARG NODE_VERSION="23.11.0"
 ARG NPM_VERSION="11.3.0"
 
 FROM node:${NODE_VERSION}-alpine AS base
 
+ARG NODE_ENV
 ARG NPM_VERSION
 
-ENV NODE_ENV="development"
+ENV NODE_ENV="${NODE_ENV}"
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install --global npm@${NPM_VERSION}
