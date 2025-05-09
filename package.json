@@ -1,10 +1,10 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "author": "Andrius Andrikonis",
   "dependencies": {
     "@slack/bolt": "^4.2.1",
-    "dotenv": "^16.5.0",
+    "pg": "^8.15.6",
     "reflect-metadata": "^0.2.2",
-    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.22"
   },
   "description": "Word game for your slack word game needs",
@@ -12,19 +12,19 @@
     "@eslint/js": "^9.24.0",
     "@slack/cli-hooks": "^1.2.0",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.2",
     "@types/webpack-node-externals": "^3.0.4",
-    "eslint": "^9.25.0",
+    "eslint": "^9.25.1",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1",
-    "webpack": "^5.99.6",
+    "typescript-eslint": "^8.31.0",
+    "webpack": "^5.99.7",
     "webpack-cli": "^6.0.1"
   },
   "engines": {
     "node": "^23.11.0",
-    "npm": "^11.2.0"
+    "npm": "^11.3.0"
   },
   "keywords": [
     "word-game",
@@ -34,12 +34,16 @@
   "main": "dist/app.js",
   "name": "word-game",
   "scripts": {
-    "build": "webpack -c webpack.config.mts",
+    "build:development": "webpack build --config webpack.config.mts --mode development",
+    "build:production": "webpack build --config webpack.config.mts --mode production",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "start": "npm run build && node ./dist/app.js",
-    "test": "npm run build && npm run lint",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./src/entities"
+    "node:development": "node --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.development --env-file-if-exists .env.development.local",
+    "node:production": "node --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
+    "start:development": "npm run build:development && npm run node:development ./dist/app.js",
+    "start:production": "npm run build:production && npm run node:production ./dist/app.js",
+    "typeorm:development": "npm run node:development -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities",
+    "typeorm:production": "npm run node:production -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

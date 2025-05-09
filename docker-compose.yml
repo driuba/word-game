@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+
+name: "word-game"
+services:
+  app:
+    environment:
+      NODE_ENV:
+    env_file:
+      - ".env"
+      - ".env.${NODE_ENV}"
+    image: "registry:80/word-game_app:latest"
+    init: true
+    secrets:
+      - source: "app"
+        target: "/home/node/app/.env.local"
+  db:
+    configs:
+      - source: "initdb"
+        target: "/docker-entrypoint-initdb.d/initdb.sql"
+    environment:
+      PGDATA: "/home/postgres/data"
+      POSTGRES_PASSWORD: "SCRAM-SHA-256$$4096:fYljMSIQa9dIqjLP3hf41g==$$nPMgscGkryTjoAnB8cBCZA6eXltHkOjKe2KLDL8Z6cc=:AtaX/sv9FS1nwQaES+xQBZol76BhUciJwE6GWNW7xrU="
+    image: "postgres:17.5-alpine"
+    init: true
+    volumes:
+      - "db:/home/postgres/data"

@@ -1,0 +1,32 @@
+# WebStorm specific stuff
+.idea/
+
+# Slack specific stuff
+.slack/
+
+# Build directory
+dist/
+
+# Dependency directories
+node_modules/
+
+# DB scripts
+db/
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Git
+.git/
+.gitignore
+
+# dotenv environment variable files
+.env.local
+.env.*.local
+
+.editorconfig
+eslint.config.mjs
+LICENSE
+manifest.json
+README.md

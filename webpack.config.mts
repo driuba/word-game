@@ -7,7 +7,6 @@ export default {
   entry: './src/index.ts',
   externals: Object.keys(packageInformation.dependencies),
   externalsType: 'node-commonjs',
-  mode: 'development',
   module: {
     rules: [
       {
@@ -19,6 +18,9 @@ export default {
         use: 'ts-loader'
       }
     ]
+  },
+  optimization: {
+    nodeEnv: false
   },
   output: {
     clean: true,

@@ -22,6 +22,7 @@ export class Word extends BaseEntity {
   @CreateDateColumn({
     name: 'Created',
     nullable: false,
+    type: 'timestamp with time zone',
     update: false
   })
   readonly created!: Date;
@@ -36,7 +37,10 @@ export class Word extends BaseEntity {
   })
   score!: number;
 
-  @UpdateDateColumn({ name: 'Modified' })
+  @UpdateDateColumn({
+    name: 'Modified',
+    type: 'timestamp with time zone'
+  })
   readonly modified?: Date;
 
   @Column({

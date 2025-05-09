@@ -30,12 +30,14 @@ export default async function handleLeaderboard(
       .trim()
       .split(' ', 2) as [string?, string?];
 
-    inputFormat = inputFormat?.trim();
-    inputPeriod = inputPeriod?.trim();
-
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-    inputFormat ||= format.short;
-    inputPeriod ||= period.all;
+    inputFormat = inputFormat
+      ?.trim()
+      .toLowerCase() || format.short;
+
+    inputPeriod = inputPeriod
+      ?.trim()
+      .toLowerCase() || period.all;
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
 
     const statistics = await getStatistics(channelId);
