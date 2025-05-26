@@ -3,5 +3,5 @@ import filterMessageHandler from './filterMessage';
 import messageHandler from './message';
 
 export default function register(app: App) {
-  app.message(filterMessageHandler, messageHandler);
+	app.message(filterMessageHandler, messageHandler);
 }

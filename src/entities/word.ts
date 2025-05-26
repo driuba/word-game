@@ -1,69 +1,69 @@
 import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
+	BaseEntity,
+	Column,
+	CreateDateColumn,
+	Entity,
+	Index,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn
 } from 'typeorm';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
-  @Column({
-    length: 50,
-    name: 'ChannelId',
-    nullable: false,
-    update: false
-  })
-  @Index()
-  readonly channelId!: string;
+	@Column({
+		length: 50,
+		name: 'ChannelId',
+		nullable: false,
+		update: false
+	})
+	@Index()
+	readonly channelId!: string;
 
-  @CreateDateColumn({
-    name: 'Created',
-    nullable: false,
-    type: 'timestamp with time zone',
-    update: false
-  })
-  readonly created!: Date;
+	@CreateDateColumn({
+		name: 'Created',
+		nullable: false,
+		type: 'timestamp with time zone',
+		update: false
+	})
+	readonly created!: Date;
 
-  @PrimaryGeneratedColumn({ name: 'Id' })
-  readonly id!: number;
+	@PrimaryGeneratedColumn({ name: 'Id' })
+	readonly id!: number;
 
-  @Column({
-    default: 0,
-    name: 'Score',
-    nullable: false
-  })
+	@Column({
+		default: 0,
+		name: 'Score',
+		nullable: false
+	})
   score!: number;
 
-  @UpdateDateColumn({
-    name: 'Modified',
-    type: 'timestamp with time zone'
-  })
-  readonly modified?: Date;
+	@UpdateDateColumn({
+		name: 'Modified',
+		type: 'timestamp with time zone'
+	})
+	readonly modified?: Date;
 
-  @Column({
-    length: 50,
-    name: 'UserIdCreator',
-    nullable: false,
-    update: false
-  })
-  @Index()
-  readonly userIdCreator!: string;
+	@Column({
+		length: 50,
+		name: 'UserIdCreator',
+		nullable: false,
+		update: false
+	})
+	@Index()
+	readonly userIdCreator!: string;
 
-  @Column({
-    length: 50,
-    name: 'UserIdGuesser',
-    nullable: true
-  })
-  @Index()
+	@Column({
+		length: 50,
+		name: 'UserIdGuesser',
+		nullable: true
+	})
+	@Index()
   userIdGuesser?: string;
 
-  @Column({
-    name: 'Word',
-    nullable: false,
-    update: false
-  })
-  readonly word!: string;
+	@Column({
+		name: 'Word',
+		nullable: false,
+		update: false
+	})
+	readonly word!: string;
 }

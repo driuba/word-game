@@ -1,58 +1,58 @@
 {
-  "$shema": "https://json.schemastore.org/slack-app-manifest.json",
-  "_metadata": {
-    "major_version": 2,
-    "minor_version": 1
-  },
-  "display_information": {
-    "background_color": "#1483de",
-    "description": "A word game for all your word game needs",
-    "name": "Word game"
-  },
-  "features": {
-    "bot_user": {
-      "always_online": true,
-      "display_name": "word_game"
-    },
-    "slash_commands": [
-      {
-        "command": "/wg-check",
-        "description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
-      },
-      {
-        "command": "/wg-leaderboard",
-        "description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim...",
-        "usage_hint": "[(*all*|week) [full|*short*]]"
-      },
-      {
-        "command": "/wg-set-word",
-        "description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!",
-        "usage_hint": "*word*"
-      }
-    ]
-  },
-  "oauth_config": {
-    "scopes": {
-      "bot": [
-        "channels:history",
-        "channels:read",
-        "chat:write",
-        "commands",
-        "groups:history",
-        "groups:read",
-        "im:read",
-        "mpim:read",
-        "users.profile:read"
-      ]
-    }
-  },
-  "settings": {
-    "event_subscriptions": {
-      "bot_events": [
-        "message.channels",
-        "message.groups"
-      ]
-    },
-    "socket_mode_enabled": true
-  }
+	"$shema": "https://json.schemastore.org/slack-app-manifest.json",
+	"_metadata": {
+		"major_version": 2,
+		"minor_version": 1
+	},
+	"display_information": {
+		"background_color": "#1483de",
+		"description": "A word game for all your word game needs",
+		"name": "Word game"
+	},
+	"features": {
+		"bot_user": {
+			"always_online": true,
+			"display_name": "word_game"
+		},
+		"slash_commands": [
+			{
+				"command": "/wg-check",
+				"description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
+			},
+			{
+				"command": "/wg-leaderboard",
+				"description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim...",
+				"usage_hint": "[(*all*|week) [full|*short*]]"
+			},
+			{
+				"command": "/wg-set-word",
+				"description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!",
+				"usage_hint": "*word*"
+			}
+		]
+	},
+	"oauth_config": {
+		"scopes": {
+			"bot": [
+				"channels:history",
+				"channels:read",
+				"chat:write",
+				"commands",
+				"groups:history",
+				"groups:read",
+				"im:read",
+				"mpim:read",
+				"users.profile:read"
+			]
+		}
+	},
+	"settings": {
+		"event_subscriptions": {
+			"bot_events": [
+				"message.channels",
+				"message.groups"
+			]
+		},
+		"socket_mode_enabled": true
+	}
 }
