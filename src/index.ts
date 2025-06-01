@@ -13,7 +13,7 @@ const app = new App({
 	token: process.env.SLACK_BOT_TOKEN
 });
 
-registerListeners(app, process.env.WG_PREFIX_COMMAND ?? 'wg');
+registerListeners(app);
 
 void (async () => {
 	try {

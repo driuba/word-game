@@ -35,13 +35,17 @@
 		"scopes": {
 			"bot": [
 				"channels:history",
+				"channels:manage",
 				"channels:read",
 				"chat:write",
 				"commands",
 				"groups:history",
 				"groups:read",
+				"groups:write",
 				"im:read",
+				"im:write",
 				"mpim:read",
+				"mpim:write",
 				"users.profile:read"
 			]
 		}
