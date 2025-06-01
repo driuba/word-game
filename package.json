@@ -45,5 +45,5 @@
 		"typeorm:development": "npm run node:development -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities",
 		"typeorm:production": "npm run node:production -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities"
 	},
-	"version": "1.0.1"
+	"version": "1.1.0"
 }

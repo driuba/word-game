@@ -1,14 +1,22 @@
 import { textReplacement } from '~/utils';
-import messages from './messages.json';
+import resources from './messages.json';
 
-export default {
-	...messages,
-	currentWordGuessed,
-	currentWordHolder,
-	currentWordSet,
-	currentWordSetter,
-	setWordSuccess
-};
+type resourceKey = keyof typeof resources;
+type resourceRecord = Record<resourceKey, string>;
+
+const messages = Object
+	.keys(resources)
+	.reduce(
+		(a, k) => ({
+			...a,
+			get [k]() {
+				const values = resources[k as resourceKey];
+
+				return values[Math.floor(Math.random() * values.length)];
+			}
+		}),
+		{} as resourceRecord
+	);
 
 function currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
 	return replace(messages.currentWordGuessed, values);
@@ -18,12 +26,16 @@ function currentWordHolder(values: { userId: string }) {
 	return replace(messages.currentWordHolder, values);
 }
 
-function currentWordSet(values: { score: string, word: string }) {
-	return replace(messages.currentWordSet, values);
-}
-
 function currentWordSetter(values: { userId: string }) {
 	return replace(messages.currentWordSetter, values);
+}
+
+function currentWordStatusPrivate(values: { score: string, word: string }) {
+	return replace(messages.currentWordStatusPrivate, values);
+}
+
+function currentWordStatusPublic(values: { score: string, userId: string }) {
+	return replace(messages.currentWordStatusPublic, values);
 }
 
 function setWordSuccess(values: { word: string }) {
@@ -36,3 +48,13 @@ function replace(resource: string, values: Record<string, string>) {
 		(_, key) => values[key as keyof typeof values]
 	);
 }
+
+export default {
+	...messages,
+	currentWordGuessed,
+	currentWordHolder,
+	currentWordSetter,
+	currentWordStatusPrivate,
+	currentWordStatusPublic,
+	setWordSuccess
+};

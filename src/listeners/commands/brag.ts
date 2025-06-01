@@ -3,7 +3,7 @@ import { getLatestWord } from '~/core';
 import { messages } from '~/resources';
 import { getErrorMessage } from '~/utils';
 
-export default async function handleCheck(
+export default async function handleBrag(
 	{
 		ack,
 		logger,
@@ -30,20 +30,11 @@ export default async function handleCheck(
 
 		if (!word.userIdGuesser && userId === word.userIdCreator) {
 			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordStatusPrivate({
+				response_type: 'in_channel',
+				text: messages.currentWordStatusPublic({
 					score: word.score.toString(),
-					word: word.word
+					userId: word.userIdCreator
 				})
-			});
-
-			return;
-		}
-
-		if (userId === word.userIdGuesser) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordSetterMe
 			});
 
 			return;
@@ -51,9 +42,7 @@ export default async function handleCheck(
 
 		await respond({
 			response_type: 'ephemeral',
-			text: (word.userIdGuesser ? messages.currentWordSetter : messages.currentWordHolder)({
-				userId: word.userIdGuesser ?? word.userIdCreator
-			})
+			text: messages.nothingToBrag
 		});
 	} catch (error) {
 		await respond({
