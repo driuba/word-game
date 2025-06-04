@@ -19,16 +19,7 @@ export default async function handleBrag(
 
 		const word = await getLatestWord(channelId);
 
-		if (!word) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordUnset
-			});
-
-			return;
-		}
-
-		if (!word.userIdGuesser && userId === word.userIdCreator) {
+		if (word && !word.userIdGuesser && userId === word.userIdCreator) {
 			await respond({
 				response_type: 'in_channel',
 				text: messages.currentWordStatusPublic({
