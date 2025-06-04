@@ -1,5 +1,6 @@
 import { textReplacement } from '~/utils';
 import resources from './messages.json';
+import readme from './readme.md';
 
 type resourceKey = keyof typeof resources;
 type resourceRecord = Record<resourceKey, string>;
@@ -51,6 +52,7 @@ function replace(resource: string, values: Record<string, string>) {
 
 export default {
 	...messages,
+	readme,
 	currentWordGuessed,
 	currentWordHolder,
 	currentWordSetter,

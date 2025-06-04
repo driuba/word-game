@@ -2,6 +2,7 @@
 	"$schema": "https://json.schemastore.org/tsconfig.json",
 	"_version": "23.0.0",
 	"compilerOptions": {
+		"allowArbitraryExtensions": true,
 		"baseUrl": "./src",
 		"emitDecoratorMetadata": true,
 		"esModuleInterop": true,

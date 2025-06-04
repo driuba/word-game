@@ -16,6 +16,14 @@ export default {
 					/\.ts$/
 				],
 				use: 'ts-loader'
+			},
+			{
+				exclude: /^\.\/src\/migratons\//,
+				test: [
+					/^\.\/src/,
+					/\.md$/
+				],
+				type: 'asset/source'
 			}
 		]
 	},

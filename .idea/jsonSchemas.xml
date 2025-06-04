@@ -13,7 +13,7 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="file://$PROJECT_DIR$/src/resources/messages.json" />
+                    <option name="path" value="file://$PROJECT_DIR$/src/resources/*.json" />
                   </Item>
                 </list>
               </option>

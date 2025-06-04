@@ -1,5 +1,5 @@
 {
-	"$shema": "https://json.schemastore.org/slack-app-manifest.json",
+	"$schema": "https://json.schemastore.org/slack-app-manifest.json",
 	"_metadata": {
 		"major_version": 2,
 		"minor_version": 1
@@ -16,6 +16,10 @@
 		},
 		"slash_commands": [
 			{
+				"command": "/wg-brag",
+				"description": "Kas pakels šuniui uodegą?! Aš. Aš, žodžio žaidimas, asmeniškai pakelsiu šuniui uodegą."
+			},
+			{
 				"command": "/wg-check",
 				"description": "Jei turi žodį, pasitikrink kiek taškų jis surinko. Jei ne, nu tada pamatysi, kas turi."
 			},
@@ -23,6 +27,14 @@
 				"command": "/wg-leaderboard",
 				"description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim...",
 				"usage_hint": "[(*all*|week) [full|*short*]]"
+			},
+			{
+				"command": "/wg-leave",
+				"description": "Goodbye my lover\nGoodbye my friend\nYou have been the one\nYou have been the one for me"
+			},
+			{
+				"command": "/wg-readme",
+				"description": "TFM tiem, dar neperskaitė (RTFM is an initialism and internet...)"
 			},
 			{
 				"command": "/wg-set-word",
