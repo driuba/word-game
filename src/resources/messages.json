@@ -1,4 +1,7 @@
 {
+	"botNotInChat": [
+		"Beep bop, I'm not in this chat. \uD835\uDE7F̍\uD835\uDE95́\uD835\uDE8E̷\uD835\uDE8A̤\uD835\uDE9Cͦ\uD835\uDE8E͙ͯ,̰͓ ̙ͩ\uD835\uDE92ͪ̕\uD835\uDE97ͣ̔\uD835\uDE9F͓͈͐\uD835\uDE92̝̄͂\uD835\uDE9D̹́ͭ\uD835\uDE8E̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́\uD835\uDE7C̴͖̱̆\uD835\uDE74̤̺͚̫"
+	],
 	"currentWordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"
 	],

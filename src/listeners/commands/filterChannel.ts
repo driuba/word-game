@@ -1,4 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
+import { messages } from '~/resources';
 
 export default async function filterChannel(
 	{
@@ -21,5 +22,8 @@ export default async function filterChannel(
 		return;
 	}
 
-	await ack();
+	await ack({
+		response_type: 'ephemeral',
+		text: messages.botNotInChat
+	});
 }
