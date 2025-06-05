@@ -1,9 +1,32 @@
 {
-  "currentWordGuessed": "Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
-  "currentWordHolder": "Dabartinis žodžio valdovas yra <@${userId}>. Paklausk, gal pasakys žodį :isdykelis:",
-  "currentWordSet": "Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_.",
-  "currentWordSetter": "Karalius mirė, tegyvuoja karalius! <@${userId}> ruošiasi perimti chat'ą.",
-  "currentWordSetterMe": "_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!*",
-  "currentWordUnset": "Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!",
-  "setWordSuccess": "Sveikinimai! tavo naujasis žodis yra *${word}*."
+	"botNotInChat": [
+		"Beep bop, I'm not in this chat. \uD835\uDE7F̍\uD835\uDE95́\uD835\uDE8E̷\uD835\uDE8A̤\uD835\uDE9Cͦ\uD835\uDE8E͙ͯ,̰͓ ̙ͩ\uD835\uDE92ͪ̕\uD835\uDE97ͣ̔\uD835\uDE9F͓͈͐\uD835\uDE92̝̄͂\uD835\uDE9D̹́ͭ\uD835\uDE8E̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́\uD835\uDE7C̴͖̱̆\uD835\uDE74̤̺͚̫"
+	],
+	"currentWordGuessed": [
+		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"
+	],
+	"currentWordHolder": [
+		"Dabartinis žodžio valdovas yra <@${userId}>. Paklausk, gal pasakys žodį :isdykelis:"
+	],
+	"currentWordSetter": [
+		"Karalius mirė, tegyvuoja karalius! <@${userId}> ruošiasi perimti chat'ą."
+	],
+	"currentWordSetterMe": [
+		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!*"
+	],
+	"currentWordStatusPrivate": [
+		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_."
+	],
+	"currentWordStatusPublic": [
+		"<@${userId}> nori pasigirti, kad jų žodis surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau..."
+	],
+	"currentWordUnset": [
+		"Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!"
+	],
+	"nothingToBrag": [
+		"Nėr ko girtis, grybe tu."
+	],
+	"setWordSuccess": [
+		"Sveikinimai! tavo naujasis žodis yra *${word}*."
+	]
 }

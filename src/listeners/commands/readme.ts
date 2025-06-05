@@ -1,28 +1,20 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { setWord } from '~/core';
-import { getErrorMessage } from '~/utils';
 import { messages } from '~/resources';
+import { getErrorMessage } from '~/utils';
 
-export default async function handleSetWord(
+export default async function handleReadme(
 	{
 		ack,
 		logger,
-		payload: {
-			text,
-			channel_id: channelId,
-			user_id: userId
-		},
 		respond
 	}: AllMiddlewareArgs & SlackCommandMiddlewareArgs
 ) {
 	try {
 		await ack();
 
-		const { word } = await setWord(channelId, userId, text);
-
 		await respond({
 			response_type: 'ephemeral',
-			text: messages.setWordSuccess({ word })
+			text: messages.readme
 		});
 	} catch (error) {
 		await respond({

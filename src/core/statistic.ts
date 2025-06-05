@@ -1,9 +1,9 @@
 import { Statistic } from '~/entities';
 
 export function getStatistics(channelId: string) {
-  return Statistic.find({
-    where: {
-      channelId
-    }
-  });
+	return Statistic.find({
+		where: {
+			channelId
+		}
+	});
 }
