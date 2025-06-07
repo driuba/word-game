@@ -26,7 +26,7 @@
 			{
 				"command": "/wg-leaderboard",
 				"description": "Kas turi daugiausia taškų? Kas daugiausia atspėjo? Ech, turbūt niekad ir nesužinosim...",
-				"usage_hint": "[(*all*|week) [full|*short*]]"
+				"usage_hint": "[(*all*|week) [full|*short* [*channel*|global]]]"
 			},
 			{
 				"command": "/wg-leave",
