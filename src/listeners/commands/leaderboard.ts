@@ -1,5 +1,7 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getStatistics } from '~/core';
+import type { StatisticPeriod } from '~/core';
+import { getStatistics, statisticPeriod } from '~/core';
+import type { StatisticChannel, StatisticGlobal } from '~/entities';
 import { ApplicationError } from '~/utils';
 
 const format = {
@@ -7,9 +9,9 @@ const format = {
 	short: 'short'
 } as const;
 
-const period = {
-	all: 'all',
-	week: 'week'
+const scope = {
+	channel: 'channel',
+	global: 'global'
 } as const;
 
 export default async function handleLeaderboard(
@@ -24,9 +26,9 @@ export default async function handleLeaderboard(
 ) {
 	await ack();
 
-	let [inputPeriod, inputFormat] = text
+	let [inputPeriod, inputFormat, inputScope] = text
 		.trim()
-		.split(' ', 2) as [string?, string?];
+		.split(' ', 3) as [string?, string?, string?];
 
 	/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 	inputFormat = inputFormat
@@ -35,17 +37,38 @@ export default async function handleLeaderboard(
 
 	inputPeriod = inputPeriod
 		?.trim()
-		.toLowerCase() || period.all;
+		.toLowerCase() || statisticPeriod.all;
+
+	inputScope = inputScope
+		?.trim()
+		.toLowerCase() || scope.channel;
 	/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
 
-	const statistics = await getStatistics(channelId);
+	let statistics: (StatisticChannel | StatisticGlobal)[];
+
+	switch (inputScope) {
+		case scope.channel: {
+			statistics = await getStatistics(inputPeriod as StatisticPeriod, channelId);
+
+			break;
+		}
+		case scope.global: {
+			statistics = await getStatistics(inputPeriod as StatisticPeriod);
+
+			break;
+		}
+		default: {
+			throw new ApplicationError('Invalid statistics scope.', 'INPUT_INVALID');
+		}
+	}
 
 	let data;
 
 	switch (inputPeriod) {
-		case period.all: {
+		case statisticPeriod.all: {
 			data = statistics.map(s => ({
 				average: s.averageAll.toFixed(2),
+				count: s.countAll.toFixed(),
 				guesses: s.guessesAll.toFixed(),
 				maximum: s.maximumAll.toFixed(),
 				score: s.scoreAll.toFixed(),
@@ -54,9 +77,10 @@ export default async function handleLeaderboard(
 
 			break;
 		}
-		case period.week: {
+		case statisticPeriod.week: {
 			data = statistics.map(s => ({
 				average: s.averageWeek.toFixed(2),
+				count: s.countWeek.toFixed(),
 				guesses: s.guessesWeek.toFixed(),
 				maximum: s.maximumWeek.toFixed(),
 				score: s.scoreWeek.toFixed(),
@@ -72,7 +96,7 @@ export default async function handleLeaderboard(
 
 	switch (inputFormat) {
 		case format.full: {
-			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
+			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
 
 			break;
 		}

@@ -1,14 +1,17 @@
 import { DataSource } from 'typeorm';
-import { Statistic } from './statistic';
+import { StatisticChannel } from './statisticChannel';
+import { StatisticGlobal } from './statisticGlobal';
 import { Word } from './word';
 
-export * from './statistic';
+export * from './statisticChannel';
+export * from './statisticGlobal';
 export * from './word';
 
 export default new DataSource({
 	database: process.env.DB_DATABASE,
 	entities: [
-		Statistic,
+		StatisticChannel,
+		StatisticGlobal,
 		Word
 	],
 	host: process.env.DB_HOST,

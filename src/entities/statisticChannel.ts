@@ -22,10 +22,12 @@ import { Word } from './word';
 			.from(channelUsers, 'cu')
 			.select('"cu"."ChannelId"')
 			.addSelect('"cu"."UserId"')
+			.addSelect('COALESCE("sw"."Count", 0)', 'CountWeek')
 			.addSelect('COALESCE("sw"."Score", 0)', 'ScoreWeek')
 			.addSelect('COALESCE("sw"."Average", 0)', 'AverageWeek')
 			.addSelect('COALESCE("sw"."Maximum", 0)', 'MaximumWeek')
 			.addSelect('COALESCE("gw"."Guesses", 0)', 'GuessesWeek')
+			.addSelect('COALESCE("sa"."Count", 0)', 'CountAll')
 			.addSelect('COALESCE("sa"."Score", 0)', 'ScoreAll')
 			.addSelect('COALESCE("sa"."Average", 0)', 'AverageAll')
 			.addSelect('COALESCE("sa"."Maximum", 0)', 'MaximumAll')
@@ -37,9 +39,9 @@ import { Word } from './word';
 			.orderBy('"sa"."Score"', 'DESC', 'NULLS LAST')
 			.addOrderBy('"ga"."Guesses"', 'DESC', 'NULLS LAST');
 	},
-	name: 'Statistics'
+	name: 'StatisticsChannel'
 })
-export class Statistic extends BaseEntity {
+export class StatisticChannel extends BaseEntity {
 	@ViewColumn({
 		name: 'AverageAll',
 		transformer: new FloatValueTransformer()
@@ -55,6 +57,18 @@ export class Statistic extends BaseEntity {
 	@Index()
 	@ViewColumn({ name: 'ChannelId' })
 	readonly channelId!: string;
+
+	@ViewColumn({
+		name: 'CountAll',
+		transformer: new IntValueTransformer()
+	})
+	readonly countAll!: number;
+
+	@ViewColumn({
+		name: 'CountWeek',
+		transformer: new IntValueTransformer()
+	})
+	readonly countWeek!: number;
 
 	@ViewColumn({
 		name: 'GuessesAll',
@@ -114,6 +128,7 @@ function groupScores(dataSource: DataSource, from: string) {
 		.createQueryBuilder()
 		.select('"w"."ChannelId"')
 		.addSelect('"w"."UserIdCreator"', 'UserId')
+		.addSelect('COUNT(1)', 'Count')
 		.addSelect('SUM("w"."Score")', 'Score')
 		.addSelect('AVG("w"."Score")', 'Average')
 		.addSelect('MAX("w"."Score")', 'Maximum')
