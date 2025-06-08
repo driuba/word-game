@@ -13,7 +13,7 @@ import { FloatValueTransformer, IntValueTransformer } from './utils';
 			.createQueryBuilder()
 			.addCommonTableExpression(group(dataSource), statistic)
 			.from(statistic, 's')
-			.addSelect('"s"."UserId"')
+			.select('"s"."UserId"')
 			.addSelect('"s"."CountWeek"')
 			.addSelect('"s"."ScoreWeek"')
 			.addSelect('"s"."ScoreWeek" / "s"."CountWeek"', 'AverageWeek')
@@ -94,7 +94,7 @@ function group(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
 		.from(StatisticChannel, 's')
-		.addSelect('"s"."UserId"')
+		.select('"s"."UserId"')
 		.addSelect('SUM("s"."CountWeek")', 'CountWeek')
 		.addSelect('SUM("s"."ScoreWeek")', 'ScoreWeek')
 		.addSelect('MAX("s"."MaximumWeek")', 'MaximumWeek')
@@ -102,5 +102,6 @@ function group(dataSource: DataSource) {
 		.addSelect('SUM("s"."CountAll")', 'CountAll')
 		.addSelect('SUM("s"."ScoreAll")', 'ScoreAll')
 		.addSelect('MAX("s"."MaximumAll")', 'MaximumAll')
-		.addSelect('SUM("s"."GuessesAll")', 'GuessesAll');
+		.addSelect('SUM("s"."GuessesAll")', 'GuessesAll')
+		.groupBy('"s"."UserId"');
 }
