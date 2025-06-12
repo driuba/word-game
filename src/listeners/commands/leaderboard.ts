@@ -1,19 +1,8 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import type { StatisticPeriod } from '~/core';
-import { getStatistics, statisticPeriod } from '~/core';
+import { getStatistics, StatisticPeriod } from '~/core';
 import type { StatisticChannel, StatisticGlobal } from '~/entities';
 import { messages } from '~/resources';
 import { ApplicationError } from '~/utils';
-
-const format = {
-	full: 'full',
-	short: 'short'
-} as const;
-
-const scope = {
-	channel: 'channel',
-	global: 'global'
-} as const;
 
 export default async function handleLeaderboard(
 	{
@@ -34,32 +23,36 @@ export default async function handleLeaderboard(
 	/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 	inputFormat = inputFormat
 		?.trim()
-		.toLowerCase() || format.short;
+		.toLowerCase() || Format.short;
 
 	inputPeriod = inputPeriod
 		?.trim()
-		.toLowerCase() || statisticPeriod.all;
+		.toLowerCase() || StatisticPeriod.all;
 
 	inputScope = inputScope
 		?.trim()
-		.toLowerCase() || scope.channel;
+		.toLowerCase() || Scope.channel;
 	/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+
+	assertFormat(inputFormat);
+	assertScope(inputScope);
+	assertStatisticPeriod(inputPeriod);
 
 	let statistics: (StatisticChannel | StatisticGlobal)[];
 
 	switch (inputScope) {
-		case scope.channel: {
-			statistics = await getStatistics(inputPeriod as StatisticPeriod, channelId);
+		case Scope.channel: {
+			statistics = await getStatistics(inputPeriod, channelId);
 
 			break;
 		}
-		case scope.global: {
-			statistics = await getStatistics(inputPeriod as StatisticPeriod);
+		case Scope.global: {
+			statistics = await getStatistics(inputPeriod);
 
 			break;
 		}
 		default: {
-			throw new ApplicationError('Invalid statistics scope.', 'INPUT_INVALID');
+			throw new ApplicationError('Unhandled statistics scope.', { inputScope });
 		}
 	}
 
@@ -75,7 +68,7 @@ export default async function handleLeaderboard(
 	let data;
 
 	switch (inputPeriod) {
-		case statisticPeriod.all: {
+		case StatisticPeriod.all: {
 			data = statistics.map(s => ({
 				average: s.averageAll.toFixed(2),
 				count: s.countAll.toFixed(),
@@ -87,7 +80,7 @@ export default async function handleLeaderboard(
 
 			break;
 		}
-		case statisticPeriod.week: {
+		case StatisticPeriod.week: {
 			data = statistics.map(s => ({
 				average: s.averageWeek.toFixed(2),
 				count: s.countWeek.toFixed(),
@@ -100,23 +93,23 @@ export default async function handleLeaderboard(
 			break;
 		}
 		default: {
-			throw new ApplicationError('Invalid statistics period.', 'INPUT_INVALID');
+			throw new ApplicationError('Unhandled statistics period.', { inputPeriod });
 		}
 	}
 
 	switch (inputFormat) {
-		case format.full: {
+		case Format.full: {
 			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
 
 			break;
 		}
-		case format.short: {
+		case Format.short: {
 			data = data.map(d => `- ${d.score} ${d.userId}`);
 
 			break;
 		}
 		default: {
-			throw new ApplicationError('Invalid statistics format.', 'INPUT_INVALID');
+			throw new ApplicationError('Unhandled statistics format.', { inputFormat });
 		}
 	}
 
@@ -124,4 +117,42 @@ export default async function handleLeaderboard(
 		response_type: 'ephemeral',
 		text: '```' + data.join('\n') + '```'
 	});
+}
+
+enum Format {
+	full = 'full',
+	short = 'short'
+}
+
+enum Scope {
+	channel = 'channel',
+	global = 'global'
+}
+
+const formats = new Set(
+	Object.values<string>(Format)
+);
+const scopes = new Set(
+	Object.values<string>(Scope)
+);
+const statisticPeriods = new Set(
+	Object.values<string>(StatisticPeriod)
+);
+
+function assertFormat(value: unknown): asserts value is Format {
+	if (!(typeof value === 'string' && formats.has(value))) {
+		throw new ApplicationError('Invalid input format.', 'INPUT_INVALID', { value });
+	}
+}
+
+function assertScope(value: unknown): asserts value is Scope {
+	if (!(typeof value === 'string' && scopes.has(value))) {
+		throw new ApplicationError('Invalid input scope.', 'INPUT_INVALID', { value });
+	}
+}
+
+function assertStatisticPeriod(value: unknown): asserts value is StatisticPeriod {
+	if (!(typeof value === 'string' && statisticPeriods.has(value))) {
+		throw new ApplicationError('Invalid input period.', 'INPUT_INVALID', { value });
+	}
 }

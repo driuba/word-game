@@ -2,16 +2,14 @@ import type { FindManyOptions } from 'typeorm';
 import { StatisticChannel, StatisticGlobal } from '~/entities';
 import { ApplicationError } from '~/utils';
 
-export type StatisticPeriod = typeof statisticPeriod[keyof typeof statisticPeriod];
-
-export const statisticPeriod = {
-	all: 'all',
-	week: 'week'
-} as const;
+export enum StatisticPeriod {
+	all = 'all',
+	week = 'week'
+}
 
 export function getStatistics(period: StatisticPeriod): Promise<StatisticGlobal[]>;
 export function getStatistics(period: StatisticPeriod, channelId: string): Promise<StatisticChannel[]>;
-export function getStatistics(period: StatisticPeriod, channelId?: string): Promise<(StatisticChannel | StatisticGlobal)[]> {
+export function getStatistics(period: StatisticPeriod, channelId?: string) {
 	const options: FindManyOptions<StatisticChannel | StatisticGlobal> = {
 		take: 10
 	};
@@ -21,10 +19,10 @@ export function getStatistics(period: StatisticPeriod, channelId?: string): Prom
 	}
 
 	switch (period) {
-		case statisticPeriod.all: {
+		case StatisticPeriod.all: {
 			break;
 		}
-		case statisticPeriod.week: {
+		case StatisticPeriod.week: {
 			options.order = {
 				scoreWeek: {
 					direction: 'DESC',
@@ -39,7 +37,7 @@ export function getStatistics(period: StatisticPeriod, channelId?: string): Prom
 			break;
 		}
 		default: {
-			throw new ApplicationError('Invalid statistics period.', 'INPUT_INVALID');
+			throw new ApplicationError('Unhandled statistics period.', { period });
 		}
 	}
 
