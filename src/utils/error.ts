@@ -1,5 +1,7 @@
 import { errorMessages } from '~/resources';
 
+type ErrorCode = keyof typeof errorMessages;
+
 export function getErrorMessage(error?: unknown) {
 	return error instanceof ApplicationError ? errorMessages[error.code] : errorMessages.UNDEFINED;
 }
@@ -24,8 +26,6 @@ export class ApplicationError extends Error {
 		}
 	}
 }
-
-type ErrorCode = keyof typeof errorMessages;
 
 const errorCodes = new Set(Object.keys(errorMessages));
 

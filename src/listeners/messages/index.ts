@@ -1,7 +1,7 @@
 import type { App } from '@slack/bolt';
-import filterMessageHandler from './messageFilter';
 import messageHandler from './message';
+import { messageFilterHandler } from './utils';
 
 export default function register(app: App) {
-	app.message(filterMessageHandler, messageHandler);
+	app.message(messageFilterHandler, messageHandler);
 }

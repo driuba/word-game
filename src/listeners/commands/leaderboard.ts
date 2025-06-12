@@ -4,6 +4,16 @@ import type { StatisticChannel, StatisticGlobal } from '~/entities';
 import { messages } from '~/resources';
 import { ApplicationError } from '~/utils';
 
+enum Format {
+	full = 'full',
+	short = 'short'
+}
+
+enum Scope {
+	channel = 'channel',
+	global = 'global'
+}
+
 export default async function handleLeaderboard(
 	{
 		ack,
@@ -117,16 +127,6 @@ export default async function handleLeaderboard(
 		response_type: 'ephemeral',
 		text: '```' + data.join('\n') + '```'
 	});
-}
-
-enum Format {
-	full = 'full',
-	short = 'short'
-}
-
-enum Scope {
-	channel = 'channel',
-	global = 'global'
 }
 
 const formats = new Set(
