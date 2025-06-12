@@ -17,7 +17,7 @@ const messages = Object
 			}
 		}),
 		{} as ResourceRecord
-	);
+	) satisfies ResourceRecord;
 
 function currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
 	return replace(messages.currentWordGuessed, values);

@@ -42,4 +42,4 @@ export default {
 		extensions: ['.ts']
 	},
 	target: 'node'
-} as Configuration;
+} as const satisfies Configuration;

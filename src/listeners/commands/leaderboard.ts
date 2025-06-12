@@ -2,6 +2,7 @@ import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt'
 import type { StatisticPeriod } from '~/core';
 import { getStatistics, statisticPeriod } from '~/core';
 import type { StatisticChannel, StatisticGlobal } from '~/entities';
+import { messages } from '~/resources';
 import { ApplicationError } from '~/utils';
 
 const format = {
@@ -60,6 +61,15 @@ export default async function handleLeaderboard(
 		default: {
 			throw new ApplicationError('Invalid statistics scope.', 'INPUT_INVALID');
 		}
+	}
+
+	if (!statistics.length) {
+		await respond({
+			response_type: 'ephemeral',
+			text: messages.nothingInStatistics
+		});
+
+		return;
 	}
 
 	let data;
