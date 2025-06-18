@@ -1,21 +1,22 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getStatistics } from '~/core';
-import { getErrorMessage, ApplicationError } from '~/utils';
+import { getStatistics, StatisticPeriod } from '~/core';
+import type { StatisticChannel, StatisticGlobal } from '~/entities';
+import { messages } from '~/resources';
+import { ApplicationError } from '~/utils';
 
-const format = {
-	full: 'full',
-	short: 'short'
-} as const;
+enum Format {
+	full = 'full',
+	short = 'short'
+}
 
-const period = {
-	all: 'all',
-	week: 'week'
-} as const;
+enum Scope {
+	channel = 'channel',
+	global = 'global'
+}
 
 export default async function handleLeaderboard(
 	{
 		ack,
-		logger,
 		payload: {
 			text,
 			channel_id: channelId
@@ -23,81 +24,135 @@ export default async function handleLeaderboard(
 		respond
 	}: AllMiddlewareArgs & SlackCommandMiddlewareArgs
 ) {
-	try {
-		await ack();
+	await ack();
 
-		let [inputPeriod, inputFormat] = text
-			.trim()
-			.split(' ', 2) as [string?, string?];
+	let [inputPeriod, inputFormat, inputScope] = text
+		.trim()
+		.split(' ', 3) as [string?, string?, string?];
 
-		/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-		inputFormat = inputFormat
-			?.trim()
-			.toLowerCase() || format.short;
+	/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+	inputFormat = inputFormat
+		?.trim()
+		.toLowerCase() || Format.short;
 
-		inputPeriod = inputPeriod
-			?.trim()
-			.toLowerCase() || period.all;
-		/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+	inputPeriod = inputPeriod
+		?.trim()
+		.toLowerCase() || StatisticPeriod.all;
 
-		const statistics = await getStatistics(channelId);
+	inputScope = inputScope
+		?.trim()
+		.toLowerCase() || Scope.channel;
+	/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
 
-		let data;
+	assertFormat(inputFormat);
+	assertScope(inputScope);
+	assertStatisticPeriod(inputPeriod);
 
-		switch (inputPeriod) {
-			case period.all: {
-				data = statistics.map(s => ({
-					average: s.averageAll.toFixed(2),
-					guesses: s.guessesAll.toFixed(),
-					maximum: s.maximumAll.toFixed(),
-					score: s.scoreAll.toFixed(),
-					userId: `<@${s.userId}>`
-				}));
+	let statistics: (StatisticChannel | StatisticGlobal)[];
 
-				break;
-			}
-			case period.week: {
-				data = statistics.map(s => ({
-					average: s.averageWeek.toFixed(2),
-					guesses: s.guessesWeek.toFixed(),
-					maximum: s.maximumWeek.toFixed(),
-					score: s.scoreWeek.toFixed(),
-					userId: `<@${s.userId}>`
-				}));
+	switch (inputScope) {
+		case Scope.channel: {
+			statistics = await getStatistics(inputPeriod, channelId);
 
-				break;
-			}
-			default: {
-				throw new ApplicationError('Invalid statistics period.', 'INPUT_INVALID');
-			}
+			break;
 		}
+		case Scope.global: {
+			statistics = await getStatistics(inputPeriod);
 
-		switch (inputFormat) {
-			case format.full: {
-				data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
-
-				break;
-			}
-			case format.short: {
-				data = data.map(d => `- ${d.score} ${d.userId}`);
-
-				break;
-			}
-			default: {
-				throw new ApplicationError('Invalid statistics format.', 'INPUT_INVALID');
-			}
+			break;
 		}
+		default: {
+			throw new ApplicationError('Unhandled statistics scope.', { inputScope });
+		}
+	}
 
+	if (!statistics.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: '```' + data.join('\n') + '```'
-		});
-	} catch (error) {
-		await respond({
-			response_type: 'ephemeral',
-			text: getErrorMessage(error)
+			text: messages.nothingInStatistics
 		});
 
-		logger.error(error);
+		return;
+	}
+
+	let data;
+
+	switch (inputPeriod) {
+		case StatisticPeriod.all: {
+			data = statistics.map(s => ({
+				average: s.averageAll.toFixed(2),
+				count: s.countAll.toFixed(),
+				guesses: s.guessesAll.toFixed(),
+				maximum: s.maximumAll.toFixed(),
+				score: s.scoreAll.toFixed(),
+				userId: `<@${s.userId}>`
+			}));
+
+			break;
+		}
+		case StatisticPeriod.week: {
+			data = statistics.map(s => ({
+				average: s.averageWeek.toFixed(2),
+				count: s.countWeek.toFixed(),
+				guesses: s.guessesWeek.toFixed(),
+				maximum: s.maximumWeek.toFixed(),
+				score: s.scoreWeek.toFixed(),
+				userId: `<@${s.userId}>`
+			}));
+
+			break;
+		}
+		default: {
+			throw new ApplicationError('Unhandled statistics period.', { inputPeriod });
+		}
+	}
+
+	switch (inputFormat) {
+		case Format.full: {
+			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
+
+			break;
+		}
+		case Format.short: {
+			data = data.map(d => `- ${d.score} ${d.userId}`);
+
+			break;
+		}
+		default: {
+			throw new ApplicationError('Unhandled statistics format.', { inputFormat });
+		}
+	}
+
+	await respond({
+		response_type: 'ephemeral',
+		text: '```' + data.join('\n') + '```'
+	});
+}
+
+const formats = new Set(
+	Object.values<string>(Format)
+);
+const scopes = new Set(
+	Object.values<string>(Scope)
+);
+const statisticPeriods = new Set(
+	Object.values<string>(StatisticPeriod)
+);
+
+function assertFormat(value: unknown): asserts value is Format {
+	if (!(typeof value === 'string' && formats.has(value))) {
+		throw new ApplicationError('Invalid input format.', 'INPUT_INVALID', { value });
+	}
+}
+
+function assertScope(value: unknown): asserts value is Scope {
+	if (!(typeof value === 'string' && scopes.has(value))) {
+		throw new ApplicationError('Invalid input scope.', 'INPUT_INVALID', { value });
+	}
+}
+
+function assertStatisticPeriod(value: unknown): asserts value is StatisticPeriod {
+	if (!(typeof value === 'string' && statisticPeriods.has(value))) {
+		throw new ApplicationError('Invalid input period.', 'INPUT_INVALID', { value });
 	}
 }

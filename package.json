@@ -12,13 +12,13 @@
 		"@eslint/js": "^9.24.0",
 		"@slack/cli-hooks": "^1.2.0",
 		"@stylistic/eslint-plugin": "^4.4.1",
-		"@types/node": "^22.15.29",
+		"@types/node": "^22.15.31",
 		"@types/webpack-node-externals": "^3.0.4",
 		"eslint": "^9.28.0",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.33.1",
+		"typescript-eslint": "^8.34.0",
 		"webpack": "^5.99.9",
 		"webpack-cli": "^6.0.1"
 	},
@@ -45,5 +45,5 @@
 		"typeorm:development": "npm run node:development -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities",
 		"typeorm:production": "npm run node:production -- -r ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/entities"
 	},
-	"version": "1.1.0"
+	"version": "1.2.0"
 }

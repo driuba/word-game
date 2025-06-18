@@ -28,17 +28,19 @@ Komandos su parametrais:
 
 `/wg-leaderboard`
 
-Komanda priima nebūtinus du parametrus: laikotarpį ir formatą.
+Komanda priima nebūtinus tris parametrus: laikotarpį, formatą ir apimtį.
 Laikotarpis gali būti: _all_ arba _week_.
 Formatas gali būti: _short_ arba _full_.
+Apimtis gali būti: _channel_ arba _global_.
 
-Šie parametrai nėra privalomi ir, jei nėra nurodyti, naudojami yra: _all_ ir _short_.
+Šie parametrai nėra privalomi ir, jei nėra nurodyti, naudojami yra: _all_, _short_ ir _channel_.
 
 Pavyzdžiai:
 
-* `/wg-leaderboard` = `/wg-leaderboard all short` - išspausdina geriausius žaidėjus ir jų taškus per visą žaidimo istoriją;
-* `/wg-leaderboard week` = `/wg-leaderboard week short` - išspausdina geriausiu žaidėjus ir jų taškus šią savaitę;
-* `/wg-leaderboard week full` - išspausdina geriausius žaidėjus, jų taškus, vidurkį per žodį, max taškų per žodį ir kiek žodžių buvo atspėta.
+* `/wg-leaderboard` = `/wg-leaderboard all short channel` - išspausdina geriausius žaidėjus kanale ir jų taškus per visą žaidimo istoriją;
+* `/wg-leaderboard week` = `/wg-leaderboard week short channel` - išspausdina geriausiu žaidėjus kanale ir jų taškus šią savaitę;
+* `/wg-leaderboard week full` = `/wg-leaderboard week full channel` - išspausdina geriausius žaidėjus kanale, jų taškus, žodžių kiekį, vidurkį per žodį, max taškų per žodį ir kiek žodžių buvo atspėta.
+* `/wg-leaderboard week full global` - išspausdina geriausius žaidėjus darbe, jų taškus, žodžių kiekį, vidurkį per žodį, max taškų per žodį ir kiek žodžių buvo atspėta.
 
 `/wg-set-word`
 

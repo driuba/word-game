@@ -1,10 +1,6 @@
 import { IsNull } from 'typeorm';
 import { Word } from '~/entities';
-import {
-	wordGuessPattern,
-	wordValidationPattern,
-	ApplicationError
-} from '~/utils';
+import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils';
 
 export async function checkCurrentWord(channelId: string, userId: string, text?: string) {
 	if (!text) {
@@ -56,7 +52,7 @@ export async function setWord(channelId: string, userId: string, text: string) {
 	text = text.trim();
 
 	if (!text.match(wordValidationPattern)?.length) {
-		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID');
+		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
 
 	const latestWord = await getLatestWord(channelId);

@@ -23,6 +23,9 @@
 	"currentWordUnset": [
 		"Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!"
 	],
+	"nothingInStatistics": [
+		"Neturiu ką parodyt. Prašikčiau, bandyti vėliau."
+	],
 	"nothingToBrag": [
 		"Nėr ko girtis, grybe tu."
 	],
