@@ -5,7 +5,7 @@ import leaderboardHandler from './leaderboard';
 import leaveHandler from './leave';
 import readmeHandler from './readme';
 import setWordHandler from './setWord';
-import { channelFilterHandler, errorHandler } from './utils'
+import { channelFilterHandler, errorHandler } from './utils';
 
 export default function register(app: App, prefix: string) {
 	app.command(`/${prefix}-brag`, errorHandler, channelFilterHandler, bragHandler);
