@@ -1,12 +1,4 @@
-import {
-	BaseEntity,
-	Column,
-	CreateDateColumn,
-	Entity,
-	Index,
-	PrimaryGeneratedColumn,
-	UpdateDateColumn
-} from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -35,7 +27,7 @@ export class Word extends BaseEntity {
 		name: 'Score',
 		nullable: false
 	})
-  score!: number;
+	score!: number;
 
 	@UpdateDateColumn({
 		name: 'Modified',
@@ -58,7 +50,7 @@ export class Word extends BaseEntity {
 		nullable: true
 	})
 	@Index()
-  userIdGuesser?: string;
+	userIdGuesser?: string;
 
 	@Column({
 		name: 'Word',

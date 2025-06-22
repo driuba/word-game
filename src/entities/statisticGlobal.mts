@@ -1,9 +1,5 @@
 import type { DataSource } from 'typeorm';
-import {
-	BaseEntity,
-	ViewColumn,
-	ViewEntity
-} from 'typeorm';
+import { BaseEntity, ViewColumn, ViewEntity } from 'typeorm';
 import { StatisticChannel } from './statisticChannel.mjs';
 import { FloatValueTransformer, IntValueTransformer } from './utils.mjs';
 
