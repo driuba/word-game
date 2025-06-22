@@ -1,5 +1,5 @@
-import { textReplacement } from '~/utils';
-import resources from './messages.json';
+import { textReplacement } from '~/utils/index.js';
+import resources from './messages.json' with { type: 'json' };
 import readme from './readme.md';
 
 type ResourceKey = keyof typeof resources;

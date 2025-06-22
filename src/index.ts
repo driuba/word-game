@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { App, LogLevel } from '@slack/bolt';
-import config from '~/config';
-import dataSource from '~/entities';
-import registerListeners from '~/listeners';
+import config from '~/config.js';
+import dataSource from '~/entities/index.js';
+import registerListeners from '~/listeners/index.js';
 
 const app = new App({
 	appToken: config.slack.appToken,
@@ -16,14 +16,12 @@ const app = new App({
 
 registerListeners(app);
 
-void (async () => {
-	try {
-		await dataSource.initialize();
+try {
+	await dataSource.initialize();
 
-		await app.start(config.port);
+	await app.start(config.port);
 
-		app.logger.info('⚡️ Word game is running! ⚡️');
-	} catch (error) {
-		app.logger.error('Unable to start word game.', error);
-	}
-})();
+	app.logger.info('⚡️ Word game is running! ⚡️');
+} catch (error) {
+	app.logger.error('Unable to start word game.', error);
+}

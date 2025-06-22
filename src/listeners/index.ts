@@ -1,7 +1,7 @@
 import type { App } from '@slack/bolt';
-import config from '~/config';
-import registerCommands from './commands';
-import registerMessages from './messages';
+import config from '~/config.js';
+import registerCommands from './commands/index.js';
+import registerMessages from './messages/index.js';
 
 export default function registerListeners(app: App) {
 	registerCommands(app, config.wg.commandPrefix);

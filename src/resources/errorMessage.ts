@@ -1,4 +1,4 @@
-import resources from './errorMessages.json';
+import resources from './errorMessages.json' with { type: 'json' };
 
 type ResourceKey = keyof typeof resources;
 type ResourceRecord = Record<ResourceKey, string>;

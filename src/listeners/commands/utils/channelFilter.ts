@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { messages } from '~/resources';
+import { messages } from '~/resources/index.js';
 
 export default async function handleChannelFilter(
 	{

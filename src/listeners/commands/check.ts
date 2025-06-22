@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatestWord } from '~/core';
-import { messages } from '~/resources';
+import { getLatestWord } from '~/core/index.js';
+import { messages } from '~/resources/index.js';
 
 export default async function handleCheck(
 	{

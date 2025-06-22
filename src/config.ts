@@ -2,7 +2,7 @@
 // noinspection JSUnusedLocalSymbols
 
 import { Duration } from 'luxon';
-import { ApplicationError } from '~/utils';
+import { ApplicationError } from '~/utils/index.js';
 
 const lazyMetadataKey = Symbol('lazy');
 

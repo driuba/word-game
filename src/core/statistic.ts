@@ -1,6 +1,6 @@
 import type { FindManyOptions } from 'typeorm';
-import { StatisticChannel, StatisticGlobal } from '~/entities';
-import { ApplicationError } from '~/utils';
+import { StatisticChannel, StatisticGlobal } from '~/entities/index.js';
+import { ApplicationError } from '~/utils/index.js';
 
 export enum StatisticPeriod {
 	all = 'all',

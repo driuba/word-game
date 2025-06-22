@@ -5,8 +5,8 @@ import {
 	ViewColumn,
 	ViewEntity
 } from 'typeorm';
-import { FloatValueTransformer, IntValueTransformer } from './utils';
-import { Word } from './word';
+import { FloatValueTransformer, IntValueTransformer } from './utils.js';
+import { Word } from './word.js';
 
 @ViewEntity({
 	expression(dataSource) {

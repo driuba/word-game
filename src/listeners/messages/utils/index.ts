@@ -1,1 +1,1 @@
-export { default as messageFilterHandler } from './messageFilter';
+export { default as messageFilterHandler } from './messageFilter.js';

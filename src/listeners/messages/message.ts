@@ -1,7 +1,7 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import type { GenericMessageEvent } from '@slack/types';
-import { checkCurrentWord } from '~/core';
-import { messages } from '~/resources';
+import { checkCurrentWord } from '~/core/index.js';
+import { messages } from '~/resources/index.js';
 
 export default async function handleMessage(
 	{
