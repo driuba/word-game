@@ -1,4 +1,4 @@
-import { errorMessages } from '~/resources/index.js';
+import { errorMessages } from '~/resources/index.mjs';
 
 type ErrorCode = keyof typeof errorMessages;
 type ErrorData = Record<string, unknown>;

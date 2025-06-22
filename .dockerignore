@@ -26,7 +26,7 @@ Dockerfile
 .env.*.local
 
 .editorconfig
-eslint.config.mjs
+eslint.config.mts
 LICENSE
 manifest.json
 README.md

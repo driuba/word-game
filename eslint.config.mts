@@ -1,5 +1,3 @@
-// @ts-check
-
 import eslint from '@eslint/js';
 import { globalIgnores } from 'eslint/config';
 import stylistic from '@stylistic/eslint-plugin';
@@ -12,11 +10,11 @@ export default tseslint.config(
 	globalIgnores(['dist/'], 'Ignore build directory.'),
 	globalIgnores(['src/migrations'], 'Ignore migration directory.'),
 	{
-		files: ['src/**/*', 'eslint.config.mjs', 'webpack.config.mts'],
+		files: ['src/**/*', 'eslint.config.mts', 'webpack.config.mts'],
 		languageOptions: {
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['eslint.config.mjs', 'webpack.config.mts']
+					allowDefaultProject: ['eslint.config.mts', 'webpack.config.mts']
 				},
 				tsconfigRootDir: import.meta.dirname
 			}

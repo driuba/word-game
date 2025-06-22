@@ -4,8 +4,8 @@ import {
 	ViewColumn,
 	ViewEntity
 } from 'typeorm';
-import { StatisticChannel } from './statisticChannel.js';
-import { FloatValueTransformer, IntValueTransformer } from './utils.js';
+import { StatisticChannel } from './statisticChannel.mjs';
+import { FloatValueTransformer, IntValueTransformer } from './utils.mjs';
 
 @ViewEntity({
 	expression(dataSource) {

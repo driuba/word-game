@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { setWord } from '~/core/index.js';
-import { messages } from '~/resources/index.js';
+import { setWord } from '~/core/index.mjs';
+import { messages } from '~/resources/index.mjs';
 
 export default async function handleSetWord(
 	{

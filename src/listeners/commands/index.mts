@@ -1,11 +1,11 @@
 import type { App } from '@slack/bolt';
-import bragHandler from './brag.js';
-import checkHandler from './check.js';
-import leaderboardHandler from './leaderboard.js';
-import leaveHandler from './leave.js';
-import readmeHandler from './readme.js';
-import setWordHandler from './setWord.js';
-import { channelFilterHandler, errorHandler } from './utils/index.js';
+import bragHandler from './brag.mjs';
+import checkHandler from './check.mjs';
+import leaderboardHandler from './leaderboard.mjs';
+import leaveHandler from './leave.mjs';
+import readmeHandler from './readme.mjs';
+import setWordHandler from './setWord.mjs';
+import { channelFilterHandler, errorHandler } from './utils/index.mjs';
 
 export default function register(app: App, prefix: string) {
 	app.command(`/${prefix}-brag`, errorHandler, channelFilterHandler, bragHandler);

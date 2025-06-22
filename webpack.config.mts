@@ -4,7 +4,7 @@ import packageInformation from './package.json' with { type: 'json' };
 
 export default {
 	devtool: 'source-map',
-	entry: './src/index.ts',
+	entry: './src/index.mts',
 	experiments: {
 		outputModule: true
 	},
@@ -16,7 +16,7 @@ export default {
 				exclude: /^\.\/src\/migratons\//,
 				test: [
 					/^\.\/src/,
-					/\.ts$/
+					/\.m?ts$/
 				],
 				use: 'ts-loader'
 			},
@@ -35,7 +35,7 @@ export default {
 	},
 	output: {
 		clean: true,
-		filename: 'app.js',
+		filename: 'app.mjs',
 		module: true,
 		path: resolve(import.meta.dirname, 'dist')
 	},
@@ -44,9 +44,9 @@ export default {
 			'~': resolve(import.meta.dirname, 'src')
 		},
 		extensionAlias: {
-			'.js': ['.ts']
+			'.mjs': ['.mts']
 		},
-		extensions: ['.ts']
+		extensions: ['.mts']
 	},
 	target: 'node24.2'
 } as const satisfies Configuration;

@@ -1,4 +1,4 @@
-import { textReplacement } from '~/utils/index.js';
+import { textReplacement } from '~/utils/index.mjs';
 import resources from './messages.json' with { type: 'json' };
 import readme from './readme.md';
 

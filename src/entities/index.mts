@@ -1,12 +1,12 @@
 import { DataSource } from 'typeorm';
-import config from '~/config.js';
-import { StatisticChannel } from './statisticChannel.js';
-import { StatisticGlobal } from './statisticGlobal.js';
-import { Word } from './word.js';
+import config from '~/config.mjs';
+import { StatisticChannel } from './statisticChannel.mjs';
+import { StatisticGlobal } from './statisticGlobal.mjs';
+import { Word } from './word.mjs';
 
-export * from './statisticChannel.js';
-export * from './statisticGlobal.js';
-export * from './word.js';
+export * from './statisticChannel.mjs';
+export * from './statisticGlobal.mjs';
+export * from './word.mjs';
 
 export default new DataSource({
 	database: config.db.database,
