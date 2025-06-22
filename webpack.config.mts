@@ -4,7 +4,7 @@ import packageInformation from './package.json' with { type: 'json' };
 
 export default {
 	devtool: 'source-map',
-	entry: './src/index.mts',
+	entry: './src/index.ts',
 	experiments: {
 		outputModule: true
 	},
@@ -35,7 +35,7 @@ export default {
 	},
 	output: {
 		clean: true,
-		filename: 'app.mjs',
+		filename: 'app.js',
 		module: true,
 		path: resolve(import.meta.dirname, 'dist')
 	},
@@ -44,9 +44,9 @@ export default {
 			'~': resolve(import.meta.dirname, 'src')
 		},
 		extensionAlias: {
-			'.mjs': ['.mts']
+			'.js': ['.ts']
 		},
-		extensions: ['.mts']
+		extensions: ['.ts']
 	},
 	target: 'node24.2'
 } as const satisfies Configuration;

@@ -1,7 +1,7 @@
 import type { DataSource } from 'typeorm';
 import { BaseEntity, Index, ViewColumn, ViewEntity } from 'typeorm';
-import { FloatValueTransformer, IntValueTransformer } from './utils.mjs';
-import { Word } from './word.mjs';
+import { FloatValueTransformer, IntValueTransformer } from './utils.js';
+import { Word } from './word.js';
 
 @ViewEntity({
 	expression(dataSource) {

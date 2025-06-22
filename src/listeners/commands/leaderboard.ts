@@ -1,8 +1,8 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getStatistics, StatisticPeriod } from '~/core/index.mjs';
-import type { StatisticChannel, StatisticGlobal } from '~/entities/index.mjs';
-import { messages } from '~/resources/index.mjs';
-import { ApplicationError } from '~/utils/index.mjs';
+import { getStatistics, StatisticPeriod } from '~/core/index.js';
+import type { StatisticChannel, StatisticGlobal } from '~/entities/index.js';
+import { messages } from '~/resources/index.js';
+import { ApplicationError } from '~/utils/index.js';
 
 enum Format {
 	full = 'full',

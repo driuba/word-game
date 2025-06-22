@@ -33,7 +33,7 @@
 		"word game"
 	],
 	"license": "GPL-3.0-or-later",
-	"main": "dist/app.mjs",
+	"main": "dist/app.js",
 	"name": "word-game",
 	"scripts": {
 		"build:development": "webpack build --config webpack.config.mts --mode development",
@@ -42,10 +42,10 @@
 		"lint:fix": "npm run lint -- --fix",
 		"node:development": "node --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.development --env-file-if-exists .env.development.local",
 		"node:production": "node --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
-		"start:development": "npm run build:development && npm run node:development ./dist/app.mjs",
-		"start:production": "npm run build:production && npm run node:production ./dist/app.mjs",
-		"typeorm:development": "npm run node:development -- -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities",
-		"typeorm:production": "npm run node:production -- -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities"
+		"start:development": "npm run build:development && npm run node:development ./dist/app.js",
+		"start:production": "npm run build:production && npm run node:production ./dist/app.js",
+		"typeorm:development": "npm run node:development -- --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts",
+		"typeorm:production": "npm run node:production -- --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts"
 	},
 	"sideEffects": false,
 	"type": "module",

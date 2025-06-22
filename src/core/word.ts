@@ -1,6 +1,6 @@
 import { IsNull } from 'typeorm';
-import { Word } from '~/entities/index.mjs';
-import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.mjs';
+import { Word } from '~/entities/index.js';
+import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
 export async function checkCurrentWord(channelId: string, userId: string, text?: string) {
 	if (!text) {

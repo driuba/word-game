@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getErrorMessage } from '~/utils/index.mjs';
+import { getErrorMessage } from '~/utils/index.js';
 
 export default async function handleError(
 	{
