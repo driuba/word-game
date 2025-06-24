@@ -1,8 +1,11 @@
 import 'reflect-metadata';
 import { App, LogLevel } from '@slack/bolt';
 import config from '~/config.js';
-import dataSource from '~/entities/index.js';
-import registerListeners from '~/listeners/index.js';
+
+config.assertValid();
+
+const { default: dataSource } = await import('~/entities/index.js');
+const { default: registerListeners } = await import('~/listeners/index.js');
 
 const app = new App({
 	appToken: config.slack.appToken,

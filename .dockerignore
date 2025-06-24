@@ -13,9 +13,6 @@ node_modules/
 # DB scripts
 db/
 
-# ts-node hooks
-ts-node/
-
 # Docker
 .dockerignore
 Dockerfile

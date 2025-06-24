@@ -255,5 +255,3 @@ export default abstract class Config {
 		}
 	}
 }
-
-Config.assertValid();
