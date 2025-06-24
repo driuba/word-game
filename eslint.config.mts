@@ -10,11 +10,11 @@ export default tseslint.config(
 	globalIgnores(['dist/'], 'Ignore build directory.'),
 	globalIgnores(['src/migrations'], 'Ignore migration directory.'),
 	{
-		files: ['src/**/*', 'eslint.config.mts', 'webpack.config.mts'],
+		files: ['src/**/*', 'ts-node/**/*', 'eslint.config.mts', 'webpack.config.mts'],
 		languageOptions: {
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['eslint.config.mts', 'webpack.config.mts']
+					allowDefaultProject: ['ts-node/*', 'eslint.config.mts', 'webpack.config.mts']
 				},
 				tsconfigRootDir: import.meta.dirname
 			}

@@ -12,7 +12,7 @@
 	"devDependencies": {
 		"@eslint/js": "^9.29.0",
 		"@slack/cli-hooks": "^1.2.0",
-		"@stylistic/eslint-plugin": "^4.4.1",
+		"@stylistic/eslint-plugin": "^5.0.0",
 		"@types/luxon": "^3.6.2",
 		"@types/node": "^24.0.3",
 		"eslint": "^9.29.0",
@@ -20,7 +20,7 @@
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.34.1",
+		"typescript-eslint": "^8.35.0",
 		"webpack": "^5.99.9",
 		"webpack-cli": "^6.0.1"
 	},
@@ -44,8 +44,8 @@
 		"node:production": "node --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
 		"start:development": "npm run build:development && npm run node:development ./dist/app.js",
 		"start:production": "npm run build:production && npm run node:production ./dist/app.js",
-		"typeorm:development": "npm run node:development -- --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts",
-		"typeorm:production": "npm run node:production -- --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts"
+		"typeorm:development": "npm run node:development -- --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts",
+		"typeorm:production": "npm run node:production -- --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts"
 	},
 	"sideEffects": false,
 	"type": "module",
