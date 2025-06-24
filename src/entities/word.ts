@@ -3,6 +3,12 @@ import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedCo
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
 	@Column({
+		generated: true,
+		name: 'Active'
+	})
+	readonly active!: boolean;
+
+	@Column({
 		length: 50,
 		name: 'ChannelId',
 		nullable: false,
@@ -18,6 +24,13 @@ export class Word extends BaseEntity {
 		update: false
 	})
 	readonly created!: Date;
+
+	@CreateDateColumn({
+		name: 'Expired',
+		nullable: true,
+		type: 'timestamp with time zone'
+	})
+	expired?: Date;
 
 	@PrimaryGeneratedColumn({ name: 'Id' })
 	readonly id!: number;

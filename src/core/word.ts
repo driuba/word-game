@@ -1,4 +1,3 @@
-import { IsNull } from 'typeorm';
 import { Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
@@ -33,14 +32,14 @@ export async function checkCurrentWord(channelId: string, userId: string, text?:
 export function getCurrentWord(channelId: string) {
 	return Word.findOneBy({
 		channelId,
-		userIdGuesser: IsNull()
+		active: true
 	});
 }
 
 export function getLatestWord(channelId: string) {
 	return Word.findOne({
 		order: {
-			created: 'desc'
+			created: 'ASC'
 		},
 		where: {
 			channelId
