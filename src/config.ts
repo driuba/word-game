@@ -3,6 +3,7 @@
 
 import { Duration } from 'luxon';
 import { ApplicationError } from '~/utils/index.js';
+import process from 'node:process';
 
 const lazyMetadataKey = Symbol('lazy');
 
@@ -201,16 +202,18 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 
 	Reflect.defineMetadata(lazyMetadataKey, true, target, propertyKey);
 
-	let value: T;
-
 	return {
-		get() {
-			if (typeof descriptor.get !== 'undefined') {
-				value ??= descriptor.get();
-			}
+		get: (function () {
+			let value: T;
 
-			return value;
-		}
+			return function () {
+				if (typeof descriptor.get !== 'undefined') {
+					value ??= descriptor.get();
+				}
+
+				return value;
+			};
+		})()
 	} satisfies TypedPropertyDescriptor<T>;
 }
 
@@ -220,6 +223,11 @@ export default abstract class Config {
 	static wg = Wg;
 
 	private constructor() {
+	}
+
+	@lazy
+	static get locale() {
+		return process.env.LOCALE ?? 'lt-LT';
 	}
 
 	@lazy
@@ -242,12 +250,17 @@ export default abstract class Config {
 		throw new ApplicationError('PORT is invalid.', 'CONFIG_INVALID', { value: process.env.PORT });
 	}
 
+	@lazy
+	static get timezone() {
+		return process.env.TIMEZONE ?? 'Europe/Vilnius';
+	}
+
 	static assertValid() {
 		const errors = [
 			...getErrors(this),
-			...getErrors(this.db),
-			...getErrors(this.slack),
-			...getErrors(this.wg)
+			...getErrors(Config.db),
+			...getErrors(Config.slack),
+			...getErrors(Config.wg)
 		];
 
 		if (errors.length) {

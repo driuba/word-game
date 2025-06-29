@@ -154,7 +154,7 @@ function selectWordsGuessedAll(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
 		.from(Word, 'w')
-		.where('"w"."Active"');
+		.where('NOT "w"."Active"');
 }
 
 function selectWordsGuessedWeek(dataSource: DataSource) {

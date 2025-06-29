@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import packageInformation from './package.json' with { type: 'json' };
 
 export default {
+	context: resolve(import.meta.dirname),
 	devtool: 'source-map',
 	entry: './src/index.ts',
 	experiments: {
@@ -11,22 +12,24 @@ export default {
 	externals: Object.keys(packageInformation.dependencies),
 	externalsType: 'node-commonjs',
 	module: {
+		defaultRules: [
+			{
+				exclude: /^\.\/src\/migrations\//,
+				include: /^\.\/src\//
+			}
+		],
 		rules: [
 			{
-				exclude: /^\.\/src\/migratons\//,
-				test: [
-					/^\.\/src/,
-					/\.m?ts$/
-				],
-				use: 'ts-loader'
+				test: /\.json$/,
+				type: 'json'
 			},
 			{
-				exclude: /^\.\/src\/migratons\//,
-				test: [
-					/^\.\/src/,
-					/\.md$/
-				],
+				test: /\.md$/,
 				type: 'asset/source'
+			},
+			{
+				test: /\.ts$/,
+				use: 'ts-loader'
 			}
 		]
 	},

@@ -1,8 +1,12 @@
 import 'reflect-metadata';
 import { App, LogLevel } from '@slack/bolt';
+import { Settings } from 'luxon';
 import config from '~/config.js';
 
 config.assertValid();
+
+Settings.defaultLocale = config.locale;
+Settings.defaultZone = config.timezone;
 
 const { default: dataSource } = await import('~/entities/index.js');
 const { default: registerListeners } = await import('~/listeners/index.js');

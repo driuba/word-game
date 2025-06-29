@@ -14,7 +14,7 @@
 		"@slack/cli-hooks": "^1.2.0",
 		"@stylistic/eslint-plugin": "^5.0.0",
 		"@types/luxon": "^3.6.2",
-		"@types/node": "^24.0.3",
+		"@types/node": "^24.0.4",
 		"eslint": "^9.29.0",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
