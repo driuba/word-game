@@ -8,14 +8,18 @@ type ResourceRecord = Record<ResourceKey, string>;
 const messages = Object
 	.keys(resources)
 	.reduce(
-		(a, k) => ({
-			...a,
-			get [k]() {
-				const values = resources[k as ResourceKey];
+		(a, k) => {
+			Object.defineProperty(a, k, {
+				enumerable: true,
+				get() {
+					const values = resources[k as ResourceKey];
 
-				return values[Math.floor(Math.random() * values.length)];
-			}
-		}),
+					return values[Math.floor(Math.random() * values.length)];
+				}
+			});
+
+			return a;
+		},
 		{} as ResourceRecord
 	) satisfies ResourceRecord;
 

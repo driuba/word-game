@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import config from '~/config.js';
 import { assertWord, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
@@ -89,6 +90,14 @@ export async function tryScoreOrGuessWord(channelId: string, userId: string, tex
 	}
 
 	if (word.userIdCreator === userId) {
+		if (
+			word.modified &&
+			config.wg.wordTimeoutScore &&
+			DateTime.now().diff(word.modified, 'seconds') < config.wg.wordTimeoutScore
+		) {
+			return word;
+		}
+
 		word.score += Math.min(score, config.wg.wordScoreMax);
 	} else {
 		word.userIdGuesser = userId;

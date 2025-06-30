@@ -203,6 +203,7 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 	Reflect.defineMetadata(lazyMetadataKey, true, target, propertyKey);
 
 	return {
+		enumerable: true,
 		get: (function () {
 			let value: T;
 
