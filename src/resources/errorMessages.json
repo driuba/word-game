@@ -5,6 +5,11 @@
 	"INPUT_INVALID": [
 		"RTFM, Jesus..."
 	],
+	"OPERATION_INVALID": [
+		"Ei! Ką čia darai!?",
+		"FU! Negalima!",
+		"Baigi..."
+	],
 	"UNDEFINED": [
 		"Oi! Įvyko kompiuterinė klaida."
 	],

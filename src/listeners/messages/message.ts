@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import type { GenericMessageEvent } from '@slack/types';
-import { checkCurrentWord } from '~/core/index.js';
+import { tryScoreOrGuessWord } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 
 export default async function handleMessage(
@@ -17,18 +17,24 @@ export default async function handleMessage(
 			user: userId
 		} = message as GenericMessageEvent;
 
-		const word = await checkCurrentWord(channelId, userId, text);
+		const word = await tryScoreOrGuessWord(channelId, userId, text);
 
-		if (word?.userIdGuesser !== userId) {
-			return;
+		if (word?.userIdGuesser === userId) {
+			await say(messages.currentWordGuessed({
+				score: word.score.toFixed(),
+				userIdCreator: word.userIdCreator,
+				userIdGuesser: word.userIdGuesser,
+				word: word.word
+			}));
 		}
-
-		await say(messages.currentWordGuessed({
-			score: word.score.toString(),
-			userIdCreator: word.userIdCreator,
-			userIdGuesser: word.userIdGuesser,
-			word: word.word
-		}));
+		// TODO: if implemented via a job this will be unnecessary
+		// else if (word?.expired) {
+		// 	await say(messages.currentWordExpired({
+		// 		score: word.score.toFixed(),
+		// 		userIdCreator: word.userIdCreator,
+		// 		word: word.word
+		// 	}));
+		// }
 	} catch (error) {
 		logger.error(error);
 	}

@@ -19,6 +19,18 @@ const messages = Object
 		{} as ResourceRecord
 	) satisfies ResourceRecord;
 
+function currentWordExpiredPrivate(values: { expired: string, score: string, userId: string, word: string }) {
+	return replace(messages.currentWordExpiredPrivate, values);
+}
+
+function currentWordExpiredPrivateMe(values: { expired: string, score: string, word: string }) {
+	return replace(messages.currentWordExpiredPrivateMe, values);
+}
+
+function currentWordExpiredPublic(values: { score: string, userId: string, word: string }) {
+	return replace(messages.currentWordExpiredPublic, values);
+}
+
 function currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
 	return replace(messages.currentWordGuessed, values);
 }
@@ -53,6 +65,9 @@ function replace(resource: string, values: Record<string, string>) {
 export default {
 	...messages,
 	readme,
+	currentWordExpiredPrivate,
+	currentWordExpiredPrivateMe,
+	currentWordExpiredPublic,
 	currentWordGuessed,
 	currentWordHolder,
 	currentWordSetter,

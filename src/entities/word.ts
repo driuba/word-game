@@ -32,7 +32,7 @@ export class Word extends BaseEntity {
 		type: 'timestamp with time zone',
 		update: false
 	})
-	readonly created!: DateTime;
+	readonly created!: DateTime<true>;
 
 	@Column({
 		default: null,
@@ -41,7 +41,7 @@ export class Word extends BaseEntity {
 		transformer: new DateTimeValueTransformer(),
 		type: 'timestamp with time zone'
 	})
-	expired!: DateTime | null;
+	expired!: DateTime<true> | null;
 
 	@PrimaryGeneratedColumn({
 		name: 'Id',
@@ -67,7 +67,7 @@ export class Word extends BaseEntity {
 		type: 'timestamp with time zone',
 		update: false
 	})
-	readonly modified!: DateTime | null;
+	readonly modified!: DateTime<true> | null;
 
 	@Column({
 		length: 50,
@@ -104,4 +104,15 @@ export class Word extends BaseEntity {
 	update() {
 		return update(this, Word);
 	}
+}
+
+type Active = Word & { active: true, expired: null, userIdGuesser: null };
+type Inactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+
+export function assertWord(_word: Word): asserts _word is Active | Inactive {
+	// ignore
+}
+
+export function isWordActive(word: Active | Inactive): word is Active {
+	return word.active;
 }

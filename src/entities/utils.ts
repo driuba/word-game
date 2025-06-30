@@ -1,13 +1,24 @@
 import { DateTime } from 'luxon';
 import type { BaseEntity, EntityMetadata, EntityTarget, ValueTransformer } from 'typeorm';
+import { ApplicationError } from '~/utils/index.js';
 import dataSource from './index.js';
 
 export class DateTimeValueTransformer implements ValueTransformer {
-	from(value?: Date) {
-		return value ? DateTime.fromJSDate(value) : null;
+	from(value: Date | null) {
+		if (!value) {
+			return null;
+		}
+
+		const dateTime = DateTime.fromJSDate(value);
+
+		if (dateTime.isValid) {
+			return dateTime;
+		}
+
+		throw new ApplicationError('Invalid date.', { value });
 	}
 
-	to(value?: DateTime) {
+	to(value: DateTime<true> | null) {
 		return value?.toJSDate() ?? null;
 	}
 }
@@ -61,7 +72,7 @@ export async function insert<T extends BaseEntity>(entity: T, target: EntityTarg
 		.returning('*')
 		.execute()) as { raw: [Record<string, unknown>] };
 
-	return getResult(metadata, raw, target);
+	return setValues(entity, metadata, raw);
 }
 
 export async function update<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
@@ -94,18 +105,14 @@ export async function update<T extends BaseEntity>(entity: T, target: EntityTarg
 		.returning('*')
 		.execute()) as { raw: [Record<string, unknown>] };
 
-	return getResult(metadata, raw, target);
+	return setValues(entity, metadata, raw);
 }
 
-function getResult<T extends BaseEntity>(
+function setValues(
+	entity: BaseEntity,
 	metadata: EntityMetadata,
-	raw: Record<string, unknown>,
-	target: EntityTarget<T>
+	raw: Record<string, unknown>
 ) {
-	const result = dataSource
-		.getRepository(target)
-		.create();
-
 	for (const column of metadata.columns) {
 		if (column.isVirtual) {
 			continue;
@@ -113,12 +120,8 @@ function getResult<T extends BaseEntity>(
 
 		const value = raw[column.databaseName];
 
-		if (typeof value === 'undefined') {
-			continue;
-		}
-
-		column.setEntityValue(result, dataSource.driver.prepareHydratedValue(value, column));
+		column.setEntityValue(entity, dataSource.driver.prepareHydratedValue(value, column));
 	}
 
-	return result;
+	return entity;
 }

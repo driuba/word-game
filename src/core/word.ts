@@ -1,43 +1,22 @@
-import { Word } from '~/entities/index.js';
+import config from '~/config.js';
+import { assertWord, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
-export async function checkCurrentWord(channelId: string, userId: string, text?: string) {
-	if (!text) {
-		return;
+export async function getCurrentWord(channelId: string) {
+	const word = await Word.findOneBy({
+		channelId,
+		active: true
+	});
+
+	if (word) {
+		assertWord(word);
 	}
-
-	const word = await getCurrentWord(channelId);
-
-	if (!word) {
-		return;
-	}
-
-	const pattern = wordGuessPattern(word.word);
-
-	if (!text.match(pattern)?.length) {
-		return;
-	}
-
-	if (word.userIdCreator === userId) {
-		word.score++;
-	} else {
-		word.userIdGuesser = userId;
-	}
-
-	await word.save();
 
 	return word;
 }
 
-export function getCurrentWord(channelId: string) {
-	return Word.findOneBy({
-		channelId,
-		active: true
-	});
-}
-
-export function getLatestWord(channelId: string) {
-	return Word.findOne({
+export async function getLatestWord(channelId: string) {
+	const word = await Word.findOne({
 		order: {
 			created: 'ASC'
 		},
@@ -45,6 +24,12 @@ export function getLatestWord(channelId: string) {
 			channelId
 		}
 	});
+
+	if (word) {
+		assertWord(word);
+	}
+
+	return word;
 }
 
 export async function setWord(channelId: string, userId: string, text: string) {
@@ -56,9 +41,20 @@ export async function setWord(channelId: string, userId: string, text: string) {
 
 	const latestWord = await getLatestWord(channelId);
 
-	if (latestWord && latestWord.userIdGuesser !== userId) {
-		throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');
+	if (latestWord) {
+		if (isWordActive(latestWord)) {
+			throw new ApplicationError('Word is already set.', 'OPERATION_INVALID');
+		}
+
+		if (latestWord.expired && latestWord.userIdCreator === userId) {
+			throw new ApplicationError('Word has already expired.', 'USER_INVALID', { expired: latestWord.expired });
+		}
+
+		if (latestWord.userIdGuesser !== userId) {
+			throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');
+		}
 	}
+
 
 	const newWord = Word.create({
 		channelId,
@@ -66,7 +62,39 @@ export async function setWord(channelId: string, userId: string, text: string) {
 		word: text
 	});
 
-	await newWord.save();
+	await newWord.insert();
+
+	assertWord(newWord);
 
 	return newWord;
+}
+
+export async function tryScoreOrGuessWord(channelId: string, userId: string, text?: string) {
+	if (!text) {
+		return null;
+	}
+
+	const word = await getCurrentWord(channelId);
+
+	if (!word) {
+		return null;
+	}
+
+	const pattern = wordGuessPattern(word.word);
+
+	const score = text.match(pattern)?.length ?? 0;
+
+	if (!score) {
+		return null;
+	}
+
+	if (word.userIdCreator === userId) {
+		word.score += Math.min(score, config.wg.wordScoreMax);
+	} else {
+		word.userIdGuesser = userId;
+	}
+
+	await word.update();
+
+	return word;
 }
