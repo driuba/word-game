@@ -20,7 +20,8 @@ services:
     environment:
       PGDATA: "/home/postgres/data"
       POSTGRES_PASSWORD: "SCRAM-SHA-256$$4096:fYljMSIQa9dIqjLP3hf41g==$$nPMgscGkryTjoAnB8cBCZA6eXltHkOjKe2KLDL8Z6cc=:AtaX/sv9FS1nwQaES+xQBZol76BhUciJwE6GWNW7xrU="
-    image: "postgres:17.5-alpine3.21"
+      TZ: "Europe/Vilnius"
+    image: "postgres:17.5-alpine3.22"
     init: true
     volumes:
       - "db:/home/postgres/data"

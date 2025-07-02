@@ -14,6 +14,8 @@ ENV NODE_ENV="${NODE_ENV}"
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install --global npm@${NPM_VERSION}
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add tzdata
 
 FROM base AS dependency-build
 

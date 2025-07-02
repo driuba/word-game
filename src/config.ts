@@ -253,7 +253,7 @@ export default abstract class Config {
 
 	@lazy
 	static get timezone() {
-		return process.env.TIMEZONE ?? 'Europe/Vilnius';
+		return process.env.TZ ?? 'Europe/Vilnius';
 	}
 
 	static assertValid() {
