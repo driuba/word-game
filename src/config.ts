@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class,@typescript-eslint/no-empty-function */
 // noinspection JSUnusedLocalSymbols
 
+import process from 'node:process';
 import { Duration } from 'luxon';
 import { ApplicationError } from '~/utils/index.js';
-import process from 'node:process';
 
 const lazyMetadataKey = Symbol('lazy');
 
@@ -114,6 +114,11 @@ abstract class Wg {
 	@lazy
 	static get commandPrefix() {
 		return process.env.WG_COMMAND_PREFIX ?? 'wg';
+	}
+
+	@lazy
+	static get reportingChatId() {
+		return process.env.WG_REPORTING_CHAT_ID ?? null;
 	}
 
 	@lazy

@@ -38,6 +38,9 @@
 	"nothingToBrag": [
 		"Nėr ko girtis, grybe tu."
 	],
+	"report": [
+		"Aš gyvas ir sveikas."
+	],
 	"setWordSuccess": [
 		"Sveikinimai! tavo naujasis žodis yra *${word}*."
 	]
