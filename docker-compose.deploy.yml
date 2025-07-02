@@ -13,6 +13,12 @@ services:
       file: "docker-compose.yml"
       service: "app"
   db:
+    deploy:
+      endpoint_mode: "dnsrr"
+      restart_policy:
+        delay: "5s"
+        max_attempts: 3
+        window: "1m"
     extends:
       file: "docker-compose.yml"
       service: "db"

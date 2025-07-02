@@ -70,6 +70,31 @@ export async function setWord(channelId: string, userId: string, text: string) {
 	return newWord;
 }
 
+export async function* tryExpireWords() {
+	const now = DateTime.now();
+
+	const words = await Word.findBy({
+		active: true
+	});
+
+	for (const word of words) {
+		assertWord(word);
+
+		if (
+			config.wg.wordTimeoutGlobal && now.diff(word.created, 'days') > config.wg.wordTimeoutGlobal ||
+			config.wg.wordTimeoutUsage && now.diff(word.modified ?? word.created, 'hours') > config.wg.wordTimeoutUsage
+		) {
+			word.expired = now;
+
+			await word.update();
+		}
+
+		if (!isWordActive(word)) {
+			yield word;
+		}
+	}
+}
+
 export async function tryScoreOrGuessWord(channelId: string, userId: string, text?: string) {
 	if (!text) {
 		return null;
@@ -95,7 +120,7 @@ export async function tryScoreOrGuessWord(channelId: string, userId: string, tex
 			config.wg.wordTimeoutScore &&
 			DateTime.now().diff(word.modified, 'seconds') < config.wg.wordTimeoutScore
 		) {
-			return word;
+			return null;
 		}
 
 		word.score += Math.min(score, config.wg.wordScoreMax);
