@@ -1,12 +1,7 @@
 import type { DataSource } from 'typeorm';
-import {
-	BaseEntity,
-	Index,
-	ViewColumn,
-	ViewEntity
-} from 'typeorm';
-import { FloatValueTransformer, IntValueTransformer } from './utils';
-import { Word } from './word';
+import { BaseEntity, Index, ViewColumn, ViewEntity } from 'typeorm';
+import { FloatValueTransformer, IntValueTransformer } from './utils.js';
+import { Word } from './word.js';
 
 @ViewEntity({
 	expression(dataSource) {
@@ -159,7 +154,7 @@ function selectWordsGuessedAll(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
 		.from(Word, 'w')
-		.where('"w"."UserIdGuesser" IS NOT NULL');
+		.where('NOT "w"."Active"');
 }
 
 function selectWordsGuessedWeek(dataSource: DataSource) {

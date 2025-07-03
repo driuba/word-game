@@ -1,2 +1,2 @@
-export * from './statistic';
-export * from './word';
+export * from './statistic.js';
+export * from './word.js';

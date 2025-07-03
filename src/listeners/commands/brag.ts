@@ -1,6 +1,7 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatestWord } from '~/core';
-import { messages } from '~/resources';
+import { getLatestWord } from '~/core/index.js';
+import { isWordActive } from '~/entities/index.js';
+import { messages } from '~/resources/index.js';
 
 export default async function handleBrag(
 	{
@@ -16,11 +17,11 @@ export default async function handleBrag(
 
 	const word = await getLatestWord(channelId);
 
-	if (word && !word.userIdGuesser && userId === word.userIdCreator) {
+	if (word && isWordActive(word) && word.userIdCreator === userId) {
 		await respond({
 			response_type: 'in_channel',
 			text: messages.currentWordStatusPublic({
-				score: word.score.toString(),
+				score: word.score.toFixed(),
 				userId: word.userIdCreator
 			})
 		});

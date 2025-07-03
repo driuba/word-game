@@ -2,7 +2,7 @@
 
 ARG ALPINE_VERSION="3.22"
 ARG NODE_ENV="development"
-ARG NODE_VERSION="24.2.0"
+ARG NODE_VERSION="24.3.0"
 ARG NPM_VERSION="11.4.2"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
@@ -14,6 +14,8 @@ ENV NODE_ENV="${NODE_ENV}"
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install --global npm@${NPM_VERSION}
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add tzdata
 
 FROM base AS dependency-build
 

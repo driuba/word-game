@@ -1,11 +1,7 @@
 import type { DataSource } from 'typeorm';
-import {
-	BaseEntity,
-	ViewColumn,
-	ViewEntity
-} from 'typeorm';
-import { StatisticChannel } from './statisticChannel';
-import { FloatValueTransformer, IntValueTransformer } from './utils';
+import { BaseEntity, ViewColumn, ViewEntity } from 'typeorm';
+import { StatisticChannel } from './statisticChannel.js';
+import { FloatValueTransformer, IntValueTransformer } from './utils.js';
 
 @ViewEntity({
 	expression(dataSource) {

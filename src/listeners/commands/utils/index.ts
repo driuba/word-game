@@ -1,2 +1,2 @@
-export { default as channelFilterHandler } from './channelFilter';
-export { default as errorHandler } from './error';
+export { default as channelFilterHandler } from './channelFilter.js';
+export { default as errorHandler } from './error.js';

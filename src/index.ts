@@ -1,8 +1,17 @@
 import 'reflect-metadata';
+import * as process from 'node:process';
 import { App, LogLevel } from '@slack/bolt';
-import config from '~/config';
-import dataSource from '~/entities';
-import registerListeners from '~/listeners';
+import { Settings } from 'luxon';
+import config from '~/config.js';
+
+config.assertValid();
+
+Settings.defaultLocale = config.locale;
+Settings.defaultZone = config.timezone;
+
+const { default: dataSource } = await import('~/entities/index.js');
+const { default: registerListeners } = await import('~/listeners/index.js');
+const { default: registerWorkers } = await import('~/workers/index.js');
 
 const app = new App({
 	appToken: config.slack.appToken,
@@ -16,14 +25,27 @@ const app = new App({
 
 registerListeners(app);
 
-void (async () => {
-	try {
-		await dataSource.initialize();
+try {
+	await dataSource.initialize();
 
-		await app.start(config.port);
+	await app.start(config.port);
 
-		app.logger.info('⚡️ Word game is running! ⚡️');
-	} catch (error) {
-		app.logger.error('Unable to start word game.', error);
+	const workers = registerWorkers(app);
+
+	process.on('SIGINT', terminate);
+	process.on('SIGTERM', terminate);
+
+	app.logger.info('⚡️ Word game is running! ⚡️');
+
+	function terminate() {
+		Promise
+			.all([
+				app.stop(),
+				...workers.map(w => w.stop())
+			])
+			.then(() => process.exit(0))
+			.catch(() => process.exit(1));
 	}
-})();
+} catch (error) {
+	app.logger.error('Unable to start word game.', error);
+}

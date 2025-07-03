@@ -1,6 +1,7 @@
-import { errorMessages } from '~/resources';
+import { errorMessages } from '~/resources/index.js';
 
 type ErrorCode = keyof typeof errorMessages;
+type ErrorData = Record<string, unknown>;
 
 export function getErrorMessage(error?: unknown) {
 	return error instanceof ApplicationError ? errorMessages[error.code] : errorMessages.UNDEFINED;
@@ -8,11 +9,11 @@ export function getErrorMessage(error?: unknown) {
 
 export class ApplicationError extends Error {
 	readonly code: ErrorCode = 'UNDEFINED';
-	readonly data?: object;
+	readonly data?: ErrorData;
 
-	constructor(message: string, value?: ErrorCode | object);
-	constructor(message: string, code: ErrorCode, data?: object);
-	constructor(message: string, value1?: ErrorCode | object, value2?: object) {
+	constructor(message: string, value?: ErrorCode | ErrorData);
+	constructor(message: string, code: ErrorCode, data?: ErrorData);
+	constructor(message: string, value1?: ErrorCode | ErrorData, value2?: ErrorData) {
 		super(message);
 
 		if (isErrorCode(value1)) {

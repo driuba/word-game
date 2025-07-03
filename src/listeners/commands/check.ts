@@ -1,6 +1,8 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatestWord } from '~/core';
-import { messages } from '~/resources';
+import { DateTime } from 'luxon';
+import { getLatestWord } from '~/core/index.js';
+import { isWordActive } from '~/entities/index.js';
+import { messages } from '~/resources/index.js';
 
 export default async function handleCheck(
 	{
@@ -25,11 +27,49 @@ export default async function handleCheck(
 		return;
 	}
 
-	if (!word.userIdGuesser && userId === word.userIdCreator) {
+	if (isWordActive(word)) {
+		if (word.userIdCreator === userId) {
+			await respond({
+				response_type: 'ephemeral',
+				text: messages.currentWordStatusPrivate({
+					score: word.score.toFixed(),
+					word: word.word
+				})
+			});
+
+			return;
+		}
+
 		await respond({
 			response_type: 'ephemeral',
-			text: messages.currentWordStatusPrivate({
-				score: word.score.toString(),
+			text: messages.currentWordHolder({
+				userId: word.userIdCreator
+			})
+		});
+
+		return;
+	}
+
+	if (word.expired) {
+		if (word.userIdCreator === userId) {
+			await respond({
+				response_type: 'ephemeral',
+				text: messages.currentWordExpiredPrivateMe({
+					expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
+					score: word.score.toFixed(),
+					word: word.word
+				})
+			});
+
+			return;
+		}
+
+		await respond({
+			response_type: 'ephemeral',
+			text: messages.currentWordExpiredPrivate({
+				expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
+				score: word.score.toFixed(),
+				userId: word.userIdCreator,
 				word: word.word
 			})
 		});
@@ -46,10 +86,11 @@ export default async function handleCheck(
 		return;
 	}
 
+
 	await respond({
 		response_type: 'ephemeral',
-		text: (word.userIdGuesser ? messages.currentWordSetter : messages.currentWordHolder)({
-			userId: word.userIdGuesser ?? word.userIdCreator
+		text: messages.currentWordSetter({
+			userId: word.userIdGuesser
 		})
 	});
 }

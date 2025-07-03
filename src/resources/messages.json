@@ -2,6 +2,15 @@
 	"botNotInChat": [
 		"Beep bop, I'm not in this chat. \uD835\uDE7F̍\uD835\uDE95́\uD835\uDE8E̷\uD835\uDE8A̤\uD835\uDE9Cͦ\uD835\uDE8E͙ͯ,̰͓ ̙ͩ\uD835\uDE92ͪ̕\uD835\uDE97ͣ̔\uD835\uDE9F͓͈͐\uD835\uDE92̝̄͂\uD835\uDE9D̹́ͭ\uD835\uDE8E̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́\uD835\uDE7C̴͖̱̆\uD835\uDE74̤̺͚̫"
 	],
+	"currentWordExpiredPrivate": [
+		"Psst... <@${userId}> žodelis *${word}* (*${score}*) nebegalioja, kas reiškia, kad bet kas gali nustatyti sekantį žodį. Jei paskubėsi, gal spėsi :wink:"
+	],
+	"currentWordExpiredPrivateMe": [
+		"Tavo žodis *${word}* jau sugedo, jis surinko *${score}* pagarbos taškus(-ą, -ų) ir išėjo iš galiojimo *${expired}*."
+	],
+	"currentWordExpiredPublic": [
+		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius – <@${userId}>, o žodis buvo – *${word}*, jis surinko – ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus <@${userId}>, tau negalima."
+	],
 	"currentWordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"
 	],
@@ -28,6 +37,9 @@
 	],
 	"nothingToBrag": [
 		"Nėr ko girtis, grybe tu."
+	],
+	"report": [
+		"Aš gyvas ir sveikas."
 	],
 	"setWordSuccess": [
 		"Sveikinimai! tavo naujasis žodis yra *${word}*."
