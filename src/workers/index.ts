@@ -37,7 +37,7 @@ function* getWorkers(app: App) {
 	if (config.wg.wordTimeoutGlobal || config.wg.wordTimeoutUsage) {
 		app.logger.info('Starting word expiration worker.');
 
-		yield createJob(app, '0 0 10-18 * * 1-5', wordExpirationHandler);
+		yield createJob(app, '0 0 10-17 * * 1-5', wordExpirationHandler);
 	}
 }
 

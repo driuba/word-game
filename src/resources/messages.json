@@ -9,7 +9,7 @@
 		"Tavo žodis *${word}* jau sugedo, jis surinko *${score}* pagarbos taškus(-ą, -ų) ir išėjo iš galiojimo *${expired}*."
 	],
 	"currentWordExpiredPublic": [
-		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius – <@${userId}>, o žodis buvo – *${word}*, jis surinko – ${score}.\nO dabar padarom taip, **kas pirmesnis, tas gudresnis**!\nIšskyrus <@${userId}>, tau negalima."
+		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius – <@${userId}>, o žodis buvo – *${word}*, jis surinko – ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus <@${userId}>, tau negalima."
 	],
 	"currentWordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"

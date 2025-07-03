@@ -7,6 +7,13 @@
 	3. Kiti žaidėjai gali atspėti žodį irgi jį panaudodami žinutėje;
 	4. Dalyvis, atspėjęs žodį, gauna teisę nustatyti sekantį žaidimo žodį ir žaidimas tęsiasi nuo ta pačia tvarka.
 
+Žodžių galiojimas:
+
+	• Nenaudojamas žodis per parą išeina iš galiojimo;
+	• Neatspėtas žodis per savaitę išeina iš galiojimo;
+	• Žodžių galiojimas tikrinamas pirmadieniais -- penktadieniais, 10 -- 17 valandomis, kas valandą;
+	• Žodžiui išėjus iš galiojimo naują žodį gali nustatyti bet kuris kanalo narys išskyrus tą, kuris jau turėjo žodį.
+
 Taisyklės žodžiams:
 
 	1. Žodžiai privalo būti sudaryti tik iš raidžių, skaičiai negalimi;

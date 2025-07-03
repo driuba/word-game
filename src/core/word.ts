@@ -19,7 +19,7 @@ export async function getCurrentWord(channelId: string) {
 export async function getLatestWord(channelId: string) {
 	const word = await Word.findOne({
 		order: {
-			created: 'ASC'
+			created: 'DESC'
 		},
 		where: {
 			channelId
@@ -47,15 +47,14 @@ export async function setWord(channelId: string, userId: string, text: string) {
 			throw new ApplicationError('Word is already set.', 'OPERATION_INVALID');
 		}
 
-		if (latestWord.expired && latestWord.userIdCreator === userId) {
-			throw new ApplicationError('Word has already expired.', 'USER_INVALID', { expired: latestWord.expired });
-		}
-
-		if (latestWord.userIdGuesser !== userId) {
+		if (latestWord.expired) {
+			if (latestWord.userIdCreator === userId) {
+				throw new ApplicationError('Word has already expired.', 'USER_INVALID', { expired: latestWord.expired });
+			}
+		} else if (latestWord.userIdGuesser !== userId) {
 			throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');
 		}
 	}
-
 
 	const newWord = Word.create({
 		channelId,

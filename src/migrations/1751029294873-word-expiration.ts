@@ -4,7 +4,9 @@ export class WordExpiration1751029294873 implements MigrationInterface {
     name = 'WordExpiration1751029294873'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`REINDEX DATABASE "word-game"`);
         await queryRunner.query(`ALTER DATABASE "word-game" SET TIME ZONE 'Europe/Vilnius'`);
+        await queryRunner.query(`ALTER DATABASE "word-game" REFRESH COLLATION VERSION`);
         await queryRunner.query(`ALTER TABLE "Words" ADD "Expired" TIMESTAMP WITH TIME ZONE`);
         await queryRunner.query(`ALTER TABLE "Words" ADD "Active" BOOLEAN NOT NULL GENERATED ALWAYS AS ("Expired" IS NULL AND "UserIdGuesser" IS NULL) STORED`);
         await queryRunner.query(`ALTER TABLE "Words" ALTER COLUMN "Modified" DROP NOT NULL`);
