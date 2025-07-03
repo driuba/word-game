@@ -27,14 +27,6 @@ export default async function handleMessage(
 				word: word.word
 			}));
 		}
-		// TODO: if implemented via a job this will be unnecessary
-		// else if (word?.expired) {
-		// 	await say(messages.currentWordExpired({
-		// 		score: word.score.toFixed(),
-		// 		userIdCreator: word.userIdCreator,
-		// 		word: word.word
-		// 	}));
-		// }
 	} catch (error) {
 		logger.error(error);
 	}

@@ -14,12 +14,13 @@ type Params = CronJobParams<null, App>;
 function createJob(
 	context: App,
 	cronTime: Pick<Params, 'cronTime'>['cronTime'],
+	errorHandler: (e: unknown) => void,
 	onTick: Pick<Params, 'onTick'>['onTick']
 ) {
 	return CronJob.from({
 		context,
 		cronTime,
-		errorHandler: handleError.bind(context),
+		errorHandler,
 		onTick,
 		start: true,
 		timeZone: config.timezone,
@@ -28,16 +29,18 @@ function createJob(
 }
 
 function* getWorkers(app: App) {
+	const errorHandler = handleError.bind(app);
+
 	if (config.wg.reportingChatId) {
 		app.logger.info('Starting report worker.');
 
-		yield createJob(app, '0 0 9 * * 1-5', reportHandler);
+		yield createJob(app, '0 0 9 * * 1-5', errorHandler, reportHandler);
 	}
 
 	if (config.wg.wordTimeoutGlobal || config.wg.wordTimeoutUsage) {
 		app.logger.info('Starting word expiration worker.');
 
-		yield createJob(app, '0 0 10-17 * * 1-5', wordExpirationHandler);
+		yield createJob(app, '0 0 10-17 * * 1-5', errorHandler, wordExpirationHandler);
 	}
 }
 
