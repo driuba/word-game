@@ -19,6 +19,7 @@ services:
         target: "/docker-entrypoint-initdb.d/initdb.sql"
     environment:
       PGDATA: "/home/postgres/data"
+      PGTZ: "Europe/Vilnius"
       POSTGRES_PASSWORD: "SCRAM-SHA-256$$4096:fYljMSIQa9dIqjLP3hf41g==$$nPMgscGkryTjoAnB8cBCZA6eXltHkOjKe2KLDL8Z6cc=:AtaX/sv9FS1nwQaES+xQBZol76BhUciJwE6GWNW7xrU="
       TZ: "Europe/Vilnius"
     image: "postgres:17.5-alpine3.22"

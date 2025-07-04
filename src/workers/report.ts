@@ -8,8 +8,12 @@ export default async function handleReport(this: App) {
 		throw new ApplicationError('Reporting chat ID is required for report worker.', 'CONFIG_INVALID');
 	}
 
+	this.logger.info('Stating report.');
+
 	await this.client.chat.postMessage({
 		channel: config.wg.reportingChatId,
 		text: messages.report
 	});
+
+	this.logger.info('Finishing report.');
 }

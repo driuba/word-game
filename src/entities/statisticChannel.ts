@@ -7,22 +7,24 @@ import { Word } from './word.js';
 	expression(dataSource) {
 		return dataSource
 			.createQueryBuilder()
-			.addCommonTableExpression(selectWordsGuessedAll(dataSource), wordsGuessedAll)
-			.addCommonTableExpression(selectWordsGuessedWeek(dataSource), wordsGuessedWeek)
+			.addCommonTableExpression(selectWordsInactiveAll(dataSource), wordsInactiveAll)
+			.addCommonTableExpression(selectWordsInactiveWeek(dataSource), wordsInactiveWeek)
 			.addCommonTableExpression(selectChannelUsers(dataSource), channelUsers)
-			.addCommonTableExpression(groupGuesses(dataSource, wordsGuessedAll), guessesAll)
-			.addCommonTableExpression(groupGuesses(dataSource, wordsGuessedWeek), guessesWeek)
-			.addCommonTableExpression(groupScores(dataSource, wordsGuessedAll), scoresAll)
-			.addCommonTableExpression(groupScores(dataSource, wordsGuessedWeek), scoresWeek)
+			.addCommonTableExpression(groupGuesses(dataSource, wordsInactiveAll), guessesAll)
+			.addCommonTableExpression(groupGuesses(dataSource, wordsInactiveWeek), guessesWeek)
+			.addCommonTableExpression(groupScores(dataSource, wordsInactiveAll), scoresAll)
+			.addCommonTableExpression(groupScores(dataSource, wordsInactiveWeek), scoresWeek)
 			.from(channelUsers, 'cu')
 			.select('"cu"."ChannelId"')
 			.addSelect('"cu"."UserId"')
 			.addSelect('COALESCE("sw"."Count", 0)', 'CountWeek')
+			.addSelect('COALESCE("sw"."CountExpired", 0)', 'CountExpiredWeek')
 			.addSelect('COALESCE("sw"."Score", 0)', 'ScoreWeek')
 			.addSelect('COALESCE("sw"."Average", 0)', 'AverageWeek')
 			.addSelect('COALESCE("sw"."Maximum", 0)', 'MaximumWeek')
 			.addSelect('COALESCE("gw"."Guesses", 0)', 'GuessesWeek')
 			.addSelect('COALESCE("sa"."Count", 0)', 'CountAll')
+			.addSelect('COALESCE("sa"."CountExpired", 0)', 'CountExpiredAll')
 			.addSelect('COALESCE("sa"."Score", 0)', 'ScoreAll')
 			.addSelect('COALESCE("sa"."Average", 0)', 'AverageAll')
 			.addSelect('COALESCE("sa"."Maximum", 0)', 'MaximumAll')
@@ -32,7 +34,8 @@ import { Word } from './word.js';
 			.leftJoin(scoresAll, 'sa', '"sa"."ChannelId" = "cu"."ChannelId" AND "sa"."UserId" = "cu"."UserId"')
 			.leftJoin(scoresWeek, 'sw', '"sw"."ChannelId" = "cu"."ChannelId" AND "sw"."UserId" = "cu"."UserId"')
 			.orderBy('"sa"."Score"', 'DESC', 'NULLS LAST')
-			.addOrderBy('"ga"."Guesses"', 'DESC', 'NULLS LAST');
+			.addOrderBy('"ga"."Guesses"', 'DESC', 'NULLS LAST')
+			.addOrderBy('"sa"."CountExpired"', 'DESC', 'NULLS LAST');
 	},
 	name: 'StatisticsChannel'
 })
@@ -64,6 +67,18 @@ export class StatisticChannel extends BaseEntity {
 		transformer: new IntValueTransformer()
 	})
 	readonly countWeek!: number;
+
+	@ViewColumn({
+		name: 'CountExpiredWeek',
+		transformer: new IntValueTransformer()
+	})
+	readonly countExpiredWeek!: number;
+
+	@ViewColumn({
+		name: 'CountExpiredAll',
+		transformer: new IntValueTransformer()
+	})
+	readonly countExpiredAll!: number;
 
 	@ViewColumn({
 		name: 'GuessesAll',
@@ -104,8 +119,8 @@ const guessesAll = 'GuessesAll';
 const guessesWeek = 'GuessesWeek';
 const scoresAll = 'ScoresAll';
 const scoresWeek = 'ScoresWeek';
-const wordsGuessedAll = 'WordsGuessedAll';
-const wordsGuessedWeek = 'WordsGuessedWeek';
+const wordsInactiveAll = 'WordsInactiveAll';
+const wordsInactiveWeek = 'WordsInactiveWeek';
 
 function groupGuesses(dataSource: DataSource, from: string) {
 	return dataSource
@@ -114,6 +129,7 @@ function groupGuesses(dataSource: DataSource, from: string) {
 		.addSelect('"w"."UserIdGuesser"', 'UserId')
 		.addSelect('COUNT(1)', 'Guesses')
 		.from(from, 'w')
+		.where('"w"."UserIdGuesser" IS NOT NULL')
 		.groupBy('"w"."ChannelId"')
 		.addGroupBy('"w"."UserIdGuesser"');
 }
@@ -124,6 +140,7 @@ function groupScores(dataSource: DataSource, from: string) {
 		.select('"w"."ChannelId"')
 		.addSelect('"w"."UserIdCreator"', 'UserId')
 		.addSelect('COUNT(1)', 'Count')
+		.addSelect('COUNT("w"."Expired")', 'CountExpired')
 		.addSelect('SUM("w"."Score")', 'Score')
 		.addSelect('AVG("w"."Score")', 'Average')
 		.addSelect('MAX("w"."Score")', 'Maximum')
@@ -135,31 +152,32 @@ function groupScores(dataSource: DataSource, from: string) {
 function selectChannelUsers(dataSource: DataSource) {
 	const userIdsCreator = dataSource
 		.createQueryBuilder()
-		.select('"wga"."ChannelId"')
-		.addSelect('"wga"."UserIdCreator"', 'UserId')
-		.from(wordsGuessedAll, 'wga')
+		.select('"wia"."ChannelId"')
+		.addSelect('"wia"."UserIdCreator"', 'UserId')
+		.from(wordsInactiveAll, 'wia')
 		.getQuery();
 
 	const userIdsGuesser = dataSource
 		.createQueryBuilder()
-		.select('"wga"."ChannelId"')
-		.addSelect('"wga"."UserIdGuesser"', 'UserId')
-		.from(wordsGuessedAll, 'wga')
+		.select('"wia"."ChannelId"')
+		.addSelect('"wia"."UserIdGuesser"', 'UserId')
+		.from(wordsInactiveAll, 'wia')
+		.where('"wia"."UserIdGuesser" IS NOT NULL')
 		.getQuery();
 
 	return `${userIdsCreator} UNION ${userIdsGuesser}`;
 }
 
-function selectWordsGuessedAll(dataSource: DataSource) {
+function selectWordsInactiveAll(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
 		.from(Word, 'w')
 		.where('NOT "w"."Active"');
 }
 
-function selectWordsGuessedWeek(dataSource: DataSource) {
+function selectWordsInactiveWeek(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
-		.from(wordsGuessedAll, 'wga')
-		.where(`"wga"."Created" >= date_trunc('week', CURRENT_TIMESTAMP)`);
+		.from(wordsInactiveAll, 'wia')
+		.where(`"wia"."Created" >= date_trunc('week', now())`);
 }

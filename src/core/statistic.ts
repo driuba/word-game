@@ -31,6 +31,10 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 				guessesWeek: {
 					direction: 'DESC',
 					nulls: 'LAST'
+				},
+				countExpiredWeek: {
+					direction: 'DESC',
+					nulls: 'LAST'
 				}
 			};
 
