@@ -20,7 +20,6 @@ services:
       service: "db"
     profiles:
       - "main"
-      - "migration"
   migration:
     environment:
       NODE_ENV:
@@ -31,8 +30,6 @@ services:
         - "registry:80/word-game_app:latest"
       target: "build"
     command: "migration:run"
-    depends_on:
-      - "db"
     entrypoint: "npm run typeorm:${NODE_ENV}"
     image: "registry:80/word-game_migration:latest"
     init: true
