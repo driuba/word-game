@@ -144,6 +144,11 @@ Once services are build and pushed into the registry docker stack deployment can
 ```shell
 docker compose -f docker-compose.deploy.yml config | sed 1d | docker stack deploy -c - word-game
 ```
+To remove the stack use the command:
+
+```shell
+docker stack rm word-game
+```
 
 Notes:
 
