@@ -33,7 +33,7 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 					nulls: 'LAST'
 				},
 				countExpiredWeek: {
-					direction: 'DESC',
+					direction: 'ASC',
 					nulls: 'LAST'
 				}
 			};
