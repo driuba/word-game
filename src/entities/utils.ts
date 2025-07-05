@@ -56,18 +56,18 @@ export async function insert<T extends BaseEntity>(entity: T, target: EntityTarg
 		.getRepository(target)
 		.createQueryBuilder()
 		.insert()
-		.values(metadata.columns
-			.filter(c =>
-				c.isInsert &&
-				!(
-					c.isGenerated ||
-					c.isVirtual
-				)
-			)
-			.reduce((a, c) => ({
-				...a,
-				[c.propertyName]: c.getEntityValue(entity) as unknown
-			}), {})
+		.values(
+			Object.fromEntries(
+				metadata.columns
+					.filter(c =>
+						c.isInsert &&
+						!(
+							c.isGenerated ||
+							c.isVirtual
+						)
+					)
+					.map(c => [c.propertyName, c.getEntityValue(entity)])
+			) as object & T
 		)
 		.returning('*')
 		.execute()) as { raw: [Record<string, unknown>] };
@@ -82,25 +82,25 @@ export async function update<T extends BaseEntity>(entity: T, target: EntityTarg
 		.getRepository(target)
 		.createQueryBuilder()
 		.update()
-		.set(metadata.columns
-			.filter(c =>
-				c.isUpdate &&
-				!(
-					c.isGenerated ||
-					c.isVirtual
-				)
-			)
-			.reduce((a, c) => ({
-				...a,
-				[c.propertyName]: c.getEntityValue(entity) as unknown
-			}), {})
+		.set(
+			Object.fromEntries(
+				metadata.columns
+					.filter(c =>
+						c.isUpdate &&
+						!(
+							c.isGenerated ||
+							c.isVirtual
+						)
+					)
+					.map(c => [c.propertyName, c.getEntityValue(entity)])
+			) as object & T
 		)
-		.where(metadata.columns
-			.filter(c => c.isPrimary)
-			.reduce((a, c) => ({
-				...a,
-				[c.propertyName]: c.getEntityValue(entity) as unknown
-			}), {})
+		.where(
+			Object.fromEntries(
+				metadata.columns
+					.filter(c => c.isPrimary)
+					.map(c => [c.propertyName, c.getEntityValue(entity)])
+			)
 		)
 		.returning('*')
 		.execute()) as { raw: [Record<string, unknown>] };

@@ -11,9 +11,11 @@ Settings.defaultZone = config.timezone;
 
 const { default: dataSource } = await import('~/entities/index.js');
 const { default: registerListeners } = await import('~/listeners/index.js');
+const { default: logger } = await import('~/logger.js');
 const { default: registerWorkers } = await import('~/workers/index.js');
 
 const app = new App({
+	logger,
 	appToken: config.slack.appToken,
 	clientId: config.slack.clientId,
 	clientSecret: config.slack.clientSecret,

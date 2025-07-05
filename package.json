@@ -7,7 +7,8 @@
 		"luxon": "^3.6.1",
 		"pg": "^8.16.3",
 		"reflect-metadata": "^0.2.2",
-		"typeorm": "^0.3.25"
+		"typeorm": "^0.3.25",
+		"winston": "^3.17.0"
 	},
 	"description": "Word game for your slack word game needs",
 	"devDependencies": {
