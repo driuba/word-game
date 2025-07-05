@@ -50,9 +50,7 @@ const logger = createLogger({
 });
 
 function* getFormats() {
-	yield format.errors({
-		stack: config.nodeEnv === 'development'
-	});
+	yield format.errors({ stack: true });
 
 	yield format.label({
 		get label() {

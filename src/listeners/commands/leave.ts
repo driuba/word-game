@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 
-export default async function handleLeave(
+export default async function (
 	{
 		ack,
 		client,

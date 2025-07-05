@@ -14,7 +14,7 @@ enum Scope {
 	global = 'global'
 }
 
-export default async function handleLeaderboard(
+export default async function (
 	{
 		ack,
 		payload: {

@@ -3,7 +3,7 @@ import type { GenericMessageEvent } from '@slack/types';
 import { tryScoreOrGuessWord } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 
-export default async function handleMessage(
+export default async function (
 	{
 		logger,
 		message,

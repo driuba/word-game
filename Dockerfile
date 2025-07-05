@@ -53,6 +53,6 @@ USER node:node
 
 COPY --from=build /home/node/build/dist/ ./
 
-ENTRYPOINT ["node", "--env-file-if-exists", ".env.local"]
+ENTRYPOINT ["node", "--enable-source-maps", "--env-file-if-exists", ".env.local"]
 
 CMD ["app.js"]

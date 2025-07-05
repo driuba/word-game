@@ -45,8 +45,16 @@ try {
 				app.stop(),
 				...workers.map(w => w.stop())
 			])
-			.then(() => process.exit(0))
-			.catch(() => process.exit(1));
+			.then(() => {
+				app.logger.info('🪦 Word game has been terminated! 🪦');
+
+				process.exit(0);
+			})
+			.catch(() => {
+				app.logger.warn('☠️ Word game has been killed! ☠️');
+
+				process.exit(1);
+			});
 	}
 } catch (error) {
 	app.logger.error('Unable to start word game.', error);

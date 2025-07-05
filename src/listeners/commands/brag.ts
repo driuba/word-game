@@ -3,7 +3,7 @@ import { getLatestWord } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
 
-export default async function handleBrag(
+export default async function (
 	{
 		ack,
 		payload: {

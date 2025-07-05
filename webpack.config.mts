@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import type { Configuration } from 'webpack';
 import { resolve } from 'path';
 import packageInformation from './package.json' with { type: 'json' };
@@ -14,8 +16,8 @@ export default {
 	module: {
 		defaultRules: [
 			{
-				exclude: /^\.\/src\/migrations\//,
-				include: /^\.\/src\//
+				exclude: resolve(import.meta.dirname, 'src', 'migrations'),
+				include: resolve(import.meta.dirname, 'src')
 			}
 		],
 		rules: [
