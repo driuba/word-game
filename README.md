@@ -57,30 +57,30 @@ From:
 
 ```yaml
 secrets:
-	app:
-		file: "/mnt/efs/word-game/secrets/.env.app"
-	migration:
-		file: "/mnt/efs/word-game/secrets/.env.migration"
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 volumes:
-	db:
-		external: true
-		name: "word-game_db"
+  db:
+    external: true
+    name: "word-game_db"
 networks:
-	default:
-		external: true
-		name: "word-game_default"
+  default:
+    external: true
+    name: "word-game_default"
 ```
 
 To something like:
 
 ```yaml
 secrets:
-	app:
-		file: ".env.app.local"
-	migration:
-		file: ".env.migration.local"
+  app:
+    file: ".env.app.local"
+  migration:
+    file: ".env.migration.local"
 volumes:
-	db:
+  db:
 ```
 
 **All docker compose commands require `NODE_ENV` to be set, e.g. `export NODE_ENV=development` or by prefixing all docker compose command with `NODE_ENV=development`.**
@@ -144,6 +144,7 @@ Once services are build and pushed into the registry docker stack deployment can
 ```shell
 docker compose -f docker-compose.deploy.yml config | sed 1d | docker stack deploy -c - word-game
 ```
+
 To remove the stack use the command:
 
 ```shell
@@ -160,30 +161,30 @@ E.g. from:
 
 ```yaml
 secrets:
-	app:
-		file: "/mnt/efs/word-game/secrets/.env.app"
-	migration:
-		file: "/mnt/efs/word-game/secrets/.env.migration"
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 ```
 
 to:
 
 ```yaml
 secrets:
-	app:
-		external: true
-		name: "word-game_app"
-	migration:
-		external: true
-		name: "word-game_migration"
+  app:
+    external: true
+    name: "word-game_app"
+  migration:
+    external: true
+    name: "word-game_migration"
 ```
 
 Network is intentionally configured as attachable for migration image to connect to database when run as compose container instead of swarm service.
 
 ```yaml
 networks:
-	default:
-		attachable: true
+  default:
+    attachable: true
 ```
 
 ### Migrate
