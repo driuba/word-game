@@ -1,6 +1,7 @@
 import type { DateTime } from 'luxon';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer, insert, update } from './utils.js';
+import config from '~/config.js';
+import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -99,6 +100,62 @@ export class Word extends BaseEntity {
 
 	insert() {
 		return insert(this, Word);
+	}
+
+	setExpired() {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.update()
+				.set({
+					expired() {
+						return 'now()';
+					}
+				})
+				.where({
+					id: this.id
+				}),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	setUserIdGuesser(value: string) {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.update()
+				.set({
+					userIdGuesser: value
+				})
+				.where({
+					id: this.id
+				}),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	tryAddScore(value: number) {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.update()
+				.set({
+					score() {
+						return `"Score" + ${value.toFixed()}`;
+					}
+				})
+				.where(
+					'"Id" = :id AND COALESCE(now() - "Modified" > :interval, true)',
+					{
+						id: this.id,
+						interval: config.wg.wordTimeoutScore?.toISO()
+					}
+				),
+			this,
+			Word.getRepository().metadata
+		);
 	}
 
 	update() {
