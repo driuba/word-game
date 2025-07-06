@@ -11,9 +11,11 @@ Settings.defaultZone = config.timezone;
 
 const { default: dataSource } = await import('~/entities/index.js');
 const { default: registerListeners } = await import('~/listeners/index.js');
+const { default: logger } = await import('~/logger.js');
 const { default: registerWorkers } = await import('~/workers/index.js');
 
 const app = new App({
+	logger,
 	appToken: config.slack.appToken,
 	clientId: config.slack.clientId,
 	clientSecret: config.slack.clientSecret,
@@ -43,8 +45,16 @@ try {
 				app.stop(),
 				...workers.map(w => w.stop())
 			])
-			.then(() => process.exit(0))
-			.catch(() => process.exit(1));
+			.then(() => {
+				app.logger.info('🪦 Word game has been terminated! 🪦');
+
+				process.exit(0);
+			})
+			.catch(() => {
+				app.logger.warn('☠️ Word game has been killed! ☠️');
+
+				process.exit(1);
+			});
 	}
 } catch (error) {
 	app.logger.error('Unable to start word game.', error);

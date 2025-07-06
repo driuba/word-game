@@ -2,7 +2,7 @@ import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 
 const subtypes = new Set(['file_share', 'me_message', 'message_replied', 'thread_broadcast']);
 
-export default async function handleMessageFilter(
+export default async function (
 	{
 		message,
 		next

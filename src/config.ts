@@ -223,7 +223,7 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 	} satisfies TypedPropertyDescriptor<T>;
 }
 
-export default abstract class Config {
+export default abstract class {
 	static db = Db;
 	static slack = Slack;
 	static wg = Wg;
@@ -264,9 +264,9 @@ export default abstract class Config {
 	static assertValid() {
 		const errors = [
 			...getErrors(this),
-			...getErrors(Config.db),
-			...getErrors(Config.slack),
-			...getErrors(Config.wg)
+			...getErrors(this.db),
+			...getErrors(this.slack),
+			...getErrors(this.wg)
 		];
 
 		if (errors.length) {

@@ -14,7 +14,7 @@ enum Scope {
 	global = 'global'
 }
 
-export default async function handleLeaderboard(
+export default async function (
 	{
 		ack,
 		payload: {
@@ -82,6 +82,7 @@ export default async function handleLeaderboard(
 			data = statistics.map(s => ({
 				average: s.averageAll.toFixed(2),
 				count: s.countAll.toFixed(),
+				countExpired: s.countExpiredAll.toFixed(),
 				guesses: s.guessesAll.toFixed(),
 				maximum: s.maximumAll.toFixed(),
 				score: s.scoreAll.toFixed(),
@@ -94,6 +95,7 @@ export default async function handleLeaderboard(
 			data = statistics.map(s => ({
 				average: s.averageWeek.toFixed(2),
 				count: s.countWeek.toFixed(),
+				countExpired: s.countExpiredWeek.toFixed(),
 				guesses: s.guessesWeek.toFixed(),
 				maximum: s.maximumWeek.toFixed(),
 				score: s.scoreWeek.toFixed(),
@@ -109,7 +111,7 @@ export default async function handleLeaderboard(
 
 	switch (inputFormat) {
 		case Format.full: {
-			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
+			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Count expired: ${d.countExpired}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
 
 			break;
 		}

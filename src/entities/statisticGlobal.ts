@@ -11,11 +11,13 @@ import { FloatValueTransformer, IntValueTransformer } from './utils.js';
 			.from(statistic, 's')
 			.select('"s"."UserId"')
 			.addSelect('"s"."CountWeek"')
+			.addSelect('"s"."CountExpiredWeek"')
 			.addSelect('"s"."ScoreWeek"')
 			.addSelect('CASE "s"."CountWeek" WHEN 0 THEN 0 ELSE "s"."ScoreWeek" / "s"."CountWeek" END', 'AverageWeek')
 			.addSelect('"s"."MaximumWeek"')
 			.addSelect('"s"."GuessesWeek"')
 			.addSelect('"s"."CountAll"')
+			.addSelect('"s"."CountExpiredAll"')
 			.addSelect('"s"."ScoreAll"')
 			.addSelect('CASE "s"."CountAll" WHEN 0 THEN 0 ELSE "s"."ScoreAll" / "s"."CountAll" END', 'AverageAll')
 			.addSelect('"s"."MaximumAll"')
@@ -49,6 +51,18 @@ export class StatisticGlobal extends BaseEntity {
 		transformer: new IntValueTransformer()
 	})
 	readonly countWeek!: number;
+
+	@ViewColumn({
+		name: 'CountExpiredWeek',
+		transformer: new IntValueTransformer()
+	})
+	readonly countExpiredWeek!: number;
+
+	@ViewColumn({
+		name: 'CountExpiredAll',
+		transformer: new IntValueTransformer()
+	})
+	readonly countExpiredAll!: number;
 
 	@ViewColumn({
 		name: 'GuessesAll',
@@ -92,10 +106,12 @@ function group(dataSource: DataSource) {
 		.from(StatisticChannel, 's')
 		.select('"s"."UserId"')
 		.addSelect('SUM("s"."CountWeek")', 'CountWeek')
+		.addSelect('SUM("s"."CountExpiredWeek")', 'CountExpiredWeek')
 		.addSelect('SUM("s"."ScoreWeek")', 'ScoreWeek')
 		.addSelect('MAX("s"."MaximumWeek")', 'MaximumWeek')
 		.addSelect('SUM("s"."GuessesWeek")', 'GuessesWeek')
 		.addSelect('SUM("s"."CountAll")', 'CountAll')
+		.addSelect('SUM("s"."CountExpiredAll")', 'CountExpiredAll')
 		.addSelect('SUM("s"."ScoreAll")', 'ScoreAll')
 		.addSelect('MAX("s"."MaximumAll")', 'MaximumAll')
 		.addSelect('SUM("s"."GuessesAll")', 'GuessesAll')
