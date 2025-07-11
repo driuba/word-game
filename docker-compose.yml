@@ -25,4 +25,6 @@ services:
     image: "postgres:17.5-alpine3.22"
     init: true
     volumes:
-      - "db:/home/postgres/data"
+      - source: "db"
+        target: "/home/postgres/data"
+        type: "volume"

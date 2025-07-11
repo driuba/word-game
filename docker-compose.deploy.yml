@@ -1,6 +1,17 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
 
+configs:
+  initdb:
+    file: "./db/init.sql"
 name: "word-game"
+networks:
+  default:
+    attachable: true
+secrets:
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 services:
   app:
     deploy:
@@ -22,14 +33,6 @@ services:
     extends:
       file: "docker-compose.yml"
       service: "db"
-configs:
-  initdb:
-    file: "./db/init.sql"
-secrets:
-  app:
-    file: "/mnt/efs/word-game/secrets/.env.app"
-  migration:
-    file: "/mnt/efs/word-game/secrets/.env.migration"
 volumes:
   db:
     driver: "local"
@@ -37,6 +40,3 @@ volumes:
       device: "/mnt/efs/word-game/data"
       o: "bind"
       type: "none"
-networks:
-  default:
-    attachable: true
