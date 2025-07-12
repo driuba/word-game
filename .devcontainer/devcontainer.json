@@ -1,0 +1,15 @@
+{
+	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+	"customizations": {
+		"jetbrains": {
+			"backend": "WebStorm"
+		}
+	},
+	"dockerComposeFile": "docker-compose.yml",
+	"name": "Word game",
+	"runServices": [
+		"db"
+	],
+	"service": "app",
+	"workspaceFolder": "/home/node/app"
+}
