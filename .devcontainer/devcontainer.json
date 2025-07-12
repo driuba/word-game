@@ -1,3 +1,7 @@
+/* TODO Check when JetBrains bugs are resolved
+	https://youtrack.jetbrains.com/issue/IJPL-170288/RD-cant-work-on-Alpine
+	https://youtrack.jetbrains.com/issue/IJPL-193821/Cannot-build-docker-compose-image.-after-updating-Rancher-Desktop-to-1.19.2-and-Docker-Desktop-to-4.42.1
+*/
 {
 	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
 	"customizations": {
@@ -10,6 +14,6 @@
 	"runServices": [
 		"db"
 	],
-	"service": "app",
+	"service": "app-dev",
 	"workspaceFolder": "/home/node/app"
 }

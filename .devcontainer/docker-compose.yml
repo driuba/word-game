@@ -5,7 +5,7 @@ configs:
     file: "../db/init.sql"
 name: "word-game"
 services:
-  app:
+  app-dev:
     build: {}
     depends_on:
       - "db"

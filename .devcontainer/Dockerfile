@@ -23,4 +23,4 @@ USER node:node
 
 WORKDIR /home/node/app
 
-ENTRYPOINT ["sh"]
+ENTRYPOINT ["sleep", "infinity"]
