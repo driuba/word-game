@@ -3,7 +3,7 @@
 	"author": "Andrius Andrikonis",
 	"dependencies": {
 		"@slack/bolt": "^4.4.0",
-		"cron": "^4.3.1",
+		"cron": "^4.3.2",
 		"luxon": "^3.7.1",
 		"pg": "^8.16.3",
 		"reflect-metadata": "^0.2.2",
@@ -38,6 +38,7 @@
 	"license": "GPL-3.0-or-later",
 	"main": "dist/app.js",
 	"name": "word-game",
+	"packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
 	"scripts": {
 		"build:development": "webpack build --config webpack.config.mts --mode development",
 		"build:production": "webpack build --config webpack.config.mts --mode production",

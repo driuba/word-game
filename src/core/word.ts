@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import config from '~/config.js';
 import { assertWord, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
@@ -70,8 +69,6 @@ export async function setWord(channelId: string, userId: string, text: string) {
 }
 
 export async function* tryExpireWords() {
-	const now = DateTime.now();
-
 	const words = await Word.findBy({
 		active: true
 	});
@@ -79,12 +76,7 @@ export async function* tryExpireWords() {
 	for (const word of words) {
 		assertWord(word);
 
-		if (
-			config.wg.wordTimeoutGlobal && now.diff(word.created, 'days') > config.wg.wordTimeoutGlobal ||
-			config.wg.wordTimeoutUsage && now.diff(word.modified ?? word.created, 'hours') > config.wg.wordTimeoutUsage
-		) {
-			await word.setExpired();
-		}
+		await word.trySetExpired();
 
 		if (!isWordActive(word)) {
 			yield word;
@@ -116,7 +108,7 @@ export async function tryScoreOrGuessWord(channelId: string, userId: string, tex
 			Math.min(score, config.wg.wordScoreMax)
 		);
 	} else {
-		await word.setUserIdGuesser(userId);
+		await word.trySetUserIdGuesser(userId);
 	}
 
 	return word;

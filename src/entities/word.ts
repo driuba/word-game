@@ -102,44 +102,11 @@ export class Word extends BaseEntity {
 		return insert(this, Word);
 	}
 
-	setExpired() {
-		return execute(
-			Word
-				.createQueryBuilder()
-				.update()
-				.set({
-					expired() {
-						return 'now()';
-					}
-				})
-				.where({
-					id: this.id
-				}),
-			this,
-			Word.getRepository().metadata
-		);
-	}
-
-	setUserIdGuesser(value: string) {
-		return execute(
-			Word
-				.createQueryBuilder()
-				.update()
-				.set({
-					userIdGuesser: value
-				})
-				.where({
-					id: this.id
-				}),
-			this,
-			Word.getRepository().metadata
-		);
-	}
-
 	tryAddScore(value: number) {
 		return execute(
 			Word
 				.createQueryBuilder()
+				.useTransaction(true)
 				.update()
 				.set({
 					score() {
@@ -147,12 +114,56 @@ export class Word extends BaseEntity {
 					}
 				})
 				.where(
-					'"Id" = :id AND COALESCE(now() - "Modified" > :interval, true)',
+					'"Active" AND ' +
+					'"Id" = :id AND ' +
+					'coalesce(now() - "Modified" > :interval, true)',
 					{
 						id: this.id,
-						interval: config.wg.wordTimeoutScore?.toISO()
+						interval: config.wg.wordTimeoutScore?.toISO() ?? null
 					}
 				),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	trySetExpired() {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.useTransaction(true)
+				.update()
+				.set({
+					expired() {
+						return 'now()';
+					}
+				})
+				.where(
+					'"Active" AND ' +
+					'"Id" = :id AND ' +
+					'(now() - "Created" > :intervalGlobal OR ' +
+					'now() - coalesce("Modified", "Created") > :intervalUsage)',
+					{
+						id: this.id,
+						intervalGlobal: config.wg.wordTimeoutGlobal?.toISO() ?? null,
+						intervalUsage: config.wg.wordTimeoutUsage?.toISO() ?? null
+					}
+				),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	trySetUserIdGuesser(value: string) {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.useTransaction(true)
+				.update()
+				.set({
+					userIdGuesser: value
+				})
+				.where('"Active" AND "Id" = :id', { id: this.id }),
 			this,
 			Word.getRepository().metadata
 		);

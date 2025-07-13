@@ -83,6 +83,7 @@ export async function insert<T extends BaseEntity>(entity: T, target: EntityTarg
 		dataSource
 			.getRepository(target)
 			.createQueryBuilder()
+			.useTransaction(true)
 			.insert()
 			.values(
 				Object.fromEntries(
@@ -111,6 +112,7 @@ export async function update<T extends BaseEntity>(entity: T, target: EntityTarg
 		dataSource
 			.getRepository(target)
 			.createQueryBuilder()
+			.useTransaction(true)
 			.update()
 			.set(
 				Object.fromEntries(
