@@ -13,6 +13,9 @@ node_modules/
 # DB scripts
 db/
 
+# DevContainer
+.devcontainer/
+
 # Docker
 .dockerignore
 Dockerfile

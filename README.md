@@ -13,6 +13,27 @@ Premise of the game:
 
 ### Slack SDK / node
 
+#### Node
+
+For node, I use [nvm for windows](https://github.com/coreybutler/nvm-windows) (or [zsh-nvm](https://github.com/lukechilds/zsh-nvm) on my linux machine).
+
+Install is simple, just check the version in `package.json` and install that. E.g:
+
+```shell
+nvm install 24.4.0
+```
+
+Enabling and installing `pnmp` can be done with `corepack`. E.g.:
+
+```shell
+corepack enable pnpm
+corepack install --global pnpm@10.13.1
+```
+
+Keep in mind that actual versions of the engine and package manager are maintained in `package.json` and `Dockerfile`.
+
+#### Project
+
 `package.json` is configured with running the app and migrations, however additional setup is required for secrets and database.
 
 Secrets are configurable via `.env` files.
@@ -24,7 +45,7 @@ Database credentials should be configured in `.local` environment files.
 Once database is initialized migrations can be performed by running:
 
 ```shell
-npm run typeorm:developmnent migration:run
+pnpm run typeorm:developmnent migration:run
 ```
 
 Keep in mind that environment file needs to be updated with *wg-admin* credentials.
@@ -32,7 +53,7 @@ Keep in mind that environment file needs to be updated with *wg-admin* credentia
 Running the application in node is done by:
 
 ```shell
-npm run start:development
+pnpm run start:development
 ```
 
 For the command `.env.development.local` file is expected with the following keys:
@@ -51,36 +72,36 @@ Database password is expected to be for *wg-user*.
 Local development is also possible (and probably easier) on docker. For this `docker-compose.build.yml` file should be edited such that valid top-level configurations are used.
 Currently, the file is set up for deployment into internal Toughlex infrastructure that uses docker swarm.
 
-The build configuration contains the following configuration that need to be updated.
+The build configuration contains the following configuration that needs to be updated.
 
 From:
 
 ```yaml
 secrets:
-	app:
-		file: "/mnt/efs/word-game/secrets/.env.app"
-	migration:
-		file: "/mnt/efs/word-game/secrets/.env.migration"
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 volumes:
-	db:
-		external: true
-		name: "word-game_db"
+  db:
+    external: true
+    name: "word-game_db"
 networks:
-	default:
-		external: true
-		name: "word-game_default"
+  default:
+    external: true
+    name: "word-game_default"
 ```
 
 To something like:
 
 ```yaml
 secrets:
-	app:
-		file: ".env.app.local"
-	migration:
-		file: ".env.migration.local"
+  app:
+    file: ".env.app.local"
+  migration:
+    file: ".env.migration.local"
 volumes:
-	db:
+  db:
 ```
 
 **All docker compose commands require `NODE_ENV` to be set, e.g. `export NODE_ENV=development` or by prefixing all docker compose command with `NODE_ENV=development`.**
@@ -126,7 +147,7 @@ Working with deployment assumes there is a configured location to check out the 
 ### Build
 
 Built image registry is required for deployment into stack.
-Build compose configuration assumes existence of local swarm registry running on `registry` domain name `80` port.
+Build compose configuration assumes existence of local swarm registry running on `registry` domain name, `80` port.
 
 ```shell
 docker compose -f docker-compose.build.yml --profile main build --push
@@ -144,6 +165,7 @@ Once services are build and pushed into the registry docker stack deployment can
 ```shell
 docker compose -f docker-compose.deploy.yml config | sed 1d | docker stack deploy -c - word-game
 ```
+
 To remove the stack use the command:
 
 ```shell
@@ -152,38 +174,38 @@ docker stack rm word-game
 
 Notes:
 
-While configuration expects secret to be accessible as files, that is only necessary if we wish to use secrets just with docker compose, **not stack**.  
+While configuration expects secrets to be accessible as files, that is only necessary if we wish to use secrets just with docker compose, **not stack**.  
 Docker swarm supports external secrets and configs which are shared via internal docker swarm [RAFT](https://en.wikipedia.org/wiki/Raft_(algorithm)) storage.
 As such they can be separately setup with `docker config` and `docker secret` commands and used as external.
 
-E.g. from:
+E.g., from:
 
 ```yaml
 secrets:
-	app:
-		file: "/mnt/efs/word-game/secrets/.env.app"
-	migration:
-		file: "/mnt/efs/word-game/secrets/.env.migration"
+  app:
+    file: "/mnt/efs/word-game/secrets/.env.app"
+  migration:
+    file: "/mnt/efs/word-game/secrets/.env.migration"
 ```
 
 to:
 
 ```yaml
 secrets:
-	app:
-		external: true
-		name: "word-game_app"
-	migration:
-		external: true
-		name: "word-game_migration"
+  app:
+    external: true
+    name: "word-game_app"
+  migration:
+    external: true
+    name: "word-game_migration"
 ```
 
 Network is intentionally configured as attachable for migration image to connect to database when run as compose container instead of swarm service.
 
 ```yaml
 networks:
-	default:
-		attachable: true
+  default:
+    attachable: true
 ```
 
 ### Migrate

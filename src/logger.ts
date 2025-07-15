@@ -1,9 +1,11 @@
-import type { Logger } from '@slack/bolt';
+import type { Logger as LoggerSlack } from '@slack/bolt';
 import { LogLevel } from '@slack/bolt';
+import type { Logger as LoggerTypeorm } from 'typeorm';
 import { createLogger, format, transports } from 'winston';
 import config from '~/config.js';
 
 export default {
+	//Slack
 	debug(...messages) {
 		for (const message of messages) {
 			logger.debug(message);
@@ -32,8 +34,46 @@ export default {
 		for (const message of messages) {
 			logger.warn(message);
 		}
+	},
+	//TypeORM
+	log(level, message) {
+		switch (level) {
+			case 'info': {
+				logger.info(message);
+
+				break;
+			}
+			case 'log': {
+				logger.debug(message);
+
+				break;
+			}
+			case 'warn': {
+				logger.warn(message);
+
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+	},
+	logMigration(message) {
+		logger.info(message);
+	},
+	logQuery(query) {
+		logger.debug(query);
+	},
+	logQueryError(error) {
+		logger.error(error);
+	},
+	logQuerySlow() {
+		// ignore
+	},
+	logSchemaBuild(message) {
+		logger.debug(message);
 	}
-} as const satisfies Logger;
+} as const satisfies LoggerSlack & LoggerTypeorm;
 
 let label: string | undefined;
 

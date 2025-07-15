@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon';
-import type { BaseEntity, EntityMetadata, EntityTarget, ValueTransformer } from 'typeorm';
+import type { BaseEntity, EntityMetadata, EntityTarget, InsertQueryBuilder, UpdateQueryBuilder, ValueTransformer } from 'typeorm';
 import { ApplicationError } from '~/utils/index.js';
-import dataSource from './index.js';
 
 export class DateTimeValueTransformer implements ValueTransformer {
 	from(value: Date | null) {
@@ -49,70 +48,19 @@ export class IntValueTransformer implements ValueTransformer {
  * https://github.com/typeorm/typeorm/issues/6803#issuecomment-864681382
  * https://github.com/typeorm/typeorm/issues/9870#issuecomment-1594665438
  */
-export async function insert<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
-	const metadata = dataSource.getMetadata(target);
-
-	const { raw: [raw] } = (await dataSource
-		.getRepository(target)
-		.createQueryBuilder()
-		.insert()
-		.values(
-			Object.fromEntries(
-				metadata.columns
-					.filter(c =>
-						c.isInsert &&
-						!(
-							c.isGenerated ||
-							c.isVirtual
-						)
-					)
-					.map(c => [c.propertyName, c.getEntityValue(entity)])
-			) as object & T
-		)
-		.returning('*')
-		.execute()) as { raw: [Record<string, unknown>] };
-
-	return setValues(entity, metadata, raw);
-}
-
-export async function update<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
-	const metadata = dataSource.getMetadata(target);
-
-	const { raw: [raw] } = (await dataSource
-		.getRepository(target)
-		.createQueryBuilder()
-		.update()
-		.set(
-			Object.fromEntries(
-				metadata.columns
-					.filter(c =>
-						c.isUpdate &&
-						!(
-							c.isGenerated ||
-							c.isVirtual
-						)
-					)
-					.map(c => [c.propertyName, c.getEntityValue(entity)])
-			) as object & T
-		)
-		.where(
-			Object.fromEntries(
-				metadata.columns
-					.filter(c => c.isPrimary)
-					.map(c => [c.propertyName, c.getEntityValue(entity)])
-			)
-		)
-		.returning('*')
-		.execute()) as { raw: [Record<string, unknown>] };
-
-	return setValues(entity, metadata, raw);
-}
-
-function setValues(
-	entity: BaseEntity,
-	metadata: EntityMetadata,
-	raw: Record<string, unknown>
+export async function execute<T extends BaseEntity>(
+	builder: InsertQueryBuilder<T> | UpdateQueryBuilder<T>,
+	entity: T,
+	metadata: EntityMetadata
 ) {
+	const { raw: [raw] } = await builder
+		.returning('*')
+		.execute() as { raw: [Record<string, unknown>?] };
+
+	if (!raw) {
+		return entity;
+	}
+
 	for (const column of metadata.columns) {
 		if (column.isVirtual) {
 			continue;
@@ -120,8 +68,73 @@ function setValues(
 
 		const value = raw[column.databaseName];
 
-		column.setEntityValue(entity, dataSource.driver.prepareHydratedValue(value, column));
+		column.setEntityValue(entity, builder.connection.driver.prepareHydratedValue(value, column));
 	}
 
 	return entity;
+}
+
+export async function insert<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
+	const { default: dataSource } = await import('./index.js');
+
+	const metadata = dataSource.getMetadata(target);
+
+	return await execute(
+		dataSource
+			.getRepository(target)
+			.createQueryBuilder()
+			.useTransaction(true)
+			.insert()
+			.values(
+				Object.fromEntries(
+					metadata.columns
+						.filter(c =>
+							c.isInsert &&
+							!(
+								c.isGenerated ||
+								c.isVirtual
+							)
+						)
+						.map(c => [c.propertyName, c.getEntityValue(entity)])
+				) as object & T
+			),
+		entity,
+		metadata
+	);
+}
+
+export async function update<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
+	const { default: dataSource } = await import('./index.js');
+
+	const metadata = dataSource.getMetadata(target);
+
+	return await execute(
+		dataSource
+			.getRepository(target)
+			.createQueryBuilder()
+			.useTransaction(true)
+			.update()
+			.set(
+				Object.fromEntries(
+					metadata.columns
+						.filter(c =>
+							c.isUpdate &&
+							!(
+								c.isGenerated ||
+								c.isVirtual
+							)
+						)
+						.map(c => [c.propertyName, c.getEntityValue(entity)])
+				) as object & T
+			)
+			.where(
+				Object.fromEntries(
+					metadata.columns
+						.filter(c => c.isPrimary)
+						.map(c => [c.propertyName, c.getEntityValue(entity)])
+				)
+			),
+		entity,
+		metadata
+	);
 }

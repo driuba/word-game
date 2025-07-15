@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import config from '~/config.js';
 import { assertWord, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
@@ -70,8 +69,6 @@ export async function setWord(channelId: string, userId: string, text: string) {
 }
 
 export async function* tryExpireWords() {
-	const now = DateTime.now();
-
 	const words = await Word.findBy({
 		active: true
 	});
@@ -79,14 +76,7 @@ export async function* tryExpireWords() {
 	for (const word of words) {
 		assertWord(word);
 
-		if (
-			config.wg.wordTimeoutGlobal && now.diff(word.created, 'days') > config.wg.wordTimeoutGlobal ||
-			config.wg.wordTimeoutUsage && now.diff(word.modified ?? word.created, 'hours') > config.wg.wordTimeoutUsage
-		) {
-			word.expired = now;
-
-			await word.update();
-		}
+		await word.trySetExpired();
 
 		if (!isWordActive(word)) {
 			yield word;
@@ -114,20 +104,12 @@ export async function tryScoreOrGuessWord(channelId: string, userId: string, tex
 	}
 
 	if (word.userIdCreator === userId) {
-		if (
-			word.modified &&
-			config.wg.wordTimeoutScore &&
-			DateTime.now().diff(word.modified, 'seconds') < config.wg.wordTimeoutScore
-		) {
-			return null;
-		}
-
-		word.score += Math.min(score, config.wg.wordScoreMax);
+		await word.tryAddScore(
+			Math.min(score, config.wg.wordScoreMax)
+		);
 	} else {
-		word.userIdGuesser = userId;
+		await word.trySetUserIdGuesser(userId);
 	}
-
-	await word.update();
 
 	return word;
 }

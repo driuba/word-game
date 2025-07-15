@@ -1,6 +1,7 @@
 import type { DateTime } from 'luxon';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer, insert, update } from './utils.js';
+import config from '~/config.js';
+import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -99,6 +100,73 @@ export class Word extends BaseEntity {
 
 	insert() {
 		return insert(this, Word);
+	}
+
+	tryAddScore(value: number) {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.useTransaction(true)
+				.update()
+				.set({
+					score() {
+						return `"Score" + ${value.toFixed()}`;
+					}
+				})
+				.where(
+					'"Active" AND ' +
+					'"Id" = :id AND ' +
+					'coalesce(now() - "Modified" > :interval, true)',
+					{
+						id: this.id,
+						interval: config.wg.wordTimeoutScore?.toISO() ?? null
+					}
+				),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	trySetExpired() {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.useTransaction(true)
+				.update()
+				.set({
+					expired() {
+						return 'now()';
+					}
+				})
+				.where(
+					'"Active" AND ' +
+					'"Id" = :id AND ' +
+					'(now() - "Created" > :intervalGlobal OR ' +
+					'now() - coalesce("Modified", "Created") > :intervalUsage)',
+					{
+						id: this.id,
+						intervalGlobal: config.wg.wordTimeoutGlobal?.toISO() ?? null,
+						intervalUsage: config.wg.wordTimeoutUsage?.toISO() ?? null
+					}
+				),
+			this,
+			Word.getRepository().metadata
+		);
+	}
+
+	trySetUserIdGuesser(value: string) {
+		return execute(
+			Word
+				.createQueryBuilder()
+				.useTransaction(true)
+				.update()
+				.set({
+					userIdGuesser: value
+				})
+				.where('"Active" AND "Id" = :id', { id: this.id }),
+			this,
+			Word.getRepository().metadata
+		);
 	}
 
 	update() {
