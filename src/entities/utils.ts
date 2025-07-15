@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import { ApplicationError } from '~/utils/index.js';
 import type { BaseEntity, EntityMetadata, EntityTarget, InsertQueryBuilder, UpdateQueryBuilder, ValueTransformer } from 'typeorm';
+import { ApplicationError } from '~/utils/index.js';
 
 export class DateTimeValueTransformer implements ValueTransformer {
 	from(value: Date | null) {
