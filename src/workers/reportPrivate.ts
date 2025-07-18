@@ -31,7 +31,7 @@ export default async function (this: App) {
 				continue;
 			}
 
-			if (word.expiration?.startOf('day') !== dateToday) {
+			if (!word.expiration || word.expiration.startOf('day') > dateToday) {
 				continue;
 			}
 
@@ -39,7 +39,7 @@ export default async function (this: App) {
 				channel: word.userId,
 				text: messages.reportPrivate({
 					...word,
-					expiration: word.expiration.toLocaleString(DateTime.TIME_WITH_SECONDS)
+					expiration: word.expiration.toLocaleString(DateTime.DATETIME_SHORT)
 				})
 			});
 		}

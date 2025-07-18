@@ -37,7 +37,7 @@ export function getWordExpiration(word: Word) {
 		);
 
 		if (expiration.isValid) {
-			return expiration === dateMax ? null : expiration;
+			return expiration.equals(dateMax) ? null : expiration;
 		}
 
 		return null;
