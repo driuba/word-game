@@ -13,22 +13,22 @@
 	"description": "Word game for your slack word game needs",
 	"devDependencies": {
 		"@eslint/js": "^9.31.0",
-		"@slack/cli-hooks": "^1.2.0",
+		"@slack/cli-hooks": "^1.2.1",
 		"@slack/types": "^2.15.0",
-		"@stylistic/eslint-plugin": "^5.1.0",
+		"@stylistic/eslint-plugin": "^5.2.0",
 		"@types/luxon": "^3.6.2",
-		"@types/node": "^24.0.13",
+		"@types/node": "^24.0.14",
 		"eslint": "^9.31.0",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.36.0",
-		"webpack": "^5.100.1",
+		"typescript-eslint": "^8.37.0",
+		"webpack": "^5.100.2",
 		"webpack-cli": "^6.0.1"
 	},
 	"engines": {
-		"node": "^24.4.0",
+		"node": "^24.4.1",
 		"pnpm": "^10.13.1"
 	},
 	"keywords": [
@@ -43,13 +43,13 @@
 		"build:development": "webpack build --config webpack.config.mts --mode development",
 		"build:production": "webpack build --config webpack.config.mts --mode production",
 		"lint": "eslint --flag unstable_native_nodejs_ts_config .",
-		"lint:fix": "pnpm run lint -- --fix",
+		"lint:fix": "pnpm run lint --fix",
 		"node:development": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.development --env-file-if-exists .env.development.local",
 		"node:production": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
 		"start:development": "pnpm run build:development && pnpm run node:development ./dist/app.js",
 		"start:production": "pnpm run build:production && pnpm run node:production ./dist/app.js",
-		"typeorm:development": "pnpm run node:development -- --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts",
-		"typeorm:production": "pnpm run node:production -- --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts"
+		"typeorm:development": "pnpm run node:development --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts --transaction each",
+		"typeorm:production": "pnpm run node:production --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts --transaction each"
 	},
 	"sideEffects": false,
 	"type": "module",

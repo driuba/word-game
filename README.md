@@ -20,7 +20,7 @@ For node, I use [nvm for windows](https://github.com/coreybutler/nvm-windows) (o
 Install is simple, just check the version in `package.json` and install that. E.g:
 
 ```shell
-nvm install 24.4.0
+nvm install 24.4.1
 ```
 
 Enabling and installing `pnmp` can be done with `corepack`. E.g.:
