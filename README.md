@@ -207,13 +207,23 @@ networks:
   default:
     attachable: true
 ```
-
+  
 ### Migrate
 
-Once services are deployed migration can be run same as with developments set up.
+Once services are deployed migration can be run same as with developments set up.  
+Currently there seems to be an issue with swarm overlay network -- if there is no running services on the node, compose cannot attach to the network.  
+The bug is reported as fixed, but from testing the issue seems to still be present. Relevant links:  
+* [bug report](https://github.com/docker/compose/issues/11894)
+* [Reddit post with similar case](https://www.reddit.com/r/docker/comments/1d6gmmf/compose_with_overlay_network_not_working/)
+* [StackOverflow question with similar case](https://stackoverflow.com/questions/77743294/attaching-to-an-remote-overlay-network-using-docker-compose)
+
+Due to these issues built image is run by itself via `docker run` as this CLI seems to work properly.
+`docker compose` is still used since that gives a convenient way to reuse cache and set entrypoint with command.
 
 ```shell
-docker compose -f docker-compose.build.yml --profile migration run --build --rm migration
+docker compose -f docker-compose.build.yml --profile migration build migration
+docker run --network=word-game_default --rm registry:80/word-game_migration:latest
+docker compose -f docker-compose.build.yml --profile migration run --rm migration
 docker image rm registry:80/word-game_migration:latest
 ```
 
