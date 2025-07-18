@@ -2,6 +2,10 @@ import config from '~/config.js';
 import { assertWord, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
+export function getActiveWords() {
+	return Word.findBy({ active: true });
+}
+
 export async function getCurrentWord(channelId: string) {
 	const word = await Word.findOneBy({
 		channelId,

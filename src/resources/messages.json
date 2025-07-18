@@ -39,7 +39,7 @@
 		"Nėr ko girtis, grybe tu."
 	],
 	"report": [
-		"Aš gyvas ir sveikas."
+		"Kanalas <@${channelId}> priklauso <@${userId}>"
 	],
 	"setWordSuccess": [
 		"Sveikinimai! tavo naujasis žodis yra *${word}*."

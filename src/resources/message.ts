@@ -55,15 +55,14 @@ function currentWordStatusPublic(values: { score: string, userId: string }) {
 	return replace(messages.currentWordStatusPublic, values);
 }
 
-function setWordSuccess(values: { word: string }) {
-	return replace(messages.setWordSuccess, values);
+function report(values: { channelId: string, userId: string }[]) {
+	return values
+		.map(v => replace(messages.report, v))
+		.join('\n');
 }
 
-function replace(resource: string, values: Record<string, string>) {
-	return resource.replace(
-		textReplacement,
-		(_, key) => values[key as keyof typeof values]
-	);
+function setWordSuccess(values: { word: string }) {
+	return replace(messages.setWordSuccess, values);
 }
 
 export default {
@@ -77,5 +76,13 @@ export default {
 	currentWordSetter,
 	currentWordStatusPrivate,
 	currentWordStatusPublic,
+	report,
 	setWordSuccess
 };
+
+function replace(resource: string, values: Record<string, string>) {
+	return resource.replace(
+		textReplacement,
+		(_, key) => values[key as keyof typeof values]
+	);
+}
