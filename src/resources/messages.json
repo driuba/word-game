@@ -41,6 +41,9 @@
 	"report": [
 		"Kanalas <@${channelId}> priklauso <@${userId}>"
 	],
+	"reportPrivate": [
+		"Sveikas `drauge` :proletariatas:! Noriu tave informuot, kad tu turi aktyvų žodį ${word} kanale <@${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir šiandien ${expiration} išeina iš galiojimo."
+	],
 	"setWordSuccess": [
 		"Sveikinimai! tavo naujasis žodis yra *${word}*."
 	]

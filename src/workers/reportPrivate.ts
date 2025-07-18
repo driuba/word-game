@@ -1,7 +1,7 @@
 import type { App } from '@slack/bolt';
 import { DateTime } from 'luxon';
 import { getActiveWords, getWordExpiration } from '~/core/index.js';
-import { messages } from "~/resources/index.js";
+import { messages } from '~/resources/index.js';
 
 const dateToday = DateTime.now().startOf('day');
 
@@ -19,7 +19,7 @@ export default async function (this: App) {
 		const words = await getActiveWords().then(
 			ws => ws.map(w => ({
 				channelId: w.channelId,
-				expiration: getWordExpiration(w)?.startOf('day'),
+				expiration: getWordExpiration(w),
 				score: w.score.toFixed(),
 				userId: w.userIdCreator,
 				word: w.word
@@ -31,7 +31,7 @@ export default async function (this: App) {
 				continue;
 			}
 
-			if (word.expiration !== dateToday) {
+			if (word.expiration?.startOf('day') !== dateToday) {
 				continue;
 			}
 
@@ -39,7 +39,7 @@ export default async function (this: App) {
 				channel: word.userId,
 				text: messages.reportPrivate({
 					...word,
-					expiration: word.expiration.toLocaleString(DateTime.DATETIME_SHORT)
+					expiration: word.expiration.toLocaleString(DateTime.TIME_WITH_SECONDS)
 				})
 			});
 		}

@@ -70,9 +70,7 @@ function report(values: { channelId: string, userId: string }[]) {
 }
 
 function reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
-	throw new Error('Not implemented.');
-
-	return '';
+	return replace(messages.reportPrivate, values);
 }
 
 function setWordSuccess(values: { word: string }) {
