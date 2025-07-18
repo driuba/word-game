@@ -47,8 +47,16 @@ function currentWordSetter(values: { userId: string }) {
 	return replace(messages.currentWordSetter, values);
 }
 
-function currentWordStatusPrivate(values: { score: string, word: string }) {
-	return replace(messages.currentWordStatusPrivate, values);
+function currentWordStatusPrivate(values: { expiration?: string, score: string, word: string }) {
+	return replace(
+		messages.currentWordStatusPrivate,
+		{
+			...values,
+			expiration: typeof values.expiration === 'undefined'
+				? 'niekada neišeis iš galiojimo'
+				: `išeis iš galiojimo ${values.expiration}`
+		}
+	);
 }
 
 function currentWordStatusPublic(values: { score: string, userId: string }) {

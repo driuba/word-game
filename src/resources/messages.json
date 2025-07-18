@@ -24,7 +24,7 @@
 		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!*"
 	],
 	"currentWordStatusPrivate": [
-		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_."
+		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_ ir ${expiration}."
 	],
 	"currentWordStatusPublic": [
 		"<@${userId}> nori pasigirti, kad jų žodis surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau..."

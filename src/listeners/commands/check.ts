@@ -1,8 +1,11 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { DateTime } from 'luxon';
+import config from '~/config.js';
 import { getLatestWord } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
+
+const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999');
 
 export default async function (
 	{
@@ -29,9 +32,15 @@ export default async function (
 
 	if (isWordActive(word)) {
 		if (word.userIdCreator === userId) {
+			const expiration = DateTime.min(
+				config.wg.wordTimeoutGlobal ? word.created.plus(config.wg.wordTimeoutGlobal) : dateMax,
+				config.wg.wordTimeoutUsage ? (word.modified ?? word.created).plus(config.wg.wordTimeoutUsage) : dateMax
+			);
+
 			await respond({
 				response_type: 'ephemeral',
 				text: messages.currentWordStatusPrivate({
+					expiration:  expiration === dateMax ? undefined : expiration.toLocaleString(DateTime.DATETIME_SHORT),
 					score: word.score.toFixed(),
 					word: word.word
 				})

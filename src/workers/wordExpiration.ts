@@ -9,8 +9,19 @@ export default async function (this: App) {
 
 	this.logger.info('Starting expiration.');
 
+	const channelIds = await this.client.users
+		.conversations({
+			exclude_archived: true,
+			types: 'public_channel,private_channel'
+		})
+		.then(r => new Set(r.channels?.map(c => c.id)));
+
 	for await (const word of tryExpireWords()) {
 		try {
+			if (!channelIds.has(word.channelId)) {
+				continue;
+			}
+
 			await this.client.chat.postMessage({
 				channel: word.channelId,
 				text: messages.currentWordExpiredPublic({
