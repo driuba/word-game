@@ -69,6 +69,12 @@ function report(values: { channelId: string, userId: string }[]) {
 		.join('\n');
 }
 
+function reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
+	throw new Error('Not implemented.');
+
+	return '';
+}
+
 function setWordSuccess(values: { word: string }) {
 	return replace(messages.setWordSuccess, values);
 }
@@ -85,6 +91,7 @@ export default {
 	currentWordStatusPrivate,
 	currentWordStatusPublic,
 	report,
+	reportPrivate,
 	setWordSuccess
 };
 
