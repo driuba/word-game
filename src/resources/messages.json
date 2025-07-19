@@ -24,7 +24,7 @@
 		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!*"
 	],
 	"currentWordStatusPrivate": [
-		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_."
+		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_ ir _${expiration}_."
 	],
 	"currentWordStatusPublic": [
 		"<@${userId}> nori pasigirti, kad jų žodis surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau..."
@@ -39,7 +39,10 @@
 		"Nėr ko girtis, grybe tu."
 	],
 	"report": [
-		"Aš gyvas ir sveikas."
+		"Kanalas <#${channelId}> priklauso <@${userId}>"
+	],
+	"reportPrivate": [
+		"Sveikas `drauge` :proletariatas:! Noriu tave informuot, kad tu turi aktyvų žodį *${word}* kanale <#${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir _${expiration}_ išeina (išėjo) iš galiojimo."
 	],
 	"setWordSuccess": [
 		"Sveikinimai! tavo naujasis žodis yra *${word}*."

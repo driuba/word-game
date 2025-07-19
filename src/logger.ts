@@ -79,6 +79,7 @@ let label: string | undefined;
 
 const logger = createLogger({
 	format: format.combine(...getFormats()),
+	level: config.nodeEnv === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
 	levels: Object.fromEntries(
 		Object
 			.values(LogLevel)

@@ -3,6 +3,7 @@ import type { CronJobParams, CronOnCompleteCommand } from 'cron';
 import { CronJob } from 'cron';
 import config from '~/config.js';
 import reportHandler from './report.js';
+import reportPrivateHandler from '~/workers/reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
 
 export default function (app: App) {
@@ -46,6 +47,18 @@ function* getWorkers(app: App) {
 			reportHandler
 		);
 	}
+
+	app.logger.info('Starting personal report worker.');
+
+	yield createJob(
+		app,
+		'0 0 9 * * 1-5',
+		errorHandler,
+		() => {
+			app.logger.info('Stopping personal report worker.');
+		},
+		reportPrivateHandler
+	);
 
 	if (config.wg.wordTimeoutGlobal || config.wg.wordTimeoutUsage) {
 		app.logger.info('Starting word expiration worker.');

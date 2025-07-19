@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getLatestWord } from '~/core/index.js';
+import { getLatestWord, getWordExpiration } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
 
@@ -32,6 +32,7 @@ export default async function (
 			await respond({
 				response_type: 'ephemeral',
 				text: messages.currentWordStatusPrivate({
+					expiration: getWordExpiration(word)?.toLocaleString(DateTime.DATETIME_SHORT),
 					score: word.score.toFixed(),
 					word: word.word
 				})

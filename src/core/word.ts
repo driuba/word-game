@@ -1,6 +1,18 @@
+import { DateTime } from 'luxon';
 import config from '~/config.js';
-import { assertWord, isWordActive, Word } from '~/entities/index.js';
+import { assertWord, assertWords, isWordActive, Word } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
+
+const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999');
+
+// TODO: rename methods -- reorder specifiers
+export async function getActiveWords() {
+	const words = await Word.findBy({ active: true });
+
+	assertWords(words);
+
+	return words.filter(isWordActive);
+}
 
 export async function getCurrentWord(channelId: string) {
 	const word = await Word.findOneBy({
@@ -13,6 +25,25 @@ export async function getCurrentWord(channelId: string) {
 	}
 
 	return word;
+}
+
+export function getWordExpiration(word: Word) {
+	assertWord(word);
+
+	if (isWordActive(word)) {
+		const expiration = DateTime.min(
+			config.wg.wordTimeoutGlobal ? word.created.plus(config.wg.wordTimeoutGlobal) : dateMax,
+			config.wg.wordTimeoutUsage ? (word.modified ?? word.created).plus(config.wg.wordTimeoutUsage) : dateMax
+		);
+
+		if (expiration.isValid) {
+			return expiration.equals(dateMax) ? null : expiration;
+		}
+
+		return null;
+	}
+
+	return word.expired ?? word.modified;
 }
 
 export async function getLatestWord(channelId: string) {
