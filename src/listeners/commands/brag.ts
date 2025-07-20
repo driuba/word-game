@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getLatestWord } from '~/core/index.js';
+import { getWordLatest } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
 
@@ -15,7 +15,7 @@ export default async function (
 ) {
 	await ack();
 
-	const word = await getLatestWord(channelId);
+	const word = await getWordLatest(channelId);
 
 	if (word && isWordActive(word) && word.userIdCreator === userId) {
 		await respond({

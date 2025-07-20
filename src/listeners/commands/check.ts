@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getLatestWord, getWordExpiration } from '~/core/index.js';
+import { getWordExpiration, getWordLatest } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
 
@@ -16,7 +16,7 @@ export default async function (
 ) {
 	await ack();
 
-	const word = await getLatestWord(channelId);
+	const word = await getWordLatest(channelId);
 
 	if (!word) {
 		await respond({

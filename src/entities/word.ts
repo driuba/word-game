@@ -181,7 +181,7 @@ export function assertWord(_word: Word): asserts _word is Active | Inactive {
 	// ignore
 }
 
-export function assertWords(_words: Word[]): asserts _words is Active[] | Inactive[] {
+export function assertWords(_words: Word[]): asserts _words is (Active | Inactive)[] {
 	// ignore
 }
 

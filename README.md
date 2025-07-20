@@ -222,7 +222,7 @@ Due to these issues built image is run by itself via `docker run` as this CLI se
 
 ```shell
 docker compose -f docker-compose.build.yml --profile migration build migration
-docker run --network=word-game_default --rm registry:80/word-game_migration:latest
+docker run --init --network=word-game_default --rm registry:80/word-game_migration:latest pnpm run typeorm:${NODE_ENV} migration:run
 docker compose -f docker-compose.build.yml --profile migration run --rm migration
 docker image rm registry:80/word-game_migration:latest
 ```
