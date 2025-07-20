@@ -1,6 +1,6 @@
 import type { App } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getActiveWords, getWordExpiration } from '~/core/index.js';
+import { getWordExpiration, getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 
 const dateToday = DateTime
@@ -18,7 +18,7 @@ export default async function (this: App) {
 		.then(r => new Set(r.channels?.map(c => c.id)));
 
 	if (channelIds.size) {
-		const words = await getActiveWords().then(
+		const words = await getWordsActive().then(
 			ws => ws.map(w => ({
 				channelId: w.channelId,
 				expiration: getWordExpiration(w),

@@ -1,6 +1,6 @@
 import type { App } from '@slack/bolt';
 import config from '~/config.js';
-import { getActiveWords } from '~/core/index.js';
+import { getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
@@ -11,7 +11,7 @@ export default async function (this: App) {
 
 	this.logger.info('Stating report.');
 
-	const words = await getActiveWords();
+	const words = await getWordsActive();
 
 	await this.client.chat.postMessage({
 		channel: config.wg.reportingChatId,

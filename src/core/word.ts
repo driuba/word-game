@@ -5,16 +5,7 @@ import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/uti
 
 const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999');
 
-// TODO: rename methods -- reorder specifiers
-export async function getActiveWords() {
-	const words = await Word.findBy({ active: true });
-
-	assertWords(words);
-
-	return words.filter(isWordActive);
-}
-
-export async function getCurrentWord(channelId: string) {
+export async function getWordCurrent(channelId: string) {
 	const word = await Word.findOneBy({
 		channelId,
 		active: true
@@ -25,6 +16,31 @@ export async function getCurrentWord(channelId: string) {
 	}
 
 	return word;
+}
+
+export async function getWordLatest(channelId: string) {
+	const word = await Word.findOne({
+		order: {
+			created: 'DESC'
+		},
+		where: {
+			channelId
+		}
+	});
+
+	if (word) {
+		assertWord(word);
+	}
+
+	return word;
+}
+
+export async function getWordsActive() {
+	const words = await Word.findBy({ active: true });
+
+	assertWords(words);
+
+	return words.filter(isWordActive);
 }
 
 export function getWordExpiration(word: Word) {
@@ -46,23 +62,6 @@ export function getWordExpiration(word: Word) {
 	return word.expired ?? word.modified;
 }
 
-export async function getLatestWord(channelId: string) {
-	const word = await Word.findOne({
-		order: {
-			created: 'DESC'
-		},
-		where: {
-			channelId
-		}
-	});
-
-	if (word) {
-		assertWord(word);
-	}
-
-	return word;
-}
-
 export async function setWord(channelId: string, userId: string, text: string) {
 	text = text.trim();
 
@@ -70,7 +69,7 @@ export async function setWord(channelId: string, userId: string, text: string) {
 		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
 
-	const latestWord = await getLatestWord(channelId);
+	const latestWord = await getWordLatest(channelId);
 
 	if (latestWord) {
 		if (isWordActive(latestWord)) {
@@ -120,7 +119,7 @@ export async function tryScoreOrGuessWord(channelId: string, userId: string, tex
 		return null;
 	}
 
-	const word = await getCurrentWord(channelId);
+	const word = await getWordCurrent(channelId);
 
 	if (!word) {
 		return null;
