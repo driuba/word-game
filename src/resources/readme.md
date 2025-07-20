@@ -2,10 +2,10 @@
 
 Žodžių žaidimas yra labai paprastas.
 
-  \1. Žmogus kanale nustato žodį, kurį kiti kanalo dalyviai turi atspėti;
-  \2. Žodis yra vertinamas taškais, taškai gaunami žmogui panaudojus žodį žinutėje;
-  \3. Kiti žaidėjai gali atspėti žodį irgi jį panaudodami žinutėje;
-  \4. Dalyvis, atspėjęs žodį, gauna teisę nustatyti sekantį žaidimo žodį ir žaidimas tęsiasi nuo ta pačia tvarka.
+  1. Žmogus kanale nustato žodį, kurį kiti kanalo dalyviai turi atspėti;
+  2. Žodis yra vertinamas taškais, taškai gaunami žmogui panaudojus žodį žinutėje;
+  3. Kiti žaidėjai gali atspėti žodį irgi jį panaudodami žinutėje;
+  4. Dalyvis, atspėjęs žodį, gauna teisę nustatyti sekantį žaidimo žodį ir žaidimas tęsiasi nuo ta pačia tvarka.
 
 Žodžių galiojimas:
 
@@ -16,10 +16,10 @@
 
 Taisyklės žodžiams:
 
-  \1. Žodžiai privalo būti sudaryti tik iš raidžių, skaičiai negalimi;
-  \2. Žodžiai ignoruoja didžiąsias ir mažąsias raides;
-  \3. Žodžiai gali turėti lietuviškas raides (ir kitas Unicode raides) ir privalo sutapti tiek pelnant taškus, tiek aspėjant;
-  \4. Žodžiai yra atskiriami bet kokiu simboliu kuris nėra raidė (skyryba, tarpai ir pan.), *išskyrus skaičius* - skaičiai nėra traktuojami kaip ribos nors ir negali būti nustatomo žodžio dalis;
+  1. Žodžiai privalo būti sudaryti tik iš raidžių, skaičiai negalimi;
+  2. Žodžiai ignoruoja didžiąsias ir mažąsias raides;
+  3. Žodžiai gali turėti lietuviškas raides (ir kitas Unicode raides) ir privalo sutapti tiek pelnant taškus, tiek aspėjant;
+  4. Žodžiai yra atskiriami bet kokiu simboliu kuris nėra raidė (skyryba, tarpai ir pan.), *išskyrus skaičius* - skaičiai nėra traktuojami kaip ribos nors ir negali būti nustatomo žodžio dalis;
 
 Komandos:
 
@@ -27,7 +27,7 @@ Komandos:
   • `/wg-brag` - leidžia pasigirti, kiek surinkai taškų neišduodant žodžio.
   • `/wg-check` - parodo kas dabar yra nustatęs žodį, o, jei tikrina pats žodžio savininkas, parodo jam žodį ir kiek taškų jis surinko.
   • `/wg-leaderboard` - parodo geriausius kanalo žaidėjus ir jų taškus.
-  • `/wg-leave` - išmeta botą iš kanalo (reikalinga viešiems kanalams).
+  • `/wg-leave` - išmeta botą iš kanalo (reikalinga viešiems kanalams, privačiuose kanaluose galima tiesiog naudoti `/kick @Word game`).
   • `/wg-readme` - parodo šią pagalbą.
   • `/wg-set-word` - nustato žodį, jei žaidėjas turi tokią teisę.
 
