@@ -3,7 +3,9 @@ import { DateTime } from 'luxon';
 import { getActiveWords, getWordExpiration } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 
-const dateToday = DateTime.now().startOf('day');
+const dateToday = DateTime
+	.now()
+	.startOf('day');
 
 export default async function (this: App) {
 	this.logger.info('Stating personal report.');

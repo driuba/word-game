@@ -64,9 +64,11 @@ function currentWordStatusPublic(values: { score: string, userId: string }) {
 }
 
 function report(values: { channelId: string, userId: string }[]) {
-	return values
-		.map(v => replace(messages.report, v))
-		.join('\n');
+	return '```' +
+		values
+			.map(v => `  • ${replace(messages.report, v)}`)
+			.join('\n') +
+		'```';
 }
 
 function reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
