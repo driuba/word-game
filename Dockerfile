@@ -12,12 +12,10 @@ ARG PNPM_VERSION
 
 ENV NODE_ENV="${NODE_ENV}"
 
-RUN --mount=type=cache,target=/root/.cache/node/corepack \
-    corepack enable pnpm
-RUN --mount=type=cache,target=/root/.cache/node/corepack \
-    corepack install --global pnpm@${PNPM_VERSION}
-RUN --mount=type=cache,target=/var/cache/apk \
+RUN --mount=type=cache,id=apk,target=/var/cache/apk \
     apk add tzdata
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm install --global pnpm@${PNPM_VERSION}
 
 FROM base AS dependency-build
 
@@ -27,7 +25,7 @@ WORKDIR /home/node/build
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
-    --mount=type=cache,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
+    --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile
 
 FROM dependency-build AS build
@@ -46,7 +44,7 @@ WORKDIR /home/node/app
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
-    --mount=type=cache,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
+    --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile --prod
 
 FROM dependency-deploy AS deploy
