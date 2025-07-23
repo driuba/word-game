@@ -39,6 +39,21 @@ abstract class Db {
 	}
 
 	@lazy
+	static get port() {
+		if (!process.env.DB_PORT) {
+			return 5432;
+		}
+
+		const value = parseInt(process.env.DB_PORT, 10);
+
+		if (value > 0) {
+			return value;
+		}
+
+		throw new ApplicationError('DB_PORT is invalid.', 'CONFIG_INVALID', { value: process.env.DB_PORT });
+	}
+
+	@lazy
 	static get schema() {
 		if (process.env.DB_SCHEMA) {
 			return process.env.DB_SCHEMA;
