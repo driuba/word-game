@@ -41,8 +41,8 @@ services:
       cache_from:
         - "registry:80/word-game_app:latest"
       target: "build"
-    command: "migration:run"
-    entrypoint: "pnpm run typeorm:${NODE_ENV}"
+    command: "migrate:${NODE_ENV}"
+    entrypoint: "pnpm run"
     image: "registry:80/word-game_migration:latest"
     init: true
     profiles:

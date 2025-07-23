@@ -23,7 +23,7 @@ Install is simple, just check the version in `package.json` and install that. E.
 nvm install 24.4.1
 ```
 
-Enabling and installing `pnmp` can be done with `corepack`. E.g.:
+Enabling and installing `pnpm` can be done with `corepack`. E.g.:
 
 ```shell
 corepack enable pnpm
@@ -222,8 +222,7 @@ Due to these issues built image is run by itself via `docker run` as this CLI se
 
 ```shell
 docker compose -f docker-compose.build.yml --profile migration build migration
-docker run --init --network=word-game_default --rm registry:80/word-game_migration:latest pnpm run typeorm:${NODE_ENV} migration:run
-docker compose -f docker-compose.build.yml --profile migration run --rm migration
+docker run --init --network=word-game_default --rm registry:80/word-game_migration:latest pnpm run migrate:${NODE_ENV}
 docker image rm registry:80/word-game_migration:latest
 ```
 
