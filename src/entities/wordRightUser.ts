@@ -40,4 +40,12 @@ export class WordRightUser extends BaseEntity {
 		update: false
 	})
 	readonly userId!: string;
+
+	@Column({
+		name: 'WordRightId',
+		nullable: false,
+		type: 'integer',
+		update: false
+	})
+	readonly wordRightId!: number;
 }

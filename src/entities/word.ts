@@ -1,7 +1,8 @@
 import type { DateTime } from 'luxon';
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, Index, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
 import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
+import type { WordRight } from './wordRight.js';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -69,6 +70,13 @@ export class Word extends BaseEntity {
 		update: false
 	})
 	readonly modified!: DateTime<true> | null;
+
+	@OneToOne('WordRights', (wr: WordRight) => wr.word, {
+		cascade: false,
+		eager: false,
+		nullable: false
+	})
+	readonly right!: WordRight;
 
 	@Column({
 		length: 50,
@@ -174,17 +182,13 @@ export class Word extends BaseEntity {
 	}
 }
 
-type Active = Word & { active: true, expired: null, userIdGuesser: null };
-type Inactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+export type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
+export type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
 
-export function assertWord(_word: Word): asserts _word is Active | Inactive {
+export function assertWord(_word: Word): asserts _word is WordActive | WordInactive {
 	// ignore
 }
 
-export function assertWords(_words: Word[]): asserts _words is (Active | Inactive)[] {
-	// ignore
-}
-
-export function isWordActive(word: Active | Inactive): word is Active {
+export function isWordActive(word: WordActive | WordInactive): word is WordActive {
 	return word.active;
 }
