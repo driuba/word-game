@@ -3,7 +3,7 @@
 	"author": "Andrius Andrikonis",
 	"dependencies": {
 		"@slack/bolt": "^4.4.0",
-		"cron": "^4.3.2",
+		"cron": "^4.3.3",
 		"luxon": "^3.7.1",
 		"pg": "^8.16.3",
 		"reflect-metadata": "^0.2.2",
@@ -12,24 +12,24 @@
 	},
 	"description": "Word game for your slack word game needs",
 	"devDependencies": {
-		"@eslint/js": "^9.31.0",
+		"@eslint/js": "^9.33.0",
 		"@slack/cli-hooks": "^1.2.1",
 		"@slack/types": "^2.15.0",
-		"@stylistic/eslint-plugin": "^5.2.2",
-		"@types/luxon": "^3.6.2",
-		"@types/node": "^24.1.0",
-		"eslint": "^9.31.0",
+		"@stylistic/eslint-plugin": "^5.2.3",
+		"@types/luxon": "^3.7.1",
+		"@types/node": "^24.2.1",
+		"eslint": "^9.33.0",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.38.0",
-		"webpack": "^5.100.2",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.39.1",
+		"webpack": "^5.101.0",
 		"webpack-cli": "^6.0.1"
 	},
 	"engines": {
-		"node": "^24.4.1",
-		"pnpm": "^10.13.1"
+		"node": "^24.5.0",
+		"pnpm": "^10.14.0"
 	},
 	"keywords": [
 		"word-game",
@@ -43,7 +43,7 @@
 		"build:production": "webpack build --config webpack.config.mts --mode production",
 		"lint": "eslint --flag unstable_native_nodejs_ts_config .",
 		"lint:fix": "pnpm run lint --fix",
-		"migrate:development":  "pnpm run typeorm:development --transaction each migration:run",
+		"migrate:development": "pnpm run typeorm:development --transaction each migration:run",
 		"migrate:production": "pnpm run typeorm:production --transaction each migration:run",
 		"node:development": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.development --env-file-if-exists .env.development.local",
 		"node:production": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
