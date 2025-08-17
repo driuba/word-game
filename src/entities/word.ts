@@ -1,8 +1,7 @@
 import type { DateTime } from 'luxon';
-import { BaseEntity, Column, Entity, Index, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
 import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
-import type { WordRight } from './wordRight.js';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -70,13 +69,6 @@ export class Word extends BaseEntity {
 		update: false
 	})
 	readonly modified!: DateTime<true> | null;
-
-	@OneToOne('WordRights', (wr: WordRight) => wr.word, {
-		cascade: false,
-		eager: false,
-		nullable: false
-	})
-	readonly right!: WordRight;
 
 	@Column({
 		length: 50,
