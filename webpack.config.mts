@@ -53,5 +53,5 @@ export default {
 		},
 		extensions: ['.ts']
 	},
-	target: 'node24.5'
+	target: 'node24.6'
 } as const satisfies Configuration;
