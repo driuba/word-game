@@ -1,46 +1,29 @@
+/** TODO:
+ * [ ] word guess and right setting
+ * [ ] word expiration and right setting
+ * [x] word set and right usage
+ * [ ] Word guess and word right insert should be one transaction.
+ * [ ] Word set and word right removal should be one transactions.
+ *   Select locks should be enough for to solve race conditions.
+ */
+
 import { DateTime } from 'luxon';
+import type { EntityManager } from 'typeorm';
 import config from '~/config.js';
-import { assertWord, assertWords, isWordActive, Word } from '~/entities/index.js';
+import type { WordActive } from '~/entities/index.js';
+import dataSource, { assertWord, isWordActive, Word, WordRight } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
-const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999');
+const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999') as DateTime<true>;
 
-export async function getWordCurrent(channelId: string) {
-	const word = await Word.findOneBy({
-		channelId,
-		active: true
-	});
+export async function getWordsActive(channelId?: string) {
+	const filter = { active: true } as { channelId?: string, active: true };
 
-	if (word) {
-		assertWord(word);
+	if (channelId) {
+		filter.channelId = channelId;
 	}
 
-	return word;
-}
-
-export async function getWordLatest(channelId: string) {
-	const word = await Word.findOne({
-		order: {
-			created: 'DESC'
-		},
-		where: {
-			channelId
-		}
-	});
-
-	if (word) {
-		assertWord(word);
-	}
-
-	return word;
-}
-
-export async function getWordsActive() {
-	const words = await Word.findBy({ active: true });
-
-	assertWords(words);
-
-	return words.filter(isWordActive);
+	return await Word.findBy(filter) as WordActive[];
 }
 
 export function getWordExpiration(word: Word) {
@@ -52,50 +35,10 @@ export function getWordExpiration(word: Word) {
 			config.wg.wordTimeoutUsage ? (word.modified ?? word.created).plus(config.wg.wordTimeoutUsage) : dateMax
 		);
 
-		if (expiration.isValid) {
-			return expiration.equals(dateMax) ? null : expiration;
-		}
-
-		return null;
+		return expiration.equals(dateMax) ? null : expiration;
 	}
 
 	return word.expired ?? word.modified;
-}
-
-export async function setWord(channelId: string, userId: string, text: string) {
-	text = text.trim();
-
-	if (!text.match(wordValidationPattern)?.length) {
-		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
-	}
-
-	const latestWord = await getWordLatest(channelId);
-
-	if (latestWord) {
-		if (isWordActive(latestWord)) {
-			throw new ApplicationError('Word is already set.', 'OPERATION_INVALID');
-		}
-
-		if (latestWord.expired) {
-			if (latestWord.userIdCreator === userId) {
-				throw new ApplicationError('Word has already expired.', 'USER_INVALID', { expired: latestWord.expired });
-			}
-		} else if (latestWord.userIdGuesser !== userId) {
-			throw new ApplicationError('Only the user that guessed the last word can set the next one.', 'USER_INVALID');
-		}
-	}
-
-	const newWord = Word.create({
-		channelId,
-		userIdCreator: userId,
-		word: text
-	});
-
-	await newWord.insert();
-
-	assertWord(newWord);
-
-	return newWord;
 }
 
 export async function* tryExpireWords() {
@@ -114,32 +57,84 @@ export async function* tryExpireWords() {
 	}
 }
 
-export async function tryScoreOrGuessWord(channelId: string, userId: string, text?: string) {
+export async function* tryScoreOrGuessWords(channelId: string, userId: string, text?: string) {
 	if (!text) {
 		return null;
 	}
 
-	const word = await getWordCurrent(channelId);
+	const wordsActive = await getWordsActive(channelId);
 
-	if (!word) {
-		return null;
+	for (const word of wordsActive) {
+		const pattern = wordGuessPattern(word.word);
+
+		const score = text.match(pattern)?.length ?? 0;
+
+		if (!score) {
+			continue;
+		}
+
+		if (word.userIdCreator === userId) {
+			await word.tryAddScore(
+				Math.min(score, config.wg.wordScoreMax)
+			);
+		} else {
+			await word.trySetUserIdGuesser(userId);
+		}
+
+		yield word as Word;
+	}
+}
+
+export function trySetWord(channelId: string, userId: string, text: string) {
+	text = text.trim();
+
+	if (!text.match(wordValidationPattern)?.length) {
+		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
 
-	const pattern = wordGuessPattern(word.word);
+	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, userId, text));
+}
 
-	const score = text.match(pattern)?.length ?? 0;
+async function runSetWordTransaction(this: EntityManager, channelId: string, userId: string, text: string) {
+	await WordRight.lock(this);
 
-	if (!score) {
-		return null;
+	const rights = await WordRight.where(channelId, this);
+
+	if (!rights.length) {
+		throw new ApplicationError('No active word rights.', 'OPERATION_INVALID');
 	}
 
-	if (word.userIdCreator === userId) {
-		await word.tryAddScore(
-			Math.min(score, config.wg.wordScoreMax)
-		);
-	} else {
-		await word.trySetUserIdGuesser(userId);
+	let right: WordRight | undefined;
+
+	for (const rightCandidate of rights) {
+		if (!rightCandidate.users.some(u => u.userId === userId)) {
+			continue;
+		}
+
+		if (
+			!right ||
+			rightCandidate.users.length < right.users.length ||
+			rightCandidate.users.length === right.users.length && rightCandidate.created < right.created
+		) {
+			right = rightCandidate;
+		}
 	}
 
-	return word;
+	if (!right) {
+		throw new ApplicationError('User has no right to set a word.', 'USER_INVALID');
+	}
+
+	await right.delete(this);
+
+	const newWord = Word.create({
+		channelId,
+		userIdCreator: userId,
+		word: text
+	});
+
+	await newWord.insert(this);
+
+	assertWord(newWord);
+
+	return newWord;
 }

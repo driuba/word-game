@@ -1,7 +1,7 @@
 import type { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer } from './utils.js';
+import { DateTimeValueTransformer, deleteEntity } from './utils.js';
 import type { WordRightUser } from './wordRightUser.js';
 
 const tableName = 'WordRights' as const;
@@ -41,7 +41,11 @@ export class WordRight extends BaseEntity {
 	})
 	readonly users!: WordRightUser[];
 
-	static get(channelId: string, entityManager?: EntityManager) {
+	static lock(entityManager: EntityManager) {
+		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
+	}
+
+	static where(channelId: string, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
 				.getRepository(this)
@@ -55,5 +59,9 @@ export class WordRight extends BaseEntity {
 			: this.find({
 				where: { channelId }
 			});
+	}
+
+	delete(entityManager?: EntityManager) {
+		return deleteEntity(this, WordRight, entityManager);
 	}
 }

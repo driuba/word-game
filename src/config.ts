@@ -137,6 +137,21 @@ abstract class Wg {
 	}
 
 	@lazy
+	static get wordCountMax() {
+		if (!process.env.WG_WORD_COUNT_MAX) {
+			return 1;
+		}
+
+		const value = parseInt(process.env.WG_WORD_COUNT_MAX, 10);
+
+		if (value > 0) {
+			return value;
+		}
+
+		throw new ApplicationError('WG_WORD_COUNT_MAX is invalid.', 'CONFIG_INVALID', { value: process.env.WG_WORD_COUNT_MAX });
+	}
+
+	@lazy
 	static get wordScoreMax() {
 		if (!process.env.WG_WORD_SCORE_MAX) {
 			return 1;

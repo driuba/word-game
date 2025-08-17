@@ -1,5 +1,14 @@
 import { DateTime } from 'luxon';
-import type { BaseEntity, EntityMetadata, EntityTarget, InsertQueryBuilder, UpdateQueryBuilder, ValueTransformer } from 'typeorm';
+import type {
+	BaseEntity,
+	DeleteQueryBuilder,
+	EntityManager,
+	EntityMetadata,
+	EntityTarget,
+	InsertQueryBuilder,
+	UpdateQueryBuilder,
+	ValueTransformer
+} from 'typeorm';
 import { ApplicationError } from '~/utils/index.js';
 
 export class DateTimeValueTransformer implements ValueTransformer {
@@ -42,6 +51,29 @@ export class IntValueTransformer implements ValueTransformer {
 	}
 }
 
+export async function deleteEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
+	const { default: dataSource } = await import('./index.js');
+
+	const metadata = dataSource.getMetadata(target);
+
+	const repository = (entityManager ?? dataSource).getRepository(target);
+
+	return await execute(
+		repository
+			.createQueryBuilder()
+			.delete()
+			.where(
+				Object.fromEntries(
+					metadata.columns
+						.filter(c => c.isPrimary)
+						.map(c => [c.propertyName, c.getEntityValue(entity)])
+				)
+			),
+		entity,
+		metadata
+	);
+}
+
 /**
  * `insert` and `update` functions are inspired by *typeorm-deserializer* and a couple of *typeorm* GitHub issues
  * https://github.com/mdevecka/typeorm-deserializer/blob/master/src/typeorm-deserializer.ts
@@ -49,7 +81,7 @@ export class IntValueTransformer implements ValueTransformer {
  * https://github.com/typeorm/typeorm/issues/9870#issuecomment-1594665438
  */
 export async function execute<T extends BaseEntity>(
-	builder: InsertQueryBuilder<T> | UpdateQueryBuilder<T>,
+	builder: DeleteQueryBuilder<T> | InsertQueryBuilder<T> | UpdateQueryBuilder<T>,
 	entity: T,
 	metadata: EntityMetadata
 ) {
@@ -74,16 +106,16 @@ export async function execute<T extends BaseEntity>(
 	return entity;
 }
 
-export async function insert<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
+export async function insertEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
 	const { default: dataSource } = await import('./index.js');
 
 	const metadata = dataSource.getMetadata(target);
 
+	const repository = (entityManager ?? dataSource).getRepository(target);
+
 	return await execute(
-		dataSource
-			.getRepository(target)
+		repository
 			.createQueryBuilder()
-			.useTransaction(true)
 			.insert()
 			.values(
 				Object.fromEntries(
@@ -103,16 +135,16 @@ export async function insert<T extends BaseEntity>(entity: T, target: EntityTarg
 	);
 }
 
-export async function update<T extends BaseEntity>(entity: T, target: EntityTarget<T>) {
+export async function updateEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
 	const { default: dataSource } = await import('./index.js');
 
 	const metadata = dataSource.getMetadata(target);
 
+	const repository = (entityManager ?? dataSource).getRepository(target);
+
 	return await execute(
-		dataSource
-			.getRepository(target)
+		repository
 			.createQueryBuilder()
-			.useTransaction(true)
 			.update()
 			.set(
 				Object.fromEntries(

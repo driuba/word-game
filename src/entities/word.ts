@@ -1,7 +1,8 @@
 import type { DateTime } from 'luxon';
+import type { EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
-import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
+import { DateTimeValueTransformer, execute, insertEntity, updateEntity } from './utils.js';
 
 @Entity({ name: 'Words' })
 export class Word extends BaseEntity {
@@ -98,8 +99,8 @@ export class Word extends BaseEntity {
 	})
 	readonly word!: string;
 
-	insert() {
-		return insert(this, Word);
+	insert(entityManager?: EntityManager) {
+		return insertEntity(this, Word, entityManager);
 	}
 
 	tryAddScore(value: number) {
@@ -169,8 +170,8 @@ export class Word extends BaseEntity {
 		);
 	}
 
-	update() {
-		return update(this, Word);
+	update(entityManager?: EntityManager) {
+		return updateEntity(this, Word, entityManager);
 	}
 }
 
