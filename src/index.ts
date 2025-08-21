@@ -14,7 +14,7 @@ const { default: registerListeners } = await import('~/listeners/index.js');
 const { default: logger } = await import('~/logger.js');
 const { default: registerWorkers } = await import('~/workers/index.js');
 
-const app = new App({
+globalThis.app = new App({
 	logger,
 	appToken: config.slack.appToken,
 	clientId: config.slack.clientId,
@@ -25,14 +25,14 @@ const app = new App({
 	token: config.slack.botToken
 });
 
-registerListeners(app);
+registerListeners();
 
 try {
 	await dataSource.initialize();
 
 	await app.start(config.port);
 
-	const workers = registerWorkers(app);
+	const workers = registerWorkers();
 
 	process.on('SIGINT', terminate);
 	process.on('SIGTERM', terminate);

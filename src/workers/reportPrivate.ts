@@ -1,4 +1,3 @@
-import type { App } from '@slack/bolt';
 import { DateTime } from 'luxon';
 import { getWordExpiration, getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
@@ -8,7 +7,7 @@ const dateToday = DateTime
 	.now()
 	.startOf('day');
 
-export default async function (this: App) {
+export default async function (this: typeof app) {
 	this.logger.info('Stating personal report.');
 
 	const channelIds = await this.client.users

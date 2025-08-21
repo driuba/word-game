@@ -1,4 +1,3 @@
-import type { App } from '@slack/bolt';
 import type { CronJobParams, CronOnCompleteCommand } from 'cron';
 import { CronJob } from 'cron';
 import config from '~/config.js';
@@ -6,14 +5,14 @@ import reportHandler from './report.js';
 import reportPrivateHandler from '~/workers/reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
 
-export default function (app: App) {
-	return [...getWorkers(app)];
+export default function () {
+	return Array.from(getWorkers());
 }
 
-type Params = CronJobParams<CronOnCompleteCommand, App>;
+type Params = CronJobParams<CronOnCompleteCommand, typeof app>;
 
 function createJob(
-	context: App,
+	context: typeof app,
 	cronTime: Params['cronTime'],
 	errorHandler: (e: unknown) => void,
 	onComplete: Params['onComplete'],
@@ -31,7 +30,7 @@ function createJob(
 	});
 }
 
-function* getWorkers(app: App) {
+function* getWorkers() {
 	const errorHandler = handleError.bind(app);
 
 	if (config.wg.reportingChatId) {
@@ -75,6 +74,6 @@ function* getWorkers(app: App) {
 	}
 }
 
-function handleError(this: App, error: unknown) {
+function handleError(this: typeof app, error: unknown) {
 	this.logger.error(error);
 }

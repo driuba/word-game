@@ -1,9 +1,8 @@
-import type { App } from '@slack/bolt';
 import { tryExpireWords } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
-export default async function (this: App) {
+export default async function (this: typeof app) {
 	let count = 0;
 	const errors: unknown[] = [];
 
