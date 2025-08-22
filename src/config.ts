@@ -264,7 +264,7 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 				return value;
 			};
 		})()
-	} satisfies TypedPropertyDescriptor<T>;
+	} satisfies typeof descriptor;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class

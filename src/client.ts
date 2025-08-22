@@ -1,3 +1,4 @@
+import type { DurationLike } from 'luxon';
 import { DateTime } from 'luxon';
 
 const cacheMetadataKey = Symbol('cache');
@@ -12,7 +13,7 @@ export default abstract class {
 
 	/* eslint-enable @typescript-eslint/no-empty-function */
 
-	@cache
+	@cache()
 	static async getChannelIds() {
 		const channelIds = new Set<string>();
 		let cursor: string | undefined = undefined;
@@ -36,44 +37,75 @@ export default abstract class {
 
 		return channelIds;
 	}
-}
 
-interface Cache<T> {
-	expiration?: DateTime<true>,
-	value: T
-}
+	@cache()
+	static async getUserIds(channelId: string) {
+		const userIds = new Set<string>();
+		let cursor: string | undefined = undefined;
 
-type Method<T> = (...args: unknown[]) => Promise<T>;
+		do {
+			const { members: users = [], response_metadata: { next_cursor: cursorNext } = {} } = await app.client.conversations.members({
+				cursor,
+				channel: channelId,
+				limit: 200
+			});
 
-// This is more of a proof of concept, actual caching is not currently required
-function cache<T>(
-	target: object,
-	propertyKey: string,
-	descriptor: TypedPropertyDescriptor<Method<T>>
-) {
-	if (!descriptor.value) {
-		return;
+			for (const user of users) {
+				if (!await this.getIsBot(user)) {
+					userIds.add(user);
+				}
+			}
+
+			cursor = cursorNext;
+		} while (cursor);
+
+		return userIds;
 	}
 
-	Reflect.defineMetadata(cacheMetadataKey, {}, target, propertyKey);
+	@cache({ hours: 1 })
+	private static async getIsBot(userId: string) {
+		const { user: { is_bot } = { is_bot: true } } = await app.client.users.info({ user: userId });
 
-	return {
-		value: (function () {
-			const method = descriptor.value;
+		return is_bot;
+	}
+}
 
-			return async function (...args: unknown[]) {
-				const cache = Reflect.getMetadata(cacheMetadataKey, target, propertyKey) as Cache<T>;
+type Cache<T> = Record<symbol, { expiration?: DateTime<true>, value: T } | undefined>;
 
-				if (!cache.expiration || DateTime.now() > cache.expiration) {
-					cache.value = await method.call(target, ...args);
+// This is more of a proof of concept, actual caching is not currently required as the app doesn't seem hit API rate limits
+function cache(duration: DurationLike = { seconds: 1 }) {
+	return function <TArguments extends unknown[], TReturn>(
+		target: object,
+		propertyKey: string,
+		descriptor: TypedPropertyDescriptor<(...args: TArguments) => Promise<TReturn>>
+	) {
+		if (!descriptor.value) {
+			return;
+		}
 
-					cache.expiration = DateTime
-						.now()
-						.plus({ seconds: 1 });
-				}
+		Reflect.defineMetadata(cacheMetadataKey, {}, target, propertyKey);
 
-				return cache.value;
-			};
-		})()
-	} satisfies TypedPropertyDescriptor<Method<T>>;
+		return {
+			value: (function () {
+				const method = descriptor.value;
+
+				return async function (...args) {
+					const cache = Reflect.getMetadata(cacheMetadataKey, target, propertyKey) as Cache<TReturn>;
+					const key = Symbol.for(`client#${propertyKey}#${args.join('|')}`);
+
+					cache[key] ??= {} as { value: TReturn };
+
+					if (!cache[key].expiration || DateTime.now() > cache[key].expiration) {
+						cache[key].value = await method.call(target, ...args);
+
+						cache[key].expiration = DateTime
+							.now()
+							.plus(duration);
+					}
+
+					return cache[key].value;
+				};
+			})()
+		} satisfies typeof descriptor;
+	};
 }
