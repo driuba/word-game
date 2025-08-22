@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class,@typescript-eslint/no-empty-function */
-// noinspection JSUnusedLocalSymbols
-
 import process from 'node:process';
 import { Duration } from 'luxon';
 import { ApplicationError } from '~/utils/index.js';
 
 const lazyMetadataKey = Symbol('lazy');
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Db {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get database() {
@@ -72,9 +75,15 @@ abstract class Db {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Slack {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get appToken() {
@@ -122,9 +131,15 @@ abstract class Slack {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Wg {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get commandPrefix() {
@@ -240,12 +255,11 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 	return {
 		enumerable: true,
 		get: (function () {
-			let value: T;
+			const get = descriptor.get;
+			let value: T | undefined;
 
 			return function () {
-				if (typeof descriptor.get !== 'undefined') {
-					value ??= descriptor.get();
-				}
+				value ??= get();
 
 				return value;
 			};
@@ -253,13 +267,19 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 	} satisfies TypedPropertyDescriptor<T>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class {
 	static db = Db;
 	static slack = Slack;
 	static wg = Wg;
 
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get locale() {

@@ -1,3 +1,4 @@
+import client from '~/client.js';
 import config from '~/config.js';
 import { getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
@@ -12,13 +13,17 @@ export default async function (this: typeof app) {
 
 	const words = await getWordsActive();
 
+	const channelIds = await client.getChannelIds();
+
 	await this.client.chat.postMessage({
 		channel: config.wg.reportingChatId,
 		text: messages.report(
-			words.map(w => ({
-				channelId: w.channelId,
-				userId: w.userIdCreator
-			}))
+			words
+				.filter(w => channelIds.has(w.channelId))
+				.map(w => ({
+					channelId: w.channelId,
+					userId: w.userIdCreator
+				}))
 		)
 	});
 

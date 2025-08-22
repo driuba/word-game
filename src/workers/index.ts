@@ -6,7 +6,7 @@ import reportPrivateHandler from '~/workers/reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
 
 export default function () {
-	return Array.from(getWorkers());
+	return [...getWorkers()];
 }
 
 type Params = CronJobParams<CronOnCompleteCommand, typeof app>;

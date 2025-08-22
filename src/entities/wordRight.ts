@@ -1,7 +1,7 @@
 import type { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer, deleteEntity } from './utils.js';
+import { DateTimeValueTransformer, deleteEntity, insertEntity } from './utils.js';
 import type { WordRightUser } from './wordRightUser.js';
 
 const tableName = 'WordRights' as const;
@@ -63,5 +63,9 @@ export class WordRight extends BaseEntity {
 
 	delete(entityManager?: EntityManager) {
 		return deleteEntity(this, WordRight, entityManager);
+	}
+
+	insert(entityManager?: EntityManager) {
+		return insertEntity(this, WordRight, entityManager);
 	}
 }

@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import client from '~/client.js';
 import { getWordExpiration, getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
@@ -10,12 +11,7 @@ const dateToday = DateTime
 export default async function (this: typeof app) {
 	this.logger.info('Stating personal report.');
 
-	const channelIds = await this.client.users
-		.conversations({
-			exclude_archived: true,
-			types: 'public_channel,private_channel'
-		})
-		.then(r => new Set(r.channels?.map(c => c.id)));
+	const channelIds = await client.getChannelIds();
 
 	let count = 0;
 

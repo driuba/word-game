@@ -103,11 +103,12 @@ export class Word extends BaseEntity {
 		return insertEntity(this, Word, entityManager);
 	}
 
-	tryAddScore(value: number) {
+	tryAddScore(value: number, entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					score() {
@@ -124,15 +125,16 @@ export class Word extends BaseEntity {
 					}
 				),
 			this,
-			Word.getRepository().metadata
+			repository.metadata
 		);
 	}
 
-	trySetExpired() {
+	trySetExpired(entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					expired() {
@@ -151,22 +153,23 @@ export class Word extends BaseEntity {
 					}
 				),
 			this,
-			Word.getRepository().metadata
+			repository.metadata
 		);
 	}
 
-	trySetUserIdGuesser(value: string) {
+	trySetUserIdGuesser(value: string, entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					userIdGuesser: value
 				})
 				.where('"Active" AND "Id" = :id', { id: this.id }),
 			this,
-			Word.getRepository().metadata
+			repository.metadata
 		);
 	}
 
@@ -177,11 +180,8 @@ export class Word extends BaseEntity {
 
 export type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
 export type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+export type WordMaybeActive = WordActive | WordInactive;
 
-export function assertWord(_word: Word): asserts _word is WordActive | WordInactive {
-	// ignore
-}
-
-export function isWordActive(word: WordActive | WordInactive): word is WordActive {
+export function isWordActive(word: WordMaybeActive): word is WordActive {
 	return word.active;
 }

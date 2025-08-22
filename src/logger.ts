@@ -4,6 +4,7 @@ import type { Logger as LoggerTypeorm } from 'typeorm';
 import { createLogger, format, transports } from 'winston';
 import config from '~/config.js';
 
+// noinspection JSUnusedGlobalSymbols
 export default {
 	//Slack
 	debug(...messages) {

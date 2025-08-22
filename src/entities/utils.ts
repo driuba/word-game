@@ -52,11 +52,14 @@ export class IntValueTransformer implements ValueTransformer {
 }
 
 export async function deleteEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
-	const { default: dataSource } = await import('./index.js');
 
-	const metadata = dataSource.getMetadata(target);
+	let repository = entityManager?.getRepository(target);
 
-	const repository = (entityManager ?? dataSource).getRepository(target);
+	if (!repository) {
+		const { default: dataSource } = await import('./index.js');
+
+		repository = dataSource.getRepository(target);
+	}
 
 	return await execute(
 		repository
@@ -64,13 +67,13 @@ export async function deleteEntity<T extends BaseEntity>(entity: T, target: Enti
 			.delete()
 			.where(
 				Object.fromEntries(
-					metadata.columns
+					repository.metadata.columns
 						.filter(c => c.isPrimary)
 						.map(c => [c.propertyName, c.getEntityValue(entity)])
 				)
 			),
 		entity,
-		metadata
+		repository.metadata
 	);
 }
 
@@ -107,11 +110,13 @@ export async function execute<T extends BaseEntity>(
 }
 
 export async function insertEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
-	const { default: dataSource } = await import('./index.js');
+	let repository = entityManager?.getRepository(target);
 
-	const metadata = dataSource.getMetadata(target);
+	if (!repository) {
+		const { default: dataSource } = await import('./index.js');
 
-	const repository = (entityManager ?? dataSource).getRepository(target);
+		repository = dataSource.getRepository(target);
+	}
 
 	return await execute(
 		repository
@@ -119,7 +124,7 @@ export async function insertEntity<T extends BaseEntity>(entity: T, target: Enti
 			.insert()
 			.values(
 				Object.fromEntries(
-					metadata.columns
+					repository.metadata.columns
 						.filter(c =>
 							c.isInsert &&
 							!(
@@ -131,16 +136,18 @@ export async function insertEntity<T extends BaseEntity>(entity: T, target: Enti
 				) as object & T
 			),
 		entity,
-		metadata
+		repository.metadata
 	);
 }
 
 export async function updateEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
-	const { default: dataSource } = await import('./index.js');
+	let repository = entityManager?.getRepository(target);
 
-	const metadata = dataSource.getMetadata(target);
+	if (!repository) {
+		const { default: dataSource } = await import('./index.js');
 
-	const repository = (entityManager ?? dataSource).getRepository(target);
+		repository = dataSource.getRepository(target);
+	}
 
 	return await execute(
 		repository
@@ -148,7 +155,7 @@ export async function updateEntity<T extends BaseEntity>(entity: T, target: Enti
 			.update()
 			.set(
 				Object.fromEntries(
-					metadata.columns
+					repository.metadata.columns
 						.filter(c =>
 							c.isUpdate &&
 							!(
@@ -161,12 +168,12 @@ export async function updateEntity<T extends BaseEntity>(entity: T, target: Enti
 			)
 			.where(
 				Object.fromEntries(
-					metadata.columns
+					repository.metadata.columns
 						.filter(c => c.isPrimary)
 						.map(c => [c.propertyName, c.getEntityValue(entity)])
 				)
 			),
 		entity,
-		metadata
+		repository.metadata
 	);
 }

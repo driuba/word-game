@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import * as process from 'node:process';
+import process from 'node:process';
 import { App, LogLevel } from '@slack/bolt';
 import { Settings } from 'luxon';
 import config from '~/config.js';
