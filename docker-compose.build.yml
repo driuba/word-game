@@ -17,7 +17,7 @@ services:
   app:
     build:
       args:
-        NODE_ENV: "${NODE_ENV}"
+        NODE_ENV: "${NODE_ENV:?error}"
       target: "deploy"
     depends_on:
       - "db"
@@ -37,11 +37,11 @@ services:
       NODE_ENV:
     build:
       args:
-        NODE_ENV: "${NODE_ENV}"
+        NODE_ENV: "${NODE_ENV:?error}"
       cache_from:
         - "registry:80/word-game_app:latest"
       target: "build"
-    command: "migrate:${NODE_ENV}"
+    command: "migrate:${NODE_ENV:?error}"
     entrypoint: "pnpm run"
     image: "registry:80/word-game_migration:latest"
     init: true

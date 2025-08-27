@@ -4,10 +4,10 @@ name: "word-game"
 services:
   app:
     environment:
-      NODE_ENV:
+      NODE_ENV: "${NODE_ENV:?error}"
     env_file:
       - ".env"
-      - ".env.${NODE_ENV}"
+      - ".env.${NODE_ENV:?error}"
     image: "registry:80/word-game_app:latest"
     init: true
     secrets:
