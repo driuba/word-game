@@ -14,13 +14,12 @@ export default async function (
 ) {
 	await ack();
 
-	const words = await getWordsActive(channelId).then(
-		ws => ws.filter(w => w.userIdCreator === userId)
-	);
+	const words = await getWordsActive(channelId, userId);
 
 	if (words.length) {
 		await respond({
 			response_type: 'in_channel',
+			// TODO: rename
 			text: messages.currentWordStatusPublic({
 				userId,
 				count: words.length.toFixed(),

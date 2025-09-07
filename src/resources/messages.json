@@ -32,6 +32,16 @@
 	"currentWordUnset": [
 		"Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!"
 	],
+	"hasWordRightsNone": [
+		"Atgal į eilės galą, čia tokiems, kaip tu, nėra vietos.",
+		"Deja, jūs nesate įtraukti į VIP sąrašą."
+	],
+	"hasWordRightsPersonal": [
+		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!* ⨯${count}"
+	],
+	"hasWordRightsShared": [
+		"Hey, yra ${count} nenustatytų žodžių, jei paskubėsi, gal ir tu gausi progą."
+	],
 	"nothingInStatistics": [
 		"Neturiu ką parodyt. Prašikčiau, bandyti vėliau."
 	],

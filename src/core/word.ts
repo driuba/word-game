@@ -29,11 +29,15 @@ export async function* expireWords() {
 	}
 }
 
-export function getWordsActive(channelId?: string) {
-	const filter: { active: true, channelId?: string } = { active: true };
+export function getWordsActive(channelId?: string, userIdCreator?: string) {
+	const filter: { active: true, channelId?: string, userIdCreator?: string } = { active: true };
 
 	if (channelId) {
 		filter.channelId = channelId;
+	}
+
+	if (userIdCreator) {
+		filter.userIdCreator = userIdCreator;
 	}
 
 	return Word.where(filter);
@@ -173,6 +177,7 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 
 		if (
 			!right ||
+			candidate.users.length === 1 && right.users.length === 0 ||
 			candidate.users.length < right.users.length ||
 			candidate.users.length === right.users.length && candidate.created < right.created
 		) {

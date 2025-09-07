@@ -63,6 +63,14 @@ function currentWordStatusPublic(values: { count: string, score: string, userId:
 	return replace(messages.currentWordStatusPublic, values);
 }
 
+function hasWordRightsPersonal(values: { count: string }) {
+	return replace(messages.hasWordRightsPersonal, values);
+}
+
+function hasWordRightsShared(values: { count: string }) {
+	return replace(messages.hasWordRightsShared, values);
+}
+
 function report(values: { channelId: string, userId: string }[]) {
 	return values
 		.map(v => `  • ${replace(messages.report, v)}`)
@@ -77,6 +85,7 @@ function setWordSuccess(values: { word: string }) {
 	return replace(messages.setWordSuccess, values);
 }
 
+// TODO: review usages, cleanup resources, update naming
 export default {
 	...messages,
 	readme,
@@ -88,6 +97,8 @@ export default {
 	currentWordSetter,
 	currentWordStatusPrivate,
 	currentWordStatusPublic,
+	hasWordRightsPersonal,
+	hasWordRightsShared,
 	report,
 	reportPrivate,
 	setWordSuccess
