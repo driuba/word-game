@@ -1,10 +1,12 @@
 import type { DateTime } from 'luxon';
-import type { EntityManager } from 'typeorm';
+import type { EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
-import { DateTimeValueTransformer, execute, insertEntity, updateEntity } from './utils.js';
+import { DateTimeValueTransformer, execute, insertEntities } from './utils.js';
 
-@Entity({ name: 'Words' })
+const tableName = 'Words';
+
+@Entity({ name: tableName })
 export class Word extends BaseEntity {
 	@Column({
 		generated: true,
@@ -99,8 +101,36 @@ export class Word extends BaseEntity {
 	})
 	readonly word!: string;
 
+	static countWhere(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return entityManager
+			? entityManager
+				.getRepository(this)
+				.count({
+					lock: {
+						mode: 'pessimistic_write',
+						tables: [tableName]
+					},
+					where: options
+				})
+			: this.countBy(options);
+	}
+
+	static where(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return entityManager
+			? entityManager
+				.getRepository(this)
+				.find({
+					lock: {
+						mode: 'pessimistic_write',
+						tables: [tableName]
+					},
+					where: options
+				})
+			: this.findBy(options);
+	}
+
 	insert(entityManager?: EntityManager) {
-		return insertEntity(this, Word, entityManager);
+		return insertEntities([this], Word, entityManager).then(ws => ws[0]);
 	}
 
 	tryAddScore(value: number, entityManager?: EntityManager) {
@@ -124,9 +154,9 @@ export class Word extends BaseEntity {
 						interval: config.wg.wordTimeoutScore?.toISO() ?? null
 					}
 				),
-			this,
+			[this],
 			repository.metadata
-		);
+		).then(ws => ws[0]);
 	}
 
 	trySetExpired(entityManager?: EntityManager) {
@@ -152,9 +182,9 @@ export class Word extends BaseEntity {
 						intervalUsage: config.wg.wordTimeoutUsage?.toISO() ?? null
 					}
 				),
-			this,
+			[this],
 			repository.metadata
-		);
+		).then(ws => ws[0]);
 	}
 
 	trySetUserIdGuesser(value: string, entityManager?: EntityManager) {
@@ -168,20 +198,19 @@ export class Word extends BaseEntity {
 					userIdGuesser: value
 				})
 				.where('"Active" AND "Id" = :id', { id: this.id }),
-			this,
+			[this],
 			repository.metadata
-		);
-	}
-
-	update(entityManager?: EntityManager) {
-		return updateEntity(this, Word, entityManager);
+		).then(ws => ws[0]);
 	}
 }
 
 export type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
 export type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
-export type WordMaybeActive = WordActive | WordInactive;
 
-export function isWordActive(word: WordMaybeActive): word is WordActive {
+export function isWordActive(word: Word): word is WordActive {
 	return word.active;
+}
+
+export function isWordInactive(word: Word): word is WordInactive {
+	return !word.active;
 }

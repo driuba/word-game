@@ -15,10 +15,10 @@ export default async function (
 ) {
 	await ack();
 
-	const { word } = await setWord(channelId, userId, text);
+	await setWord(channelId, userId, text);
 
-	await respond({
-		response_type: 'ephemeral',
-		text: messages.setWordSuccess({ word })
-	});
+	// await respond({
+	// 	response_type: 'ephemeral',
+	// 	text: messages.setWordSuccess({ word })
+	// });
 }

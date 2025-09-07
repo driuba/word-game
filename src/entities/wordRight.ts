@@ -1,7 +1,7 @@
 import type { DateTime } from 'luxon';
-import type { EntityManager } from 'typeorm';
+import type { EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer, deleteEntity, insertEntity } from './utils.js';
+import { DateTimeValueTransformer, deleteEntity, insertEntities } from './utils.js';
 import type { WordRightUser } from './wordRightUser.js';
 
 const tableName = 'WordRights' as const;
@@ -45,7 +45,21 @@ export class WordRight extends BaseEntity {
 		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
 	}
 
-	static where(channelId: string, entityManager?: EntityManager) {
+	static countWhere(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+		return entityManager
+			? entityManager
+				.getRepository(this)
+				.count({
+					lock: {
+						mode: 'pessimistic_write',
+						tables: [tableName]
+					},
+					where: options
+				})
+			: this.countBy(options);
+	}
+
+	static where(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
 				.getRepository(this)
@@ -54,11 +68,9 @@ export class WordRight extends BaseEntity {
 						mode: 'pessimistic_write',
 						tables: [tableName]
 					},
-					where: { channelId }
+					where: options
 				})
-			: this.find({
-				where: { channelId }
-			});
+			: this.findBy(options);
 	}
 
 	delete(entityManager?: EntityManager) {
@@ -66,6 +78,6 @@ export class WordRight extends BaseEntity {
 	}
 
 	insert(entityManager?: EntityManager) {
-		return insertEntity(this, WordRight, entityManager);
+		return insertEntities([this], WordRight, entityManager);
 	}
 }

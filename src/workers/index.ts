@@ -12,18 +12,17 @@ export default function () {
 type Params = CronJobParams<CronOnCompleteCommand, typeof app>;
 
 function createJob(
-	context: typeof app,
 	cronTime: Params['cronTime'],
 	errorHandler: (e: unknown) => void,
 	onComplete: Params['onComplete'],
 	onTick: Params['onTick']
 ) {
 	return CronJob.from({
-		context,
 		cronTime,
 		errorHandler,
 		onComplete,
 		onTick,
+		context: app,
 		start: true,
 		timeZone: config.timezone,
 		waitForCompletion: true
@@ -37,7 +36,6 @@ function* getWorkers() {
 		app.logger.info('Starting report worker.');
 
 		yield createJob(
-			app,
 			'0 0 9 * * 1-5',
 			errorHandler,
 			() => {
@@ -50,7 +48,6 @@ function* getWorkers() {
 	app.logger.info('Starting personal report worker.');
 
 	yield createJob(
-		app,
 		'0 0 9 * * 1-5',
 		errorHandler,
 		() => {
@@ -63,7 +60,6 @@ function* getWorkers() {
 		app.logger.info('Starting word expiration worker.');
 
 		yield createJob(
-			app,
 			'0 0 10-17 * * 1-5',
 			errorHandler,
 			() => {

@@ -11,6 +11,7 @@ import type {
 } from 'typeorm';
 import { ApplicationError } from '~/utils/index.js';
 
+// noinspection JSUnusedGlobalSymbols
 export class DateTimeValueTransformer implements ValueTransformer {
 	from(value: Date | null) {
 		if (!value) {
@@ -31,6 +32,7 @@ export class DateTimeValueTransformer implements ValueTransformer {
 	}
 }
 
+// noinspection JSUnusedGlobalSymbols
 export class FloatValueTransformer implements ValueTransformer {
 	from(value: string) {
 		return parseFloat(value);
@@ -41,6 +43,7 @@ export class FloatValueTransformer implements ValueTransformer {
 	}
 }
 
+// noinspection JSUnusedGlobalSymbols
 export class IntValueTransformer implements ValueTransformer {
 	from(value: string) {
 		return parseInt(value);
@@ -72,9 +75,9 @@ export async function deleteEntity<T extends BaseEntity>(entity: T, target: Enti
 						.map(c => [c.propertyName, c.getEntityValue(entity)])
 				)
 			),
-		entity,
+		[entity],
 		repository.metadata
-	);
+	).then(es => es[0]);
 }
 
 /**
@@ -85,31 +88,32 @@ export async function deleteEntity<T extends BaseEntity>(entity: T, target: Enti
  */
 export async function execute<T extends BaseEntity>(
 	builder: DeleteQueryBuilder<T> | InsertQueryBuilder<T> | UpdateQueryBuilder<T>,
-	entity: T,
+	entities: T[],
 	metadata: EntityMetadata
 ) {
-	const { raw: [raw] } = await builder
+	const { raw: entitiesRaw } = await builder
 		.returning('*')
-		.execute() as { raw: [Record<string, unknown>?] };
+		.execute() as { raw: Record<string, unknown>[] };
 
-	if (!raw) {
-		return entity;
-	}
+	for (let i = 0; i < entities.length; i++) {
+		const entity = entities[i];
+		const entityRaw = entitiesRaw[i];
 
-	for (const column of metadata.columns) {
-		if (column.isVirtual) {
-			continue;
+		for (const column of metadata.columns) {
+			if (column.isVirtual) {
+				continue;
+			}
+
+			const value = entityRaw[column.databaseName];
+
+			column.setEntityValue(entity, builder.connection.driver.prepareHydratedValue(value, column));
 		}
-
-		const value = raw[column.databaseName];
-
-		column.setEntityValue(entity, builder.connection.driver.prepareHydratedValue(value, column));
 	}
 
-	return entity;
+	return entities;
 }
 
-export async function insertEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
+export async function insertEntities<T extends BaseEntity>(entities: T[], target: EntityTarget<T>, entityManager?: EntityManager) {
 	let repository = entityManager?.getRepository(target);
 
 	if (!repository) {
@@ -123,57 +127,15 @@ export async function insertEntity<T extends BaseEntity>(entity: T, target: Enti
 			.createQueryBuilder()
 			.insert()
 			.values(
-				Object.fromEntries(
-					repository.metadata.columns
-						.filter(c =>
-							c.isInsert &&
-							!(
-								c.isGenerated ||
-								c.isVirtual
-							)
-						)
-						.map(c => [c.propertyName, c.getEntityValue(entity)])
-				) as object & T
-			),
-		entity,
-		repository.metadata
-	);
-}
-
-export async function updateEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
-	let repository = entityManager?.getRepository(target);
-
-	if (!repository) {
-		const { default: dataSource } = await import('./index.js');
-
-		repository = dataSource.getRepository(target);
-	}
-
-	return await execute(
-		repository
-			.createQueryBuilder()
-			.update()
-			.set(
-				Object.fromEntries(
-					repository.metadata.columns
-						.filter(c =>
-							c.isUpdate &&
-							!(
-								c.isGenerated ||
-								c.isVirtual
-							)
-						)
-						.map(c => [c.propertyName, c.getEntityValue(entity)])
-				) as object & T
-			)
-			.where(
-				Object.fromEntries(
-					repository.metadata.columns
-						.filter(c => c.isPrimary)
-						.map(c => [c.propertyName, c.getEntityValue(entity)])
+				entities.map(e =>
+					Object.fromEntries(
+						repository.metadata.columns
+							.filter(c => c.isInsert && !(c.isGenerated || c.isVirtual))
+							.map(c => [c.propertyName, c.getEntityValue(e)])
+					) as object & T
 				)
 			),
-		entity,
+		entities,
 		repository.metadata
 	);
 }

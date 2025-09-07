@@ -1,6 +1,8 @@
 import type { DateTime } from 'luxon';
+import type { EntityManager, InsertResult } from 'typeorm';
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DateTimeValueTransformer } from './utils.js';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import { DateTimeValueTransformer, insertEntities } from './utils.js';
 import type { WordRight } from './wordRight.js';
 
 @Entity({ name: 'WordRightUsers' })
@@ -48,4 +50,8 @@ export class WordRightUser extends BaseEntity {
 		update: false
 	})
 	readonly wordRightId!: number;
+
+	static insertMany(users: WordRightUser[], entityManager?: EntityManager) {
+		return insertEntities(users, this, entityManager);
+	}
 }

@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getWordExpiration, getWordLatest } from '~/core/index.js';
+import { getWordExpiration, getWordsActive } from '~/core/index.js';
 import { isWordActive } from '~/entities/index.js';
 import { messages } from '~/resources/index.js';
 
@@ -16,9 +16,9 @@ export default async function (
 ) {
 	await ack();
 
-	const word = await getWordLatest(channelId);
+	const words = await getWordsActive(channelId);
 
-	if (!word) {
+	if (!words.length) {
 		await respond({
 			response_type: 'ephemeral',
 			text: messages.currentWordUnset
@@ -27,71 +27,73 @@ export default async function (
 		return;
 	}
 
-	if (isWordActive(word)) {
-		if (word.userIdCreator === userId) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordStatusPrivate({
-					expiration: getWordExpiration(word)?.toLocaleString(DateTime.DATETIME_SHORT),
-					score: word.score.toFixed(),
-					word: word.word
-				})
-			});
+	// TODO: all words are active, need to handle private vs not
+	// if (isWordActive(word)) {
+	// 	if (word.userIdCreator === userId) {
+	// 		await respond({
+	// 			response_type: 'ephemeral',
+	// 			text: messages.currentWordStatusPrivate({
+	// 				expiration: getWordExpiration(word)?.toLocaleString(DateTime.DATETIME_SHORT),
+	// 				score: word.score.toFixed(),
+	// 				word: word.word
+	// 			})
+	// 		});
+	//
+	// 		return;
+	// 	}
+	//
+	// 	await respond({
+	// 		response_type: 'ephemeral',
+	// 		text: messages.currentWordHolder({
+	// 			userId: word.userIdCreator
+	// 		})
+	// 	});
+	//
+	// 	return;
+	// }
 
-			return;
-		}
+	// TODO: remove
+	// if (word.expired) {
+	// 	if (word.userIdCreator === userId) {
+	// 		await respond({
+	// 			response_type: 'ephemeral',
+	// 			text: messages.currentWordExpiredPrivateMe({
+	// 				expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
+	// 				score: word.score.toFixed(),
+	// 				word: word.word
+	// 			})
+	// 		});
+	//
+	// 		return;
+	// 	}
+	//
+	// 	await respond({
+	// 		response_type: 'ephemeral',
+	// 		text: messages.currentWordExpiredPrivate({
+	// 			expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
+	// 			score: word.score.toFixed(),
+	// 			userId: word.userIdCreator,
+	// 			word: word.word
+	// 		})
+	// 	});
+	//
+	// 	return;
+	// }
 
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordHolder({
-				userId: word.userIdCreator
-			})
-		});
-
-		return;
-	}
-
-	if (word.expired) {
-		if (word.userIdCreator === userId) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordExpiredPrivateMe({
-					expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
-					score: word.score.toFixed(),
-					word: word.word
-				})
-			});
-
-			return;
-		}
-
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordExpiredPrivate({
-				expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
-				score: word.score.toFixed(),
-				userId: word.userIdCreator,
-				word: word.word
-			})
-		});
-
-		return;
-	}
-
-	if (userId === word.userIdGuesser) {
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordSetterMe
-		});
-
-		return;
-	}
-
-
-	await respond({
-		response_type: 'ephemeral',
-		text: messages.currentWordSetter({
-			userId: word.userIdGuesser
-		})
-	});
+	// TODO: redo with implemented rights
+	// if (userId === word.userIdGuesser) {
+	// 	await respond({
+	// 		response_type: 'ephemeral',
+	// 		text: messages.currentWordSetterMe
+	// 	});
+	//
+	// 	return;
+	// }
+	//
+	// await respond({
+	// 	response_type: 'ephemeral',
+	// 	text: messages.currentWordSetter({
+	// 		userId: word.userIdGuesser
+	// 	})
+	// });
 }

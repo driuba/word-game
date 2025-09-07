@@ -1,60 +1,76 @@
 /** TODO:
  * [ ] word guess and right setting
- * [ ] word expiration and right setting
+ * [x] word expiration and right setting
  * [x] word set and right usage
  * [ ] Word guess and word right insert should be one transaction.
- * [ ] Word set and word right removal should be one transactions.
- *   Select locks should be enough for to solve race conditions.
+ * [x] Word expiration and word right insert should be one transaction.
+ * [x] Word set and word right removal should be one transaction.
+ * [ ] Select locks should be enough to solve race conditions.
  */
 
 import { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
+import client from '~/client.js';
 import config from '~/config.js';
-import type { WordActive } from '~/entities/index.js';
-import dataSource, { assertWord, isWordActive, Word, WordRight } from '~/entities/index.js';
+import type { WordActive, WordInactive } from '~/entities/index.js';
+import dataSource, { isWordInactive, Word, WordRight, WordRightUser } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
 const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999') as DateTime<true>;
 
+export async function* expireWords() {
+	const errors: unknown[] = [];
+
+	const words = await getWordsActive();
+
+	for (const word of words) {
+		try {
+			await dataSource.transaction(em => runExpireWordTransaction.call(em, word));
+
+			if (isWordInactive(word)) {
+				yield word;
+			}
+		} catch (error) {
+			errors.push(error);
+		}
+	}
+
+	if (errors.length) {
+		throw new ApplicationError('Failed to expire some words.', { errors });
+	}
+}
+
 export async function getWordsActive(channelId?: string) {
-	const filter = { active: true } as { channelId?: string, active: true };
+	const filter: { active: true, channelId?: string } = { active: true };
 
 	if (channelId) {
 		filter.channelId = channelId;
 	}
 
-	return await Word.findBy(filter) as WordActive[];
+	return await Word.where(filter) as WordActive[];
 }
 
 export function getWordExpiration(word: Word) {
-	assertWord(word);
-
-	if (isWordActive(word)) {
-		const expiration = DateTime.min(
-			config.wg.wordTimeoutGlobal ? word.created.plus(config.wg.wordTimeoutGlobal) : dateMax,
-			config.wg.wordTimeoutUsage ? (word.modified ?? word.created).plus(config.wg.wordTimeoutUsage) : dateMax
-		);
-
-		return expiration.equals(dateMax) ? null : expiration;
+	if (isWordInactive(word)) {
+		return word.expired ?? word.modified;
 	}
 
-	return word.expired ?? word.modified;
+	const expiration = DateTime.min(
+		config.wg.wordTimeoutGlobal ? word.created.plus(config.wg.wordTimeoutGlobal) : dateMax,
+		config.wg.wordTimeoutUsage ? (word.modified ?? word.created).plus(config.wg.wordTimeoutUsage) : dateMax
+	);
+
+	return expiration.equals(dateMax) ? null : expiration;
 }
 
-export async function* tryExpireWords() {
-	const words = await Word.findBy({
-		active: true
-	});
+export function setWord(channelId: string, userId: string, text: string) {
+	text = text.trim();
 
-	for (const word of words) {
-		assertWord(word);
-
-		await word.trySetExpired();
-
-		if (!isWordActive(word)) {
-			yield word;
-		}
+	if (!text.match(wordValidationPattern)?.length) {
+		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
+
+	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, userId, text));
 }
 
 export async function* tryScoreOrGuessWords(channelId: string, userId: string, text?: string) {
@@ -81,24 +97,61 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 			await word.trySetUserIdGuesser(userId);
 		}
 
-		yield word as Word;
+		yield word;
 	}
 }
 
-export function trySetWord(channelId: string, userId: string, text: string) {
-	text = text.trim();
+async function runExpireWordTransaction(this: EntityManager, word: Word) {
+	await WordRight.lock(this);
 
-	if (!text.match(wordValidationPattern)?.length) {
-		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
+	// TODO: remove after testing synchronization
+	await new Promise<void>(r => setTimeout(() => {
+		r();
+	}, 30_000));
+
+	await word.trySetExpired(this);
+
+	if (isWordInactive(word)) {
+		const userIds = await client.getUserIds(word.channelId);
+
+		userIds.delete(word.userIdCreator);
+
+		await runInsertWordRightsTransaction.call(this, word, [...userIds]);
 	}
+}
 
-	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, userId, text));
+async function runInsertWordRightsTransaction(this: EntityManager, word: WordInactive, userIds: string[]) {
+	const available =
+		config.wg.wordCountMax -
+		await Word.countWhere({ active: true, channelId: word.channelId }, this) -
+		await WordRight.countWhere({ channelId: word.channelId }, this);
+
+	for (let a = available; a > 0; a--) {
+		const right = WordRight.create({
+			channelId: word.channelId
+		});
+
+		await right.insert(this);
+
+		await WordRightUser.insertMany(
+			userIds.map(ui => WordRightUser.create({
+				userId: ui,
+				wordRightId: right.id
+			})),
+			this
+		);
+	}
 }
 
 async function runSetWordTransaction(this: EntityManager, channelId: string, userId: string, text: string) {
 	await WordRight.lock(this);
 
-	const rights = await WordRight.where(channelId, this);
+	// TODO: remove after testing synchronization
+	await new Promise<void>(r => setTimeout(() => {
+		r();
+	}, 30_000));
+
+	const rights = await WordRight.where({ channelId }, this);
 
 	if (!rights.length) {
 		throw new ApplicationError('No active word rights.', 'OPERATION_INVALID');
@@ -106,17 +159,20 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, use
 
 	let right: WordRight | undefined;
 
-	for (const rightCandidate of rights) {
-		if (!rightCandidate.users.some(u => u.userId === userId)) {
+	for (const candidate of rights) {
+		if (
+			candidate.users.length &&
+			!candidate.users.some(u => u.userId === userId)
+		) {
 			continue;
 		}
 
 		if (
 			!right ||
-			rightCandidate.users.length < right.users.length ||
-			rightCandidate.users.length === right.users.length && rightCandidate.created < right.created
+			candidate.users.length < right.users.length ||
+			candidate.users.length === right.users.length && candidate.created < right.created
 		) {
-			right = rightCandidate;
+			right = candidate;
 		}
 	}
 
@@ -126,15 +182,13 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, use
 
 	await right.delete(this);
 
-	const newWord = Word.create({
+	const word = Word.create({
 		channelId,
 		userIdCreator: userId,
 		word: text
 	});
 
-	await newWord.insert(this);
+	await word.insert(this);
 
-	assertWord(newWord);
-
-	return newWord;
+	return word as WordActive;
 }

@@ -59,7 +59,7 @@ function currentWordStatusPrivate(values: { expiration?: string, score: string, 
 	);
 }
 
-function currentWordStatusPublic(values: { score: string, userId: string }) {
+function currentWordStatusPublic(values: { count: string, score: string, userId: string }) {
 	return replace(messages.currentWordStatusPublic, values);
 }
 
