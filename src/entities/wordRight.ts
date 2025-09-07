@@ -1,5 +1,5 @@
 import type { DateTime } from 'luxon';
-import type { EntityManager, FindOptionsWhere } from 'typeorm';
+import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, deleteEntity, insertEntities } from './utils.js';
 import type { WordRightUser } from './wordRightUser.js';
@@ -59,6 +59,10 @@ export class WordRight extends BaseEntity {
 			: this.countBy(options);
 	}
 
+	static insertOne(value: DeepPartial<WordRight>, entityManager?: EntityManager) {
+		return insertEntities([this.create(value)], this, entityManager).then(wrs => wrs[0]);
+	}
+
 	static where(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
@@ -75,9 +79,5 @@ export class WordRight extends BaseEntity {
 
 	delete(entityManager?: EntityManager) {
 		return deleteEntity(this, WordRight, entityManager);
-	}
-
-	insert(entityManager?: EntityManager) {
-		return insertEntities([this], WordRight, entityManager);
 	}
 }

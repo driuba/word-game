@@ -1,19 +1,8 @@
-/** TODO:
- * [ ] word guess and right setting
- * [x] word expiration and right setting
- * [x] word set and right usage
- * [ ] Word guess and word right insert should be one transaction.
- * [x] Word expiration and word right insert should be one transaction.
- * [x] Word set and word right removal should be one transaction.
- * [ ] Select locks should be enough to solve race conditions.
- */
-
 import { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
 import client from '~/client.js';
 import config from '~/config.js';
-import type { WordActive, WordInactive } from '~/entities/index.js';
-import dataSource, { isWordInactive, Word, WordRight, WordRightUser } from '~/entities/index.js';
+import dataSource, { isWordActive, isWordInactive, Word, WordRight, WordRightUser } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
 const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999') as DateTime<true>;
@@ -40,14 +29,14 @@ export async function* expireWords() {
 	}
 }
 
-export async function getWordsActive(channelId?: string) {
+export function getWordsActive(channelId?: string) {
 	const filter: { active: true, channelId?: string } = { active: true };
 
 	if (channelId) {
 		filter.channelId = channelId;
 	}
 
-	return await Word.where(filter) as WordActive[];
+	return Word.where(filter);
 }
 
 export function getWordExpiration(word: Word) {
@@ -70,7 +59,7 @@ export function setWord(channelId: string, userId: string, text: string) {
 		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
 
-	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, userId, text));
+	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, text, userId));
 }
 
 export async function* tryScoreOrGuessWords(channelId: string, userId: string, text?: string) {
@@ -78,9 +67,9 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 		return null;
 	}
 
-	const wordsActive = await getWordsActive(channelId);
+	const words = await getWordsActive(channelId);
 
-	for (const word of wordsActive) {
+	for (const word of words) {
 		const pattern = wordGuessPattern(word.word);
 
 		const score = text.match(pattern)?.length ?? 0;
@@ -94,10 +83,33 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 				Math.min(score, config.wg.wordScoreMax)
 			);
 		} else {
-			await word.trySetUserIdGuesser(userId);
+			await dataSource.transaction(em => runGuessWordTransaction.call(em, userId, word));
 		}
 
 		yield word;
+	}
+}
+
+async function insertWordRights(entityManager: EntityManager, userIds: string[], word: Word) {
+	const available =
+		config.wg.wordCountMax -
+		await Word.countWhere({ active: true, channelId: word.channelId }, entityManager) -
+		await WordRight.countWhere({ channelId: word.channelId }, entityManager);
+
+	for (let a = available; a > 0; a--) {
+		const right = await WordRight.insertOne({ channelId: word.channelId }, entityManager);
+
+		if (userIds.length) {
+			await WordRightUser.insertMany(
+				userIds.map(ui => WordRightUser.create({
+					userId: ui,
+					wordRightId: right.id
+				})),
+				entityManager
+			);
+
+			userIds = [];
+		}
 	}
 }
 
@@ -111,39 +123,31 @@ async function runExpireWordTransaction(this: EntityManager, word: Word) {
 
 	await word.trySetExpired(this);
 
-	if (isWordInactive(word)) {
-		const userIds = await client.getUserIds(word.channelId);
-
-		userIds.delete(word.userIdCreator);
-
-		await runInsertWordRightsTransaction.call(this, word, [...userIds]);
+	if (isWordActive(word)) {
+		return;
 	}
+
+	const userIds = await client.getUserIds(word.channelId);
+
+	userIds.delete(word.userIdCreator);
+
+	await insertWordRights(this, [...userIds], word);
 }
 
-async function runInsertWordRightsTransaction(this: EntityManager, word: WordInactive, userIds: string[]) {
-	const available =
-		config.wg.wordCountMax -
-		await Word.countWhere({ active: true, channelId: word.channelId }, this) -
-		await WordRight.countWhere({ channelId: word.channelId }, this);
+async function runGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
+	await WordRight.lock(this);
 
-	for (let a = available; a > 0; a--) {
-		const right = WordRight.create({
-			channelId: word.channelId
-		});
+	// TODO: remove after testing synchronization
+	await new Promise<void>(r => setTimeout(() => {
+		r();
+	}, 30_000));
 
-		await right.insert(this);
+	await word.trySetUserIdGuesser(userId);
 
-		await WordRightUser.insertMany(
-			userIds.map(ui => WordRightUser.create({
-				userId: ui,
-				wordRightId: right.id
-			})),
-			this
-		);
-	}
+	await insertWordRights(this, [userId], word);
 }
 
-async function runSetWordTransaction(this: EntityManager, channelId: string, userId: string, text: string) {
+async function runSetWordTransaction(this: EntityManager, channelId: string, text: string, userId: string) {
 	await WordRight.lock(this);
 
 	// TODO: remove after testing synchronization
@@ -182,13 +186,9 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, use
 
 	await right.delete(this);
 
-	const word = Word.create({
+	return await Word.insertOne({
 		channelId,
 		userIdCreator: userId,
 		word: text
 	});
-
-	await word.insert(this);
-
-	return word as WordActive;
 }

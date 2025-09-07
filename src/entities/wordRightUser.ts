@@ -1,7 +1,6 @@
 import type { DateTime } from 'luxon';
-import type { EntityManager, InsertResult } from 'typeorm';
+import type { EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { DateTimeValueTransformer, insertEntities } from './utils.js';
 import type { WordRight } from './wordRight.js';
 

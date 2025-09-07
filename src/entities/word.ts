@@ -1,5 +1,5 @@
 import type { DateTime } from 'luxon';
-import type { EntityManager, FindOptionsWhere } from 'typeorm';
+import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
 import { DateTimeValueTransformer, execute, insertEntities } from './utils.js';
@@ -115,6 +115,10 @@ export class Word extends BaseEntity {
 			: this.countBy(options);
 	}
 
+	static insertOne(value: DeepPartial<Word>, entityManager?: EntityManager) {
+		return insertEntities([this.create(value)], this, entityManager).then(ws => ws[0]);
+	}
+
 	static where(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
@@ -127,10 +131,6 @@ export class Word extends BaseEntity {
 					where: options
 				})
 			: this.findBy(options);
-	}
-
-	insert(entityManager?: EntityManager) {
-		return insertEntities([this], Word, entityManager).then(ws => ws[0]);
 	}
 
 	tryAddScore(value: number, entityManager?: EntityManager) {
@@ -204,8 +204,8 @@ export class Word extends BaseEntity {
 	}
 }
 
-export type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
-export type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
+type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
 
 export function isWordActive(word: Word): word is WordActive {
 	return word.active;
