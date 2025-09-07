@@ -20,14 +20,13 @@ For node, I use [nvm for windows](https://github.com/coreybutler/nvm-windows) (o
 Install is simple, just check the version in `package.json` and install that. E.g:
 
 ```shell
-nvm install 24.4.1
+nvm install 24.7.0
 ```
 
-Enabling and installing `pnpm` can be done with `corepack`. E.g.:
+Installing `pnpm` can be done with `npm`. E.g.:
 
 ```shell
-corepack enable pnpm
-corepack install --global pnpm@10.13.1
+npm install --global pnpm@10.15.1
 ```
 
 Keep in mind that actual versions of the engine and package manager are maintained in `package.json` and `Dockerfile`.
