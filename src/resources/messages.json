@@ -56,11 +56,20 @@
 		"Labiau pasistenk.",
 		"ne"
 	],
-	"report": [
-		"  • Kanalas <#${channelId}> priklauso <@${userId}>"
+	"reportActive": [
+		"  • Kanalas <#${channelId}> priklauso <@${userId}> (${count})",
+		"  • <@${userId}> turi ${count} žodžius (-į, -ių) <#${channelId}>",
+		"  • Channel: <#${channelId}>; user: <@${userId}>; count: ${count}"
+	],
+	"reportEmpty": [
+		"Tuščias raportas, niekas nežaidžia."
 	],
 	"reportPrivate": [
 		"Sveikas `drauge` :proletariatas:! Noriu tave informuot, kad tu turi aktyvų žodį *${word}* kanale <#${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir _${expiration}_ išeina (išėjo) iš galiojimo."
+	],
+	"reportRights": [
+		"  • Kanalas: <#${channelId}>; kiekis: ${count}",
+		"  • Kanale <#${channelId}> yra ${count} nepanaudotų teisių"
 	],
 	"setWordSuccess": [
 		"Sveikinimai! Tavo naujasis žodis yra *${word}*."

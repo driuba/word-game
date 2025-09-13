@@ -16,32 +16,7 @@ export default async function (
 ) {
 	await ack();
 
-	// TODO: all words are active, need to handle private vs not
-	// if (isWordActive(word)) {
-	// 	if (word.userIdCreator === userId) {
-	// 		await respond({
-	// 			response_type: 'ephemeral',
-	// 			text: messages.currentWordStatusPrivate({
-	// 				expiration: getWordExpiration(word)?.toLocaleString(DateTime.DATETIME_SHORT),
-	// 				score: word.score.toFixed(),
-	// 				word: word.word
-	// 			})
-	// 		});
-	//
-	// 		return;
-	// 	}
-	//
-	// 	await respond({
-	// 		response_type: 'ephemeral',
-	// 		text: messages.currentWordHolder({
-	// 			userId: word.userIdCreator
-	// 		})
-	// 	});
-	//
-	// 	return;
-	// }
-
-	const words = await getWordsActive(channelId)
+	const reportWords = await getWordsActive(channelId)
 		.then(
 			ws => ws.reduce(
 				(a, w) => {
@@ -78,7 +53,7 @@ export default async function (
 			personal: messages.checkWordsActivePersonal(a.personal) || false as string | false
 		}));
 
-	const rights = await getWordRights(channelId)
+	const reportRights = await getWordRights(channelId)
 		.then(wrs => wrs.reduce(
 			(a, wr) => {
 				if (wr.users.some(u => u.userId === userId)) {
@@ -107,24 +82,24 @@ export default async function (
 		}))
 		.then(a => a.show && messages.checkWordRights(a));
 
-	const lines: string[] = [];
+	const linesReport: string[] = [];
 
-	if (words.personal) {
-		lines.push(words.personal);
+	if (reportWords.personal) {
+		linesReport.push(reportWords.personal);
 	}
 
-	if (words.other) {
-		lines.push(words.other);
+	if (reportWords.other) {
+		linesReport.push(reportWords.other);
 	}
 
-	if (rights) {
-		lines.push(rights);
+	if (reportRights) {
+		linesReport.push(reportRights);
 	}
 
-	if (lines.length) {
+	if (linesReport.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: lines.join('\n')
+			text: linesReport.join('\n')
 		});
 	} else {
 		throw new ApplicationError(`Something's not right... I can feel i-i-i-i-it!`);

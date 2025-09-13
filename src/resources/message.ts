@@ -60,9 +60,14 @@ const overrides = {
 	currentWordStatusPublic(values: { count: string, score: string, userId: string }) {
 		return replace(messages.currentWordStatusPublic, values);
 	},
-	report(values: { channelId: string, userId: string }[]) {
+	reportActive(values: { channelId: string, count: string, userId: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.report))
+			.map(replace.bind(undefined, messages.reportActive))
+			.join('\n');
+	},
+	reportRights(values: { channelId: string, count: string }[]) {
+		return values
+			.map(replace.bind(undefined, messages.reportRights))
 			.join('\n');
 	},
 	reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
