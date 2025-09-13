@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { messages } from '~/resources/index.js';
+import { readme } from '~/resources/index.js';
 
 export default async function (
 	{
@@ -8,6 +8,6 @@ export default async function (
 ) {
 	await ack({
 		response_type: 'ephemeral',
-		text: messages.readme
+		text: readme
 	});
 }

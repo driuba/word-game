@@ -1,15 +1,31 @@
 {
 	"botNotInChat": [
-		"Beep bop, I'm not in this chat. \uD835\uDE7F̍\uD835\uDE95́\uD835\uDE8E̷\uD835\uDE8A̤\uD835\uDE9Cͦ\uD835\uDE8E͙ͯ,̰͓ ̙ͩ\uD835\uDE92ͪ̕\uD835\uDE97ͣ̔\uD835\uDE9F͓͈͐\uD835\uDE92̝̄͂\uD835\uDE9D̹́ͭ\uD835\uDE8E̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́\uD835\uDE7C̴͖̱̆\uD835\uDE74̤̺͚̫"
+		"Beep bop, I'm not in this chat. 𝙿̍𝚕́𝚎̷𝚊̤𝚜ͦ𝚎͙ͯ,̰͓ ̙ͩ𝚒ͪ̕𝚗ͣ̔𝚟͓͈͐𝚒̝̄͂𝚝̹́ͭ𝚎̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́𝙼̴͖̱̆𝙴̤̺͚̫",
+		"Sorry, nebuvau pakviestas."
+	],
+	"checkWordRights": [
+		"Nenustatyti žodžiai: ${total}; bendri, kuriais gali pasinaudoti tu ir kažkas kitas: ${shared}; asmeniniai: ${personal}.",
+		"Tavo ${personal}, bendri ${shared}, viso ${total}."
+	],
+	"checkWordsActiveOther": [
+		"<@${userId}> kontroliuoja net _${count}_ rinkos elementus.",
+		"<@${userId}>: ${count} žodžiai."
+	],
+	"checkWordsActivePersonal": [
+		"*${word}* surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_ ir galios iki _${expiration}_.",
+		"Žodis — ${word}; rezultatas — ${score}; galojimas — ${expiration}.",
+		"Aha, matau dar turi *${word}* su *${score}* taškų.\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tAi, čia dar galiojimas yra — *${expiration}*.",
+		"`\\t WORD: ${word}\\n\\t SCORE: ${score}\\n\\t EXPIRATION: ${expiration}`",
+		"Dėmesio dėmesio! _${word}_ vertas _${score}_. Prašome nepamiršti ir naudoti žodį, kol kas nors jį atspės arba baigsis jo laikas (${expiration})."
 	],
 	"currentWordExpiredPrivate": [
-		"Psst... <@${userId}> žodelis *${word}* (*${score}*) nebegalioja, kas reiškia, kad bet kas gali nustatyti sekantį žodį. Jei paskubėsi, gal spėsi :wink:"
+		"Psst… <@${userId}> žodelis *${word}* (*${score}*) nebegalioja, kas reiškia, kad bet kas gali nustatyti sekantį žodį. Jei paskubėsi, gal spėsi :wink:"
 	],
 	"currentWordExpiredPrivateMe": [
 		"Tavo žodis *${word}* jau sugedo, jis surinko *${score}* pagarbos taškus(-ą, -ų) ir išėjo iš galiojimo *${expired}*."
 	],
 	"currentWordExpiredPublic": [
-		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius – <@${userId}>, o žodis buvo – *${word}*, jis surinko – ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus <@${userId}>, tau negalima."
+		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius — <@${userId}>, o žodis buvo — *${word}*, jis surinko — ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus *<@${userId}>*, tau negalima."
 	],
 	"currentWordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"
@@ -21,40 +37,32 @@
 		"Karalius mirė, tegyvuoja karalius! <@${userId}> ruošiasi perimti chat'ą."
 	],
 	"currentWordSetterMe": [
-		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!*"
+		"_Vienas žodis valdyti jiems visiems…_ Valdžia tavo rankose. *PASINAUDOK JA!*"
 	],
 	"currentWordStatusPrivate": [
 		"Dabartinis žodis yra *${word}* ir jis surinko *${score}* taškus _(tašką? taškų?, kaip man žinot?)_ ir _${expiration}_."
 	],
 	"currentWordStatusPublic": [
-		"<@${userId}> nori pasigirti, kad jų žodžiai, kurių yra _${count}_, surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau..."
+		"<@${userId}> nori pasigirti, kad jų žodžiai, kurių yra _${count}_, surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau…"
 	],
 	"currentWordUnset": [
 		"Nieks neturi žodžio! Tai tavo proga, nustatyk jį pats!"
-	],
-	"hasWordRightsNone": [
-		"Atgal į eilės galą, čia tokiems, kaip tu, nėra vietos.",
-		"Deja, jūs nesate įtraukti į VIP sąrašą."
-	],
-	"hasWordRightsPersonal": [
-		"_Vienas žodis valdyti jiems visiems..._ Valdžia tavo rankose. *PASINAUDOK JA!* ⨯${count}"
-	],
-	"hasWordRightsShared": [
-		"Hey, yra ${count} nenustatytų žodžių, jei paskubėsi, gal ir tu gausi progą."
 	],
 	"nothingInStatistics": [
 		"Neturiu ką parodyt. Prašikčiau, bandyti vėliau."
 	],
 	"nothingToBrag": [
-		"Nėr ko girtis, grybe tu."
+		"Nėr ko girtis, grybe tu.",
+		"Labiau pasistenk.",
+		"ne"
 	],
 	"report": [
-		"Kanalas <#${channelId}> priklauso <@${userId}>"
+		"  • Kanalas <#${channelId}> priklauso <@${userId}>"
 	],
 	"reportPrivate": [
 		"Sveikas `drauge` :proletariatas:! Noriu tave informuot, kad tu turi aktyvų žodį *${word}* kanale <#${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir _${expiration}_ išeina (išėjo) iš galiojimo."
 	],
 	"setWordSuccess": [
-		"Sveikinimai! tavo naujasis žodis yra *${word}*."
+		"Sveikinimai! Tavo naujasis žodis yra *${word}*."
 	]
 }

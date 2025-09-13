@@ -71,9 +71,7 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 		return null;
 	}
 
-	const words = await getWordsActive(channelId);
-
-	for (const word of words) {
+	for (const word of await getWordsActive(channelId)) {
 		const pattern = wordGuessPattern(word.word);
 
 		const score = text.match(pattern)?.length ?? 0;
