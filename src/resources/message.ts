@@ -13,33 +13,33 @@ const messages = new Proxy(resources, {
 }) as unknown as ResourceRecord;
 
 const overrides = {
-	checkWordRights(values: { personal: string, shared: string, total: string }) {
+	checkWordRights(values: { personal: string; shared: string; total: string }) {
 		return replace(messages.checkWordRights, values);
 	},
-	checkWordsActiveOther(values: { count: string, userId: string }[]) {
+	checkWordsActiveOther(values: { count: string; userId: string }[]) {
 		return values
 			.map(replace.bind(undefined, messages.checkWordsActiveOther))
 			.join('\n');
 	},
-	checkWordsActivePersonal(values: { expiration?: string, score: string, word: string }[]) {
+	checkWordsActivePersonal(values: { expiration?: string; score: string; word: string }[]) {
 		return values
-			.map(v => ({
+			.map((v) => ({
 				...v,
 				expiration: v.expiration ?? 'su visam'
 			}))
 			.map(replace.bind(undefined, messages.checkWordsActivePersonal))
 			.join('\n');
 	},
-	currentWordExpiredPrivate(values: { expired: string, score: string, userId: string, word: string }) {
+	currentWordExpiredPrivate(values: { expired: string; score: string; userId: string; word: string }) {
 		return replace(messages.currentWordExpiredPrivate, values);
 	},
-	currentWordExpiredPrivateMe(values: { expired: string, score: string, word: string }) {
+	currentWordExpiredPrivateMe(values: { expired: string; score: string; word: string }) {
 		return replace(messages.currentWordExpiredPrivateMe, values);
 	},
-	currentWordExpiredPublic(values: { score: string, userId: string, word: string }) {
+	currentWordExpiredPublic(values: { score: string; userId: string; word: string }) {
 		return replace(messages.currentWordExpiredPublic, values);
 	},
-	currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
+	currentWordGuessed(values: { score: string; userIdGuesser: string; userIdCreator: string; word: string }) {
 		return replace(messages.currentWordGuessed, values);
 	},
 	currentWordHolder(values: { userId: string }) {
@@ -48,7 +48,7 @@ const overrides = {
 	currentWordSetter(values: { userId: string }) {
 		return replace(messages.currentWordSetter, values);
 	},
-	currentWordStatusPrivate(values: { expiration?: string, score: string, word: string }) {
+	currentWordStatusPrivate(values: { expiration?: string; score: string; word: string }) {
 		return replace(
 			messages.currentWordStatusPrivate,
 			{
@@ -57,20 +57,20 @@ const overrides = {
 			}
 		);
 	},
-	currentWordStatusPublic(values: { count: string, score: string, userId: string }) {
+	currentWordStatusPublic(values: { count: string; score: string; userId: string }) {
 		return replace(messages.currentWordStatusPublic, values);
 	},
-	reportActive(values: { channelId: string, count: string, userId: string }[]) {
+	reportActive(values: { channelId: string; count: string; userId: string }[]) {
 		return values
 			.map(replace.bind(undefined, messages.reportActive))
 			.join('\n');
 	},
-	reportRights(values: { channelId: string, count: string }[]) {
+	reportRights(values: { channelId: string; count: string }[]) {
 		return values
 			.map(replace.bind(undefined, messages.reportRights))
 			.join('\n');
 	},
-	reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
+	reportPrivate(values: { channelId: string; expiration: string; score: string; word: string }) {
 		return replace(messages.reportPrivate, values);
 	},
 	setWordSuccess(values: { word: string }) {

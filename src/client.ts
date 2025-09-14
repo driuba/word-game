@@ -70,7 +70,7 @@ export default abstract class {
 	}
 }
 
-type Cache<T> = Record<symbol, { expiration?: DateTime<true>, value: T } | undefined>;
+type Cache<T> = Record<symbol, { expiration?: DateTime<true>; value: T } | undefined>;
 
 // This is more of a proof of concept, actual caching is not currently required as the app doesn't seem hit API rate limits
 function cache(duration: DurationLike = { seconds: 1 }) {

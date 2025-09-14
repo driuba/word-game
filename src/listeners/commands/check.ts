@@ -18,7 +18,7 @@ export default async function (
 
 	const reportWords = await getWordsActive(channelId)
 		.then(
-			ws => ws.reduce(
+			(ws) => ws.reduce(
 				(a, w) => {
 					if (w.userIdCreator === userId) {
 						a.personal.push({
@@ -35,11 +35,11 @@ export default async function (
 				},
 				{
 					other: {} as Record<string, number>,
-					personal: [] as { expiration?: string, score: string, word: string }[]
+					personal: [] as { expiration?: string; score: string; word: string }[]
 				}
 			)
 		)
-		.then(a => ({
+		.then((a) => ({
 			...a,
 			other: Object
 				.entries(a.other)
@@ -48,15 +48,15 @@ export default async function (
 					userId: k
 				}))
 		}))
-		.then(a => ({
+		.then((a) => ({
 			other: messages.checkWordsActiveOther(a.other) || false as string | false,
 			personal: messages.checkWordsActivePersonal(a.personal) || false as string | false
 		}));
 
 	const reportRights = await getWordRights(channelId)
-		.then(wrs => wrs.reduce(
+		.then((wrs) => wrs.reduce(
 			(a, wr) => {
-				if (wr.users.some(u => u.userId === userId)) {
+				if (wr.users.some((u) => u.userId === userId)) {
 					if (wr.users.length === 1) {
 						a.personal++;
 					} else {
@@ -74,13 +74,13 @@ export default async function (
 				total: 0
 			}
 		))
-		.then(a => ({
+		.then((a) => ({
 			personal: a.personal.toFixed(),
 			shared: a.shared.toFixed(),
 			show: a.total > 0,
 			total: a.total.toFixed()
 		}))
-		.then(a => a.show && messages.checkWordRights(a));
+		.then((a) => a.show && messages.checkWordRights(a));
 
 	const linesReport: string[] = [];
 

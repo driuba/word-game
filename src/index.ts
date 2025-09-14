@@ -43,7 +43,7 @@ try {
 		Promise
 			.all([
 				app.stop(),
-				...workers.map(w => w.stop())
+				...workers.map((w) => w.stop())
 			])
 			.then(() => {
 				app.logger.info('🪦 Word game has been terminated! 🪦');

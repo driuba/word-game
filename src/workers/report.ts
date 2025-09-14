@@ -14,7 +14,7 @@ export default async function (this: typeof app) {
 	const channelIds = await client.getChannelIds();
 
 	const reportWords = await getWordsActive()
-		.then(ws => ws.reduce<Record<string, Record<string, number>>>(
+		.then((ws) => ws.reduce<Record<string, Record<string, number>>>(
 			(a, w) => {
 				if (channelIds.has(w.channelId)) {
 					a[w.channelId] ??= {};
@@ -26,7 +26,7 @@ export default async function (this: typeof app) {
 			},
 			{}
 		))
-		.then(a => Object
+		.then((a) => Object
 			.entries(a)
 			.flatMap(([k1, v1]) => Object
 				.entries(v1)
@@ -40,7 +40,7 @@ export default async function (this: typeof app) {
 		.then(messages.reportActive.bind(undefined));
 
 	const reportRights = await getWordRights(reportWords)
-		.then(wrs => wrs.reduce<Record<string, number>>(
+		.then((wrs) => wrs.reduce<Record<string, number>>(
 			(a, wr) => {
 				if (channelIds.has(wr.channelId)) {
 					a[wr.channelId] ??= 0;
@@ -51,7 +51,7 @@ export default async function (this: typeof app) {
 			},
 			{}
 		))
-		.then(a => Object
+		.then((a) => Object
 			.entries(a)
 			.map(([k, v]) => ({
 				channelId: k,

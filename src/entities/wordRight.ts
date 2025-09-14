@@ -60,7 +60,7 @@ export class WordRight extends BaseEntity {
 	}
 
 	static insertOne(value: DeepPartial<WordRight>, entityManager?: EntityManager) {
-		return insertEntities([this.create(value)], this, entityManager).then(wrs => wrs[0]);
+		return insertEntities([this.create(value)], this, entityManager).then((wrs) => wrs[0]);
 	}
 
 	static where(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {

@@ -6,7 +6,7 @@ import config from '~/config.js';
 
 // noinspection JSUnusedGlobalSymbols
 export default {
-	//Slack
+	// Slack
 	debug(...messages) {
 		for (const message of messages) {
 			logger.debug(message);
@@ -36,7 +36,7 @@ export default {
 			logger.warn(message);
 		}
 	},
-	//TypeORM
+	// TypeORM
 	log(level, message) {
 		switch (level) {
 			case 'info': {

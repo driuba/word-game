@@ -230,7 +230,7 @@ abstract class Wg {
 function* getErrors(target: object) {
 	const propertyNames = Object
 		.getOwnPropertyNames(target)
-		.filter(pn => Reflect.getOwnMetadata(lazyMetadataKey, target, pn));
+		.filter((pn) => Reflect.getOwnMetadata(lazyMetadataKey, target, pn));
 
 	for (const propertyName of propertyNames) {
 		try {

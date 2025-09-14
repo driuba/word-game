@@ -19,7 +19,7 @@ export default async function (this: typeof app) {
 		const errors: unknown[] = [];
 
 		const words = await getWordsActive().then(
-			ws => ws.map(w => ({
+			(ws) => ws.map((w) => ({
 				channelId: w.channelId,
 				expiration: getWordExpiration(w),
 				score: w.score.toFixed(),

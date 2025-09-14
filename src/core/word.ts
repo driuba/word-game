@@ -14,7 +14,7 @@ export async function* expireWords() {
 
 	for (const word of words) {
 		try {
-			await dataSource.transaction(em => runExpireWordTransaction.call(em, word));
+			await dataSource.transaction((em) => runExpireWordTransaction.call(em, word));
 
 			if (isWordInactive(word)) {
 				yield word;
@@ -30,7 +30,7 @@ export async function* expireWords() {
 }
 
 export function getWordsActive(channelId?: string, userIdCreator?: string) {
-	const filter: { active: true, channelId?: string, userIdCreator?: string } = { active: true };
+	const filter: { active: true; channelId?: string; userIdCreator?: string } = { active: true };
 
 	if (channelId) {
 		filter.channelId = channelId;
@@ -63,7 +63,7 @@ export function setWord(channelId: string, userId: string, text: string) {
 		throw new ApplicationError('Word must consist of only letters.', 'WORD_INVALID', { text });
 	}
 
-	return dataSource.transaction(em => runSetWordTransaction.call(em, channelId, text, userId));
+	return dataSource.transaction((em) => runSetWordTransaction.call(em, channelId, text, userId));
 }
 
 export async function* tryScoreOrGuessWords(channelId: string, userId: string, text?: string) {
@@ -85,7 +85,7 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 				Math.min(score, config.wg.wordScoreMax)
 			);
 		} else {
-			await dataSource.transaction(em => runGuessWordTransaction.call(em, userId, word));
+			await dataSource.transaction((em) => runGuessWordTransaction.call(em, userId, word));
 		}
 
 		yield word;
@@ -103,7 +103,7 @@ async function insertWordRights(entityManager: EntityManager, userIds: string[],
 
 		if (userIds.length) {
 			await WordRightUser.insertMany(
-				userIds.map(ui => WordRightUser.create({
+				userIds.map((ui) => WordRightUser.create({
 					userId: ui,
 					wordRightId: right.id
 				})),
@@ -119,7 +119,7 @@ async function runExpireWordTransaction(this: EntityManager, word: Word) {
 	await WordRight.lock(this);
 
 	// TODO: remove after testing synchronization
-	await new Promise<void>(r => setTimeout(() => {
+	await new Promise<void>((r) => setTimeout(() => {
 		r();
 	}, 30_000));
 
@@ -140,7 +140,7 @@ async function runGuessWordTransaction(this: EntityManager, userId: string, word
 	await WordRight.lock(this);
 
 	// TODO: remove after testing synchronization
-	await new Promise<void>(r => setTimeout(() => {
+	await new Promise<void>((r) => setTimeout(() => {
 		r();
 	}, 30_000));
 
@@ -153,7 +153,7 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 	await WordRight.lock(this);
 
 	// TODO: remove after testing synchronization
-	await new Promise<void>(r => setTimeout(() => {
+	await new Promise<void>((r) => setTimeout(() => {
 		r();
 	}, 30_000));
 
@@ -168,16 +168,16 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 	for (const candidate of rights) {
 		if (
 			candidate.users.length &&
-			!candidate.users.some(u => u.userId === userId)
+			!candidate.users.some((u) => u.userId === userId)
 		) {
 			continue;
 		}
 
 		if (
 			!right ||
-			candidate.users.length === 1 && right.users.length === 0 ||
+			(candidate.users.length === 1 && right.users.length === 0) ||
 			candidate.users.length < right.users.length ||
-			candidate.users.length === right.users.length && candidate.created < right.created
+			(candidate.users.length === right.users.length && candidate.created < right.created)
 		) {
 			right = candidate;
 		}

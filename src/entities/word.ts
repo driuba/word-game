@@ -116,7 +116,7 @@ export class Word extends BaseEntity {
 	}
 
 	static insertOne(value: DeepPartial<Word>, entityManager?: EntityManager) {
-		return insertEntities([this.create(value)], this, entityManager).then(ws => ws[0]);
+		return insertEntities([this.create(value)], this, entityManager).then((ws) => ws[0]);
 	}
 
 	static where(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
@@ -156,7 +156,7 @@ export class Word extends BaseEntity {
 				),
 			[this],
 			repository.metadata
-		).then(ws => ws[0]);
+		).then((ws) => ws[0]);
 	}
 
 	trySetExpired(entityManager?: EntityManager) {
@@ -184,7 +184,7 @@ export class Word extends BaseEntity {
 				),
 			[this],
 			repository.metadata
-		).then(ws => ws[0]);
+		).then((ws) => ws[0]);
 	}
 
 	trySetUserIdGuesser(value: string, entityManager?: EntityManager) {
@@ -200,12 +200,12 @@ export class Word extends BaseEntity {
 				.where('"Active" AND "Id" = :id', { id: this.id }),
 			[this],
 			repository.metadata
-		).then(ws => ws[0]);
+		).then((ws) => ws[0]);
 	}
 }
 
-type WordActive = Word & { active: true, expired: null, userIdGuesser: null };
-type WordInactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+type WordActive = Word & { active: true; expired: null; userIdGuesser: null };
+type WordInactive = Word & { active: false } & ({ expired: DateTime<true>; userIdGuesser: null } | { expired: null; userIdGuesser: string });
 
 export function isWordActive(word: Word): word is WordActive {
 	return word.active;

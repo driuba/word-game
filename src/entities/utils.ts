@@ -55,7 +55,6 @@ export class IntValueTransformer implements ValueTransformer {
 }
 
 export async function deleteEntity<T extends BaseEntity>(entity: T, target: EntityTarget<T>, entityManager?: EntityManager) {
-
 	let repository = entityManager?.getRepository(target);
 
 	if (!repository) {
@@ -71,13 +70,13 @@ export async function deleteEntity<T extends BaseEntity>(entity: T, target: Enti
 			.where(
 				Object.fromEntries(
 					repository.metadata.columns
-						.filter(c => c.isPrimary)
-						.map(c => [c.propertyName, c.getEntityValue(entity)])
+						.filter((c) => c.isPrimary)
+						.map((c) => [c.propertyName, c.getEntityValue(entity)])
 				)
 			),
 		[entity],
 		repository.metadata
-	).then(es => es[0]);
+	).then((es) => es[0]);
 }
 
 /**
@@ -127,11 +126,11 @@ export async function insertEntities<T extends BaseEntity>(entities: T[], target
 			.createQueryBuilder()
 			.insert()
 			.values(
-				entities.map(e =>
+				entities.map((e) =>
 					Object.fromEntries(
 						repository.metadata.columns
-							.filter(c => c.isInsert && !(c.isGenerated || c.isVirtual))
-							.map(c => [c.propertyName, c.getEntityValue(e)])
+							.filter((c) => c.isInsert && !(c.isGenerated || c.isVirtual))
+							.map((c) => [c.propertyName, c.getEntityValue(e)])
 					) as object & T
 				)
 			),
