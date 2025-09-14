@@ -1,8 +1,8 @@
+import type { WordRight } from './wordRight.js';
 import type { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, insertEntities } from './utils.js';
-import type { WordRight } from './wordRight.js';
 
 @Entity({ name: 'WordRightUsers' })
 export class WordRightUser extends BaseEntity {

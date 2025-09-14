@@ -63,10 +63,10 @@ export class StatisticChannel extends BaseEntity {
 	readonly countAll!: number;
 
 	@ViewColumn({
-		name: 'CountWeek',
+		name: 'CountExpiredAll',
 		transformer: new IntValueTransformer()
 	})
-	readonly countWeek!: number;
+	readonly countExpiredAll!: number;
 
 	@ViewColumn({
 		name: 'CountExpiredWeek',
@@ -75,10 +75,10 @@ export class StatisticChannel extends BaseEntity {
 	readonly countExpiredWeek!: number;
 
 	@ViewColumn({
-		name: 'CountExpiredAll',
+		name: 'CountWeek',
 		transformer: new IntValueTransformer()
 	})
-	readonly countExpiredAll!: number;
+	readonly countWeek!: number;
 
 	@ViewColumn({
 		name: 'GuessesAll',

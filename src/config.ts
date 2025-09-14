@@ -167,6 +167,21 @@ abstract class Wg {
 	}
 
 	@lazy
+	static get wordRightTimeout() {
+		if (!process.env.WG_WORD_RIGHT_TIMEOUT) {
+			return null;
+		}
+
+		const value = Duration.fromISO(process.env.WG_WORD_RIGHT_TIMEOUT);
+
+		if (value.isValid) {
+			return value;
+		}
+
+		throw new ApplicationError('WG_WORD_RIGHT_TIMEOUT is invalid.', 'CONFIG_INVALID', { value: process.env.WG_WORD_RIGHT_TIMEOUT });
+	}
+
+	@lazy
 	static get wordScoreMax() {
 		if (!process.env.WG_WORD_SCORE_MAX) {
 			return 1;

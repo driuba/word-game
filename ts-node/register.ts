@@ -1,4 +1,4 @@
-import { register } from 'module';
-import { pathToFileURL } from 'url';
+import { register } from 'node:module';
+import { pathToFileURL } from 'node:url';
 
 register('./ts-node/esmHooks.ts', pathToFileURL(import.meta.dirname));

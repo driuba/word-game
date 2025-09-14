@@ -4,10 +4,10 @@ import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
 export default async function (this: typeof app) {
+	this.logger.info('Starting word expiration.');
+
 	const errors: unknown[] = [];
 	let count = 0;
-
-	this.logger.info('Starting expiration.');
 
 	const channelIds = await client.getChannelIds();
 

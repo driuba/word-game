@@ -54,14 +54,6 @@ export class Word extends BaseEntity {
 	readonly id!: number;
 
 	@Column({
-		default: 0,
-		name: 'Score',
-		nullable: false,
-		type: 'integer'
-	})
-	score!: number;
-
-	@Column({
 		default: null,
 		generated: true,
 		insert: false,
@@ -72,6 +64,14 @@ export class Word extends BaseEntity {
 		update: false
 	})
 	readonly modified!: DateTime<true> | null;
+
+	@Column({
+		default: 0,
+		name: 'Score',
+		nullable: false,
+		type: 'integer'
+	})
+	score!: number;
 
 	@Column({
 		length: 50,
@@ -87,8 +87,8 @@ export class Word extends BaseEntity {
 		default: null,
 		length: 50,
 		name: 'UserIdGuesser',
-		type: 'character varying',
-		nullable: true
+		nullable: true,
+		type: 'character varying'
 	})
 	@Index()
 	userIdGuesser!: string | null;

@@ -11,10 +11,10 @@ const dateToday = DateTime
 export default async function (this: typeof app) {
 	this.logger.info('Stating personal report.');
 
-	const channelIds = await client.getChannelIds();
-
 	const errors: unknown[] = [];
 	let count = 0;
+
+	const channelIds = await client.getChannelIds();
 
 	if (channelIds.size) {
 		const reportsWord = await getWordsActive()

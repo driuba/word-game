@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import type {
 	BaseEntity,
 	DeleteQueryBuilder,
@@ -9,6 +8,7 @@ import type {
 	UpdateQueryBuilder,
 	ValueTransformer
 } from 'typeorm';
+import { DateTime } from 'luxon';
 import { ApplicationError } from '~/utils/index.js';
 
 // noinspection JSUnusedGlobalSymbols

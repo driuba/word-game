@@ -45,8 +45,8 @@ export default abstract class {
 
 		do {
 			const { members: users = [], response_metadata: { next_cursor: cursorNext } = {} } = await app.client.conversations.members({
-				cursor,
 				channel: channelId,
+				cursor,
 				limit: 200
 			});
 

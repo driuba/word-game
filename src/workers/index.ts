@@ -18,11 +18,11 @@ function createJob(
 	onTick: Params['onTick']
 ) {
 	return CronJob.from({
+		context: app,
 		cronTime,
 		errorHandler,
 		onComplete,
 		onTick,
-		context: app,
 		start: true,
 		timeZone: config.timezone,
 		waitForCompletion: true

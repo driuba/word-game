@@ -15,11 +15,11 @@ const { default: logger } = await import('~/logger.js');
 const { default: registerWorkers } = await import('~/workers/index.js');
 
 globalThis.app = new App({
-	logger,
 	appToken: config.slack.appToken,
 	clientId: config.slack.clientId,
 	clientSecret: config.slack.clientSecret,
 	logLevel: config.nodeEnv === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+	logger,
 	signingSecret: config.slack.signingSecret,
 	socketMode: true,
 	token: config.slack.botToken

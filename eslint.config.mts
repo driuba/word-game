@@ -1,7 +1,8 @@
 import eslint from '@eslint/js';
-import { defineConfig, globalIgnores } from 'eslint/config';
 import stylistic from '@stylistic/eslint-plugin';
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import pluginImport from 'eslint-plugin-import';
+import { configs as tsConfigs } from 'typescript-eslint';
 
 export default defineConfig(
 	eslint.configs.recommended,
@@ -16,12 +17,13 @@ export default defineConfig(
 		semi: true,
 		severity: 'warn'
 	}),
-	tseslint.configs.recommendedTypeChecked,
-	tseslint.configs.strictTypeChecked,
-	tseslint.configs.stylisticTypeChecked,
+	tsConfigs.recommendedTypeChecked,
+	tsConfigs.strictTypeChecked,
+	tsConfigs.stylisticTypeChecked,
 	globalIgnores(['dist/'], 'Ignore build directory.'),
 	globalIgnores(['src/migrations'], 'Ignore migration directory.'),
 	{
+		extends: [pluginImport.flatConfigs.recommended, pluginImport.flatConfigs.typescript],
 		files: ['src/**/*', 'ts-node/**/*', 'eslint.config.mts', 'webpack.config.mts'],
 		languageOptions: {
 			parserOptions: {
@@ -32,8 +34,7 @@ export default defineConfig(
 			}
 		},
 		rules: {
-			curly: ['warn', 'all'],
-			eqeqeq: ['error', 'always'],
+			/* eslint-disable @typescript-eslint/naming-convention */
 			'@stylistic/indent': [
 				'warn',
 				'tab',
@@ -50,8 +51,8 @@ export default defineConfig(
 				'after',
 				{
 					overrides: {
-						'?': 'before',
-						':': 'before'
+						':': 'before',
+						'?': 'before'
 					}
 				}
 			],
@@ -63,21 +64,56 @@ export default defineConfig(
 					avoidEscape: true
 				}
 			],
-			'@typescript-eslint/consistent-type-exports': [
-				'error',
-				{
-					fixMixedExportsWithInlineTypeSpecifier: false
-				}
-			],
+			'@typescript-eslint/consistent-type-exports': ['error', { fixMixedExportsWithInlineTypeSpecifier: false }],
 			'@typescript-eslint/consistent-type-imports': [
 				'error',
 				{
 					fixStyle: 'separate-type-imports',
 					prefer: 'type-imports'
 				}],
-			'@typescript-eslint/no-unused-vars': 'warn',
+			'@typescript-eslint/member-ordering': ['warn', {
+				default: {
+					order: 'alphabetically'
+				}
+			}],
+			'@typescript-eslint/naming-convention': [
+				'warn',
+				{
+					format: ['camelCase', 'snake_case'],
+					leadingUnderscore: 'allow',
+					selector: 'default'
+				},
+				{
+					format: ['PascalCase'],
+					selector: 'typeLike'
+				}
+			],
+			'@typescript-eslint/no-empty-function': 'warn',
 			'@typescript-eslint/no-unnecessary-condition': ['warn', { allowConstantLoopConditions: 'only-allowed-literals' }],
-			'@typescript-eslint/prefer-nullish-coalescing': 'warn'
+			'@typescript-eslint/no-unused-vars': 'warn',
+			'@typescript-eslint/prefer-nullish-coalescing': 'warn',
+			curly: ['warn', 'all'],
+			eqeqeq: ['error', 'always'],
+			'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+			'import/enforce-node-protocol-usage': ['error', 'always'],
+			'import/order': ['warn', {
+				alphabetize: {
+					order: 'asc'
+				},
+				groups: ['type', 'builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+				named: true
+			}],
+			'sort-keys': 'warn',
+			'sort-vars': 'warn'
+			/* eslint-enable @typescript-eslint/naming-convention */
+		},
+		settings: {
+			/* eslint-disable @typescript-eslint/naming-convention */
+			'import/resolver': {
+				node: true,
+				typescript: true
+			}
+			/* eslint-enable @typescript-eslint/naming-convention */
 		}
 	}
 );

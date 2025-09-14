@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
 import type { Configuration } from 'webpack';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import packageInformation from './package.json' with { type: 'json' };
 
 export default {
@@ -46,10 +46,14 @@ export default {
 	},
 	resolve: {
 		alias: {
+			/* eslint-disable @typescript-eslint/naming-convention */
 			'~': resolve(import.meta.dirname, 'src')
+			/* eslint-enable @typescript-eslint/naming-convention */
 		},
 		extensionAlias: {
+			/* eslint-disable @typescript-eslint/naming-convention */
 			'.js': ['.ts']
+			/* eslint-enable @typescript-eslint/naming-convention */
 		},
 		extensions: ['.ts']
 	},

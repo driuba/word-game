@@ -1,8 +1,8 @@
-import { DateTime } from 'luxon';
 import type { EntityManager } from 'typeorm';
+import { DateTime } from 'luxon';
 import client from '~/client.js';
 import config from '~/config.js';
-import dataSource, { isWordActive, isWordInactive, Word, WordRight, WordRightUser } from '~/entities/index.js';
+import dataSource, { Word, WordRight, WordRightUser, isWordActive, isWordInactive } from '~/entities/index.js';
 import { ApplicationError, wordGuessPattern, wordValidationPattern } from '~/utils/index.js';
 
 const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999') as DateTime<true>;

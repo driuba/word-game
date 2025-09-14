@@ -39,7 +39,7 @@ const overrides = {
 	currentWordExpiredPublic(values: { score: string; userId: string; word: string }) {
 		return replace(messages.currentWordExpiredPublic, values);
 	},
-	currentWordGuessed(values: { score: string; userIdGuesser: string; userIdCreator: string; word: string }) {
+	currentWordGuessed(values: { score: string; userIdCreator: string; userIdGuesser: string; word: string }) {
 		return replace(messages.currentWordGuessed, values);
 	},
 	currentWordHolder(values: { userId: string }) {
@@ -65,11 +65,6 @@ const overrides = {
 			.map(replace.bind(undefined, messages.reportActive))
 			.join('\n');
 	},
-	reportRights(values: { channelId: string; count: string }[]) {
-		return values
-			.map(replace.bind(undefined, messages.reportRights))
-			.join('\n');
-	},
 	reportPrivateActive(values: { channelId: string; expiration: string; score: string; word: string }[]) {
 		return values
 			.map(replace.bind(undefined, messages.reportPrivateActive))
@@ -78,6 +73,11 @@ const overrides = {
 	reportPrivateRight(values: { channelId: string; count: string }[]) {
 		return values
 			.map(replace.bind(undefined, messages.reportPrivateRight))
+			.join('\n');
+	},
+	reportRights(values: { channelId: string; count: string }[]) {
+		return values
+			.map(replace.bind(undefined, messages.reportRights))
 			.join('\n');
 	},
 	setWordSuccess(values: { word: string }) {

@@ -24,16 +24,16 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 		}
 		case StatisticPeriod.week: {
 			options.order = {
-				scoreWeek: {
-					direction: 'DESC',
+				countExpiredWeek: {
+					direction: 'ASC',
 					nulls: 'LAST'
 				},
 				guessesWeek: {
 					direction: 'DESC',
 					nulls: 'LAST'
 				},
-				countExpiredWeek: {
-					direction: 'ASC',
+				scoreWeek: {
+					direction: 'DESC',
 					nulls: 'LAST'
 				}
 			};

@@ -1,8 +1,8 @@
+import type { WordRightUser } from './wordRightUser.js';
 import type { DateTime } from 'luxon';
 import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, deleteEntity, insertEntities } from './utils.js';
-import type { WordRightUser } from './wordRightUser.js';
 
 const tableName = 'WordRights' as const;
 
@@ -41,16 +41,13 @@ export class WordRight extends BaseEntity {
 	})
 	readonly users!: WordRightUser[];
 
-	static lock(entityManager: EntityManager) {
-		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
-	}
-
 	static countWhere(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
 				.getRepository(this)
 				.count({
 					lock: {
+						// TODO: deprecate all table row locks, it's solved with full table lock in transaction
 						mode: 'pessimistic_write',
 						tables: [tableName]
 					},
@@ -61,6 +58,10 @@ export class WordRight extends BaseEntity {
 
 	static insertOne(value: DeepPartial<WordRight>, entityManager?: EntityManager) {
 		return insertEntities([this.create(value)], this, entityManager).then((wrs) => wrs[0]);
+	}
+
+	static lock(entityManager: EntityManager) {
+		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
 	}
 
 	static where(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {

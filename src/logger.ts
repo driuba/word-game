@@ -1,6 +1,6 @@
 import type { Logger as LoggerSlack } from '@slack/bolt';
-import { LogLevel } from '@slack/bolt';
 import type { Logger as LoggerTypeorm } from 'typeorm';
+import { LogLevel } from '@slack/bolt';
 import { createLogger, format, transports } from 'winston';
 import config from '~/config.js';
 
@@ -37,6 +37,7 @@ export default {
 		}
 	},
 	// TypeORM
+	// eslint-disable-next-line sort-keys
 	log(level, message) {
 		switch (level) {
 			case 'info': {

@@ -21,11 +21,11 @@ export default async function (
 			response_type: 'in_channel',
 			// TODO: rename
 			text: messages.currentWordStatusPublic({
-				userId,
 				count: words.length.toFixed(),
 				score: words
 					.reduce((a, w) => a + w.score, 0)
-					.toFixed()
+					.toFixed(),
+				userId
 			})
 		});
 
