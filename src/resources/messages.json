@@ -64,8 +64,14 @@
 	"reportEmpty": [
 		"Tuščias raportas, niekas nežaidžia."
 	],
-	"reportPrivate": [
-		"Sveikas `drauge` :proletariatas:! Noriu tave informuot, kad tu turi aktyvų žodį *${word}* kanale <#${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir _${expiration}_ išeina (išėjo) iš galiojimo."
+	"reportPrivateActive": [
+		"`Drauge` :proletariatas:! Tu turi aktyvų žodį *${word}* kanale <#${channelId}>. Jis šiuo metu turi surinkęs *${score}* taškų ir _${expiration}_ išeina (išėjo) iš galiojimo.",
+		"Nepamiršk _${word}_ (${score}) kanale <#${channelId}>, turi dar laiko (iki ${expiration}), kol žodis bus perleistas kažkam.",
+		"Primenu, kad <#${channelId}> turi *${word}* su *${score}* taškų, kuriam *${expiration}* baigiasi laikas."
+	],
+	"reportPrivateRight": [
+		"Hey, <#${channelId}> turi *${count}* laisvų žodžių. Paskubėk, o tai nespėsi pasinaudoti teisėmis.",
+		"Pst, <#${channelId}>, ${count} žodžių. Nepraleisk progos"
 	],
 	"reportRights": [
 		"  • Kanalas: <#${channelId}>; kiekis: ${count}",

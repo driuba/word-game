@@ -2,7 +2,7 @@ import type { CronJobParams, CronOnCompleteCommand } from 'cron';
 import { CronJob } from 'cron';
 import config from '~/config.js';
 import reportHandler from './report.js';
-import reportPrivateWordHandler from '~/workers/reportPrivateWord.js';
+import reportPrivateHandler from './reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
 
 export default function () {
@@ -53,7 +53,7 @@ function* getWorkers() {
 		() => {
 			app.logger.info('Stopping personal report worker.');
 		},
-		reportPrivateWordHandler
+		reportPrivateHandler
 	);
 
 	if (config.wg.wordTimeoutGlobal || config.wg.wordTimeoutUsage) {

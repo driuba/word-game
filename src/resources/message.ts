@@ -70,8 +70,15 @@ const overrides = {
 			.map(replace.bind(undefined, messages.reportRights))
 			.join('\n');
 	},
-	reportPrivate(values: { channelId: string; expiration: string; score: string; word: string }) {
-		return replace(messages.reportPrivate, values);
+	reportPrivateActive(values: { channelId: string; expiration: string; score: string; word: string }[]) {
+		return values
+			.map(replace.bind(undefined, messages.reportPrivateActive))
+			.join('\n');
+	},
+	reportPrivateRight(values: { channelId: string; count: string }[]) {
+		return values
+			.map(replace.bind(undefined, messages.reportPrivateRight))
+			.join('\n');
 	},
 	setWordSuccess(values: { word: string }) {
 		return replace(messages.setWordSuccess, values);

@@ -3,7 +3,6 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
-// TODO: defaults and adjust
 export default defineConfig(
 	eslint.configs.recommended,
 	// @ts-expect-error after a recent update the types for stylistic plugin and eslint core seem to be misaligned, it still works tho
@@ -77,6 +76,7 @@ export default defineConfig(
 					prefer: 'type-imports'
 				}],
 			'@typescript-eslint/no-unused-vars': 'warn',
+			'@typescript-eslint/no-unnecessary-condition': ['warn', { allowConstantLoopConditions: 'only-allowed-literals' }],
 			'@typescript-eslint/prefer-nullish-coalescing': 'warn'
 		}
 	}
