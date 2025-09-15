@@ -18,7 +18,8 @@
 		"rootDir": "./src",
 		"sourceMap": true,
 		"strict": true,
-		"target": "ES2024",
+		// esnext is used as a temp fix for set instance method support. When es2025 target is defined this should be changed to that specific version
+		"target": "esnext",
 		"verbatimModuleSyntax": true
 	},
 	"display": "word-game",

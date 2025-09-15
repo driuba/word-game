@@ -103,7 +103,7 @@ async function insertWordRights(entityManager: EntityManager, userIds: string[],
 
 		if (userIds.length) {
 			await WordRightUser.insertMany(
-				userIds.map((ui) => WordRightUser.create({
+				userIds.map((ui) => ({
 					userId: ui,
 					wordRightId: right.id
 				})),

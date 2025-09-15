@@ -1,6 +1,6 @@
 import type { WordRight } from './wordRight.js';
 import type { DateTime } from 'luxon';
-import type { EntityManager } from 'typeorm';
+import type { DeepPartial, EntityManager } from 'typeorm';
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, insertEntities } from './utils.js';
 
@@ -50,7 +50,7 @@ export class WordRightUser extends BaseEntity {
 	})
 	readonly wordRightId!: number;
 
-	static insertMany(users: WordRightUser[], entityManager?: EntityManager) {
-		return insertEntities(users, this, entityManager);
+	static insertMany(values: DeepPartial<WordRightUser>[], entityManager?: EntityManager) {
+		return insertEntities(values.map((v) => this.create(v)), this, entityManager);
 	}
 }
