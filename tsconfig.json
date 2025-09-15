@@ -6,10 +6,7 @@
 		"baseUrl": "./src",
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"lib": [
-			"ES2024"
-		],
-		"module": "node18",
+		"module": "node20",
 		"moduleResolution": "node16",
 		"outDir": "./dist",
 		"paths": {

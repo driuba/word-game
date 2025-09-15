@@ -27,6 +27,7 @@ WORKDIR /home/node/build
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
+    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
     --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile
 
@@ -46,6 +47,7 @@ WORKDIR /home/node/app
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
+    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
     --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile --prod
 

@@ -12,6 +12,9 @@ export default {
 		outputModule: true
 	},
 	externals: Object.keys(packageInformation.dependencies),
+	externalsPresets: {
+		node: true
+	},
 	externalsType: 'node-commonjs',
 	module: {
 		defaultRules: [
@@ -35,11 +38,14 @@ export default {
 			}
 		]
 	},
+	node: false,
 	optimization: {
 		nodeEnv: false
 	},
 	output: {
+		chunkFormat: 'module',
 		clean: true,
+		environment: new Proxy({}, { get: () => true }),
 		filename: 'app.js',
 		module: true,
 		path: resolve(import.meta.dirname, 'dist')
