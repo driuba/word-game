@@ -1,6 +1,6 @@
 import type { EntityManager } from 'typeorm';
-import { In } from 'typeorm';
 import { DateTime } from 'luxon';
+import { In } from 'typeorm';
 import client from '~/client.js';
 import config from '~/config.js';
 import dataSource, { WordRight, WordRightUser } from '~/entities/index.js';

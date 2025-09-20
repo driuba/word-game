@@ -45,14 +45,7 @@ export class WordRight extends BaseEntity {
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.count({
-					lock: {
-						// TODO: deprecate all table row locks, it's solved with full table lock in transaction
-						mode: 'pessimistic_write',
-						tables: [tableName]
-					},
-					where: options
-				})
+				.count({ where: options })
 			: this.countBy(options);
 	}
 
@@ -69,13 +62,7 @@ export class WordRight extends BaseEntity {
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.find({
-					lock: {
-						mode: 'pessimistic_write',
-						tables: [tableName]
-					},
-					where: options
-				})
+				.find({ where: options })
 			: this.findBy(options);
 	}
 

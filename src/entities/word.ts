@@ -105,13 +105,7 @@ export class Word extends BaseEntity {
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.count({
-					lock: {
-						mode: 'pessimistic_write',
-						tables: [tableName]
-					},
-					where: options
-				})
+				.count({ where: options })
 			: this.countBy(options);
 	}
 
@@ -123,13 +117,7 @@ export class Word extends BaseEntity {
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.find({
-					lock: {
-						mode: 'pessimistic_write',
-						tables: [tableName]
-					},
-					where: options
-				})
+				.find({ where: options })
 			: this.findBy(options);
 	}
 
