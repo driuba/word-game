@@ -109,6 +109,24 @@ export class Word extends BaseEntity {
 			: this.countBy(options);
 	}
 
+	static countWhereGrouped(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository())
+			.createQueryBuilder()
+			.select('"ChannelId"', 'channelId')
+			.addSelect('COUNT(1)', 'count')
+			.where(options)
+			.groupBy('"ChannelId"')
+			.getRawMany<{ channelId: string; count: string }>()
+			.then((rs) => rs.reduce(
+				(a, r) => {
+					a.set(r.channelId, parseInt(r.count));
+
+					return a;
+				},
+				new Map<string, number>()
+			));
+	}
+
 	static insertOne(value: DeepPartial<Word>, entityManager?: EntityManager) {
 		return insertEntities([this.create(value)], this, entityManager).then((ws) => ws[0]);
 	}

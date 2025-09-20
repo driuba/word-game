@@ -55,6 +55,6 @@ export class WordRightUser extends BaseEntity {
 	}
 
 	static insertOne(value: DeepPartial<WordRightUser>, entityManager?: EntityManager) {
-		return this.insertMany([value], entityManager);
+		return this.insertMany([value], entityManager).then((wrus) => wrus[0]);
 	}
 }

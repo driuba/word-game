@@ -103,6 +103,7 @@ export default defineConfig(
 				groups: ['type', 'builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
 				named: true
 			}],
+			'object-shorthand': 'warn',
 			'sort-keys': 'warn',
 			'sort-vars': 'warn'
 			/* eslint-enable @typescript-eslint/naming-convention */

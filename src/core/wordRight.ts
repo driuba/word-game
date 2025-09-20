@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { In } from 'typeorm';
 import client from '~/client.js';
 import config from '~/config.js';
-import dataSource, { WordRight, WordRightUser } from '~/entities/index.js';
+import dataSource, { Word, WordRight, WordRightUser } from '~/entities/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
 export function getWordRights(channelId?: string) {
@@ -16,9 +16,17 @@ export function getWordRights(channelId?: string) {
 	return WordRight.where(options);
 }
 
+export function tryInsertWordRights(...channelIds: string[]) {
+	if (!channelIds.length) {
+		return Promise.resolve([]);
+	}
+
+	return dataSource.transaction((em) => runTryInsertWordRightsTransaction.call(em, channelIds));
+}
+
 export function updateWordRightUsers(...channelIds: string[]) {
 	if (!channelIds.length) {
-		return;
+		return Promise.resolve();
 	}
 
 	if (!config.wg.wordRightTimeout) {
@@ -30,6 +38,30 @@ export function updateWordRightUsers(...channelIds: string[]) {
 		.minus(config.wg.wordRightTimeout);
 
 	return dataSource.transaction((em) => runUpdateWordRightUsersTransaction.call(em, channelIds, to));
+}
+
+async function runTryInsertWordRightsTransaction(this: EntityManager, channelIds: string[]) {
+	await WordRight.lock(this);
+
+	const words = await Word.countWhereGrouped({ active: true, channelId: In(channelIds) }, this);
+	const wordRights = await WordRight.countWhereGrouped({ channelId: In(channelIds) }, this);
+
+	return await WordRight.insertMany(
+		[...new Set([...words.keys(), ...wordRights.keys()])].flatMap((ci) => {
+			const available =
+				config.wg.wordCountMax -
+				(words.get(ci) ?? 0) -
+				(wordRights.get(ci) ?? 0);
+			const results: { channelId: string }[] = [];
+
+			for (let a = available; a > 0; a--) {
+				results.push({ channelId: ci });
+			}
+
+			return results;
+		}),
+		this
+	);
 }
 
 async function runUpdateWordRightUsersTransaction(this: EntityManager, channelIds: string[], to: DateTime<true>) {

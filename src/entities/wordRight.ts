@@ -49,8 +49,30 @@ export class WordRight extends BaseEntity {
 			: this.countBy(options);
 	}
 
+	static countWhereGrouped(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository())
+			.createQueryBuilder()
+			.select('"ChannelId"', 'channelId')
+			.addSelect('COUNT(1)', 'count')
+			.where(options)
+			.groupBy('"ChannelId"')
+			.getRawMany<{ channelId: string; count: string }>()
+			.then((rs) => rs.reduce(
+				(a, r) => {
+					a.set(r.channelId, parseInt(r.count));
+
+					return a;
+				},
+				new Map<string, number>()
+			));
+	}
+
+	static insertMany(values: DeepPartial<WordRight>[], entityManager?: EntityManager) {
+		return insertEntities(values.map((v) => this.create(v)), this, entityManager);
+	}
+
 	static insertOne(value: DeepPartial<WordRight>, entityManager?: EntityManager) {
-		return insertEntities([this.create(value)], this, entityManager).then((wrs) => wrs[0]);
+		return this.insertMany([value], entityManager).then((wrs) => wrs[0]);
 	}
 
 	static lock(entityManager: EntityManager) {

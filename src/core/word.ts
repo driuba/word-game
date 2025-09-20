@@ -92,29 +92,6 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 	}
 }
 
-async function insertWordRights(entityManager: EntityManager, userIds: string[], word: Word) {
-	const available =
-		config.wg.wordCountMax -
-		await Word.countWhere({ active: true, channelId: word.channelId }, entityManager) -
-		await WordRight.countWhere({ channelId: word.channelId }, entityManager);
-
-	for (let a = available; a > 0; a--) {
-		const right = await WordRight.insertOne({ channelId: word.channelId }, entityManager);
-
-		if (userIds.length) {
-			await WordRightUser.insertMany(
-				userIds.map((ui) => ({
-					userId: ui,
-					wordRightId: right.id
-				})),
-				entityManager
-			);
-
-			userIds = [];
-		}
-	}
-}
-
 async function runExpireWordTransaction(this: EntityManager, word: Word) {
 	await WordRight.lock(this);
 
@@ -133,7 +110,7 @@ async function runExpireWordTransaction(this: EntityManager, word: Word) {
 
 	userIds.delete(word.userIdCreator);
 
-	await insertWordRights(this, [...userIds], word);
+	await tryInsertWordRight(this, [...userIds], word);
 }
 
 async function runGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
@@ -146,7 +123,7 @@ async function runGuessWordTransaction(this: EntityManager, userId: string, word
 
 	await word.trySetUserIdGuesser(userId);
 
-	await insertWordRights(this, [userId], word);
+	await tryInsertWordRight(this, [userId], word);
 }
 
 async function runSetWordTransaction(this: EntityManager, channelId: string, text: string, userId: string) {
@@ -163,7 +140,7 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 		throw new ApplicationError('No active word rights.', 'OPERATION_INVALID');
 	}
 
-	let right: WordRight | undefined;
+	let right: WordRight | undefined = undefined;
 
 	for (const candidate of rights) {
 		if (
@@ -194,4 +171,27 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 		userIdCreator: userId,
 		word: text
 	});
+}
+
+async function tryInsertWordRight(entityManager: EntityManager, userIds: string[], word: Word) {
+	const available =
+		config.wg.wordCountMax -
+		await Word.countWhere({ active: true, channelId: word.channelId }, entityManager) -
+		await WordRight.countWhere({ channelId: word.channelId }, entityManager);
+
+	if (available > 0) {
+		const right = await WordRight.insertOne({ channelId: word.channelId }, entityManager);
+
+		await WordRightUser.insertMany(
+			userIds.map((ui) => ({
+				userId: ui,
+				wordRightId: right.id
+			})),
+			entityManager
+		);
+
+		return true;
+	}
+
+	return false;
 }

@@ -2,7 +2,9 @@ import 'reflect-metadata';
 import process from 'node:process';
 import { App, LogLevel } from '@slack/bolt';
 import { Settings } from 'luxon';
+import client from '~/client.js';
 import config from '~/config.js';
+import { tryInsertWordRights } from '~/core/index.js';
 
 config.assertValid();
 
@@ -31,6 +33,8 @@ try {
 	await dataSource.initialize();
 
 	await app.start(config.port);
+
+	await tryInsertWordRights(...await client.getChannelIds());
 
 	const workers = registerWorkers();
 

@@ -47,7 +47,7 @@ abstract class Db {
 			return 5432;
 		}
 
-		const value = parseInt(process.env.DB_PORT, 10);
+		const value = parseInt(process.env.DB_PORT);
 
 		if (value > 0) {
 			return value;
@@ -157,7 +157,7 @@ abstract class Wg {
 			return 1;
 		}
 
-		const value = parseInt(process.env.WG_WORD_COUNT_MAX, 10);
+		const value = parseInt(process.env.WG_WORD_COUNT_MAX);
 
 		if (value > 0) {
 			return value;
@@ -187,7 +187,7 @@ abstract class Wg {
 			return 1;
 		}
 
-		const value = parseInt(process.env.WG_WORD_SCORE_MAX, 10);
+		const value = parseInt(process.env.WG_WORD_SCORE_MAX);
 
 		if (value > 0) {
 			return value;

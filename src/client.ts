@@ -64,7 +64,7 @@ export default abstract class {
 
 	@cache({ hours: 1 })
 	private static async getIsBot(userId: string) {
-		const { user: { is_bot } = { is_bot: true } } = await app.client.users.info({ user: userId });
+		const { user: { is_bot = false } = {} } = await app.client.users.info({ user: userId });
 
 		return is_bot;
 	}
@@ -103,7 +103,7 @@ function cache(duration: DurationLike = { seconds: 1 }) {
 							.plus(duration);
 					}
 
-					return cache[key].value;
+					return structuredClone(cache[key].value);
 				};
 			})()
 		} satisfies typeof descriptor;
