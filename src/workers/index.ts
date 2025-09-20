@@ -4,6 +4,7 @@ import config from '~/config.js';
 import reportHandler from './report.js';
 import reportPrivateHandler from './reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
+import wordRightUserWorker from './wordRightUser.js';
 
 export default function () {
 	return [...getWorkers()];
@@ -66,6 +67,19 @@ function* getWorkers() {
 				app.logger.info('Stopping word expiration worker.');
 			},
 			wordExpirationHandler
+		);
+	}
+
+	if (config.wg.wordRightTimeout) {
+		app.logger.info('Starting word right user worker.');
+
+		yield createJob(
+			'0 0 8 * * 1-5',
+			errorHandler,
+			() => {
+				app.logger.info('Stopping word right user worker.');
+			},
+			wordRightUserWorker
 		);
 	}
 }

@@ -40,10 +40,12 @@ try {
 	app.logger.info('⚡️ Word game is running! ⚡️');
 
 	function terminate() {
+		const promiseResolved = Promise.resolve();
+
 		Promise
 			.all([
 				app.stop(),
-				...workers.map((w) => w.stop())
+				...workers.map((w) => w.stop() ?? promiseResolved)
 			])
 			.then(() => {
 				app.logger.info('🪦 Word game has been terminated! 🪦');

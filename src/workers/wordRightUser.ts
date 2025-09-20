@@ -1,6 +1,6 @@
 import client from '~/client.js';
 import config from '~/config.js';
-import { updateWordRights } from '~/core/index.js';
+import { updateWordRightUsers } from '~/core/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
 export default async function (this: typeof app) {
@@ -13,7 +13,7 @@ export default async function (this: typeof app) {
 	let error: unknown;
 
 	try {
-		await updateWordRights(...await client.getChannelIds());
+		await updateWordRightUsers(...await client.getChannelIds());
 	} catch (e) {
 		error = e;
 	}

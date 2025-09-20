@@ -16,7 +16,7 @@ export function getWordRights(channelId?: string) {
 	return WordRight.where(options);
 }
 
-export function updateWordRights(...channelIds: string[]) {
+export function updateWordRightUsers(...channelIds: string[]) {
 	if (!channelIds.length) {
 		return;
 	}
@@ -29,10 +29,10 @@ export function updateWordRights(...channelIds: string[]) {
 		.now()
 		.minus(config.wg.wordRightTimeout);
 
-	return dataSource.transaction((em) => runUpdateWordRightsTransaction.call(em, channelIds, to));
+	return dataSource.transaction((em) => runUpdateWordRightUsersTransaction.call(em, channelIds, to));
 }
 
-async function runUpdateWordRightsTransaction(this: EntityManager, channelIds: string[], to: DateTime<true>) {
+async function runUpdateWordRightUsersTransaction(this: EntityManager, channelIds: string[], to: DateTime<true>) {
 	await WordRight.lock(this);
 
 	const rights = await WordRight
@@ -71,9 +71,9 @@ async function runUpdateWordRightsTransaction(this: EntityManager, channelIds: s
 			continue;
 		}
 
-		await WordRightUser.insertMany([{
+		await WordRightUser.insertOne({
 			userId: [...userIdsCandidate][Math.floor(Math.random() * userIdsCandidate.size)],
 			wordRightId: right.wordRight.id
-		}], this);
+		}, this);
 	}
 }
