@@ -14,49 +14,54 @@ export default async function (this: typeof app) {
 	const channelIds = await client.getChannelIds();
 
 	const reportWords = await getWordsActive()
-		.then((ws) => ws.reduce<Record<string, Record<string, number>>>(
+		.then((ws) => ws.reduce(
 			(a, w) => {
 				if (channelIds.has(w.channelId)) {
-					a[w.channelId] ??= {};
-					a[w.channelId][w.userIdCreator] ??= 0;
-					a[w.channelId][w.userIdCreator]++;
+					const channel = a.get(w.channelId) ?? new Map<string, number>();
+
+					if (!a.has(w.channelId)) {
+						a.set(w.channelId, channel);
+					}
+
+					channel.set(w.userIdCreator, (channel.get(w.userIdCreator) ?? 0) + 1);
 				}
 
 				return a;
 			},
-			{}
+			new Map<string, Map<string, number>>()
 		))
-		.then((a) => Object
-			.entries(a)
-			.flatMap(([k1, v1]) => Object
-				.entries(v1)
+		.then((a) => a
+			.entries()
+			.flatMap(([k1, v1]) => v1
+				.entries()
 				.map(([k2, v2]) => ({
 					channelId: k1,
 					count: v2.toFixed(),
 					userId: k2
 				}))
 			)
+			.toArray()
 		)
 		.then(messages.reportActive.bind(undefined));
 
 	const reportRights = await getWordRights(reportWords)
-		.then((wrs) => wrs.reduce<Record<string, number>>(
+		.then((wrs) => wrs.reduce(
 			(a, wr) => {
 				if (channelIds.has(wr.channelId)) {
-					a[wr.channelId] ??= 0;
-					a[wr.channelId]++;
+					a.set(wr.channelId, (a.get(wr.channelId) ?? 0) + 1);
 				}
 
 				return a;
 			},
-			{}
+			new Map<string, number>()
 		))
-		.then((a) => Object
-			.entries(a)
+		.then((a) => a
+			.entries()
 			.map(([k, v]) => ({
 				channelId: k,
 				count: v.toFixed()
-			})))
+			}))
+			.toArray())
 		.then(messages.reportRights.bind(undefined));
 
 	const linesReport: string[] = [];

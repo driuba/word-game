@@ -7,7 +7,7 @@ import wordExpirationHandler from './wordExpiration.js';
 import wordRightUserWorker from './wordRightUser.js';
 
 export default function () {
-	return [...getWorkers()];
+	return getWorkers().toArray();
 }
 
 type Params = CronJobParams<CronOnCompleteCommand, typeof app>;

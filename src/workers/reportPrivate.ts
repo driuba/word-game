@@ -18,13 +18,18 @@ export default async function (this: typeof app) {
 
 	if (channelIds.size) {
 		const reportsWord = await getWordsActive()
-			.then((ws) => ws.reduce<Record<string, Record<'channelId' | 'expiration' | 'score' | 'word', string>[]>>(
+			.then((ws) => ws.reduce(
 				(a, w) => {
 					const expiration = getWordExpiration(w);
 
 					if (channelIds.has(w.channelId) && expiration && expiration.startOf('day') <= dateToday) {
-						a[w.userIdCreator] ??= [];
-						a[w.userIdCreator].push({
+						const user = a.get(w.userIdCreator) ?? [];
+
+						if (!a.has(w.userIdCreator)) {
+							a.set(w.userIdCreator, user);
+						}
+
+						user.push({
 							channelId: w.channelId,
 							expiration: expiration.toLocaleString(DateTime.DATETIME_SHORT),
 							score: w.score.toFixed(),
@@ -34,10 +39,10 @@ export default async function (this: typeof app) {
 
 					return a;
 				},
-				{}
+				new Map<string, Record<'channelId' | 'expiration' | 'score' | 'word', string>[]>()
 			))
-			.then((a) => Object
-				.entries(a)
+			.then((a) => a
+				.entries()
 				.filter(([, v]) => v.length)
 				.map(([k, v]) => ({
 					report: messages.reportPrivateActive(v),
@@ -45,43 +50,53 @@ export default async function (this: typeof app) {
 				})));
 
 		const reportsRight = await getWordRights()
-			.then((wrs) => wrs.reduce<Record<string, Record<string, number>>>(
+			.then((wrs) => wrs.reduce(
 				(a, wr) => {
 					if (channelIds.has(wr.channelId)) {
 						for (const { userId } of wr.users) {
-							a[userId] ??= {};
-							a[userId][wr.channelId] ??= 0;
-							a[userId][wr.channelId]++;
+							const user = a.get(userId) ?? new Map<string, number>();
+
+							if (!a.has(userId)) {
+								a.set(userId, user);
+							}
+
+							user.set(wr.channelId, (user.get(wr.channelId) ?? 0) + 1);
 						}
 					}
 
 					return a;
 				},
-				{}
+				new Map<string, Map<string, number>>()
 			))
-			.then((a) => Object
-				.entries(a)
+			.then((a) => a
+				.entries()
 				.map(([k1, v1]) => ({
-					report: messages.reportPrivateRight(Object
-						.entries(v1)
+					report: messages.reportPrivateRight(v1
+						.entries()
 						.filter(([, v2]) => v2)
-						.map(([k2, v2]) => ({ channelId: k2, count: v2.toFixed() }))),
+						.map(([k2, v2]) => ({ channelId: k2, count: v2.toFixed() }))
+						.toArray()),
 					userId: k1
 				})));
 
-		const reports = [...reportsWord, ...reportsRight].reduce<Record<string, string[]>>(
+		const reports = [...reportsWord, ...reportsRight].reduce(
 			(a, r) => {
 				if (r.report) {
-					a[r.userId] ??= [];
-					a[r.userId].push(r.report);
+					const lines = a.get(r.userId) ?? [];
+
+					if (!a.has(r.userId)) {
+						a.set(r.userId, lines);
+					}
+
+					lines.push(r.report);
 				}
 
 				return a;
 			},
-			{}
+			new Map<string, string[]>()
 		);
 
-		for (const [userId, linesReport] of Object.entries(reports)) {
+		for (const [userId, linesReport] of reports) {
 			try {
 				await this.client.chat.postMessage({
 					channel: userId,

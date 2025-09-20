@@ -45,6 +45,7 @@ export default defineConfig(
 					]
 				}
 			],
+			'@stylistic/no-extra-parens': ['warn', 'all', { nestedBinaryExpressions: false }],
 			'@stylistic/object-curly-spacing': ['warn', 'always'],
 			'@stylistic/operator-linebreak': [
 				'warn',

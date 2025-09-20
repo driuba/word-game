@@ -1,3 +1,5 @@
+// TODO: add event to insert word rights upon invitation to chat (member_joined_channel???)
+
 import 'reflect-metadata';
 import process from 'node:process';
 import { App, LogLevel } from '@slack/bolt';

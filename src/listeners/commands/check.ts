@@ -27,26 +27,29 @@ export default async function (
 							word: w.word
 						});
 					} else {
-						a.other[w.userIdCreator] ??= 0;
-						a.other[w.userIdCreator]++;
+						a.other.set(
+							w.userIdCreator,
+							(a.other.get(w.userIdCreator) ?? 0) + 1
+						);
 					}
 
 					return a;
 				},
 				{
-					other: {} as Record<string, number>,
+					other: new Map<string, number>(),
 					personal: [] as { expiration?: string; score: string; word: string }[]
 				}
 			)
 		)
 		.then((a) => ({
 			...a,
-			other: Object
-				.entries(a.other)
+			other: a.other
+				.entries()
 				.map(([k, v]) => ({
 					count: v.toFixed(),
 					userId: k
 				}))
+				.toArray()
 		}))
 		.then((a) => ({
 			other: messages.checkWordsActiveOther(a.other) || false as string | false,
