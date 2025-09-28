@@ -22,9 +22,9 @@ services:
       PGTZ: "Europe/Vilnius"
       POSTGRES_PASSWORD: "SCRAM-SHA-256$$4096:fYljMSIQa9dIqjLP3hf41g==$$nPMgscGkryTjoAnB8cBCZA6eXltHkOjKe2KLDL8Z6cc=:AtaX/sv9FS1nwQaES+xQBZol76BhUciJwE6GWNW7xrU="
       TZ: "Europe/Vilnius"
-    image: "postgres:17.6-alpine3.22"
+    image: "postgres:18.0-alpine3.22"
     init: true
     volumes:
-      - source: "db"
+      - source: "db-18"
         target: "/home/postgres/data"
         type: "volume"

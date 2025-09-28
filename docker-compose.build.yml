@@ -51,6 +51,6 @@ services:
       - source: "migration"
         target: "/home/node/build/.env.local"
 volumes:
-  db:
+  db-18:
     external: true
-    name: "word-game_db"
+    name: "word-game_db-18"

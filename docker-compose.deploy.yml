@@ -34,9 +34,9 @@ services:
       file: "docker-compose.yml"
       service: "db"
 volumes:
-  db:
+  db-18:
     driver: "local"
     driver_opts:
-      device: "/mnt/efs/word-game/data"
+      device: "/mnt/efs/word-game/data-18"
       o: "bind"
       type: "none"
