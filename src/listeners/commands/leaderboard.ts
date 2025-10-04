@@ -69,7 +69,7 @@ export default async function (
 	if (!statistics.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: messages.nothingInStatistics
+			text: messages.leaderboardEmpty
 		});
 
 		return;

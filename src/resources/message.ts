@@ -13,6 +13,9 @@ const messages = new Proxy(resources, {
 }) as unknown as ResourceRecord;
 
 const overrides = {
+	brag(values: { count: string; score: string; userId: string }) {
+		return replace(messages.brag, values);
+	},
 	checkWordRights(values: { personal: string; shared: string; total: string }) {
 		return replace(messages.checkWordRights, values);
 	},
@@ -29,36 +32,6 @@ const overrides = {
 			}))
 			.map(replace.bind(undefined, messages.checkWordsActivePersonal))
 			.join('\n');
-	},
-	currentWordExpiredPrivate(values: { expired: string; score: string; userId: string; word: string }) {
-		return replace(messages.currentWordExpiredPrivate, values);
-	},
-	currentWordExpiredPrivateMe(values: { expired: string; score: string; word: string }) {
-		return replace(messages.currentWordExpiredPrivateMe, values);
-	},
-	currentWordExpiredPublic(values: { score: string; userId: string; word: string }) {
-		return replace(messages.currentWordExpiredPublic, values);
-	},
-	currentWordGuessed(values: { score: string; userIdCreator: string; userIdGuesser: string; word: string }) {
-		return replace(messages.currentWordGuessed, values);
-	},
-	currentWordHolder(values: { userId: string }) {
-		return replace(messages.currentWordHolder, values);
-	},
-	currentWordSetter(values: { userId: string }) {
-		return replace(messages.currentWordSetter, values);
-	},
-	currentWordStatusPrivate(values: { expiration?: string; score: string; word: string }) {
-		return replace(
-			messages.currentWordStatusPrivate,
-			{
-				...values,
-				expiration: values.expiration ?? 'amžinai'
-			}
-		);
-	},
-	currentWordStatusPublic(values: { count: string; score: string; userId: string }) {
-		return replace(messages.currentWordStatusPublic, values);
 	},
 	reportActive(values: { channelId: string; count: string; userId: string }[]) {
 		return values
@@ -82,6 +55,12 @@ const overrides = {
 	},
 	setWordSuccess(values: { word: string }) {
 		return replace(messages.setWordSuccess, values);
+	},
+	wordExpired(values: { score: string; userId: string; word: string }) {
+		return replace(messages.wordExpired, values);
+	},
+	wordGuessed(values: { score: string; userIdCreator: string; userIdGuesser: string; word: string }) {
+		return replace(messages.wordGuessed, values);
 	}
 } satisfies Partial<Record<ResourceKey, (a: never) => string>>;
 

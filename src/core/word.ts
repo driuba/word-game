@@ -95,11 +95,6 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 async function runExpireWordTransaction(this: EntityManager, word: Word) {
 	await WordRight.lock(this);
 
-	// TODO: remove after testing synchronization
-	await new Promise<void>((r) => setTimeout(() => {
-		r();
-	}, 30_000));
-
 	await word.trySetExpired(this);
 
 	if (isWordActive(word)) {
@@ -116,11 +111,6 @@ async function runExpireWordTransaction(this: EntityManager, word: Word) {
 async function runGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
 	await WordRight.lock(this);
 
-	// TODO: remove after testing synchronization
-	await new Promise<void>((r) => setTimeout(() => {
-		r();
-	}, 30_000));
-
 	await word.trySetUserIdGuesser(userId);
 
 	await tryInsertWordRight(this, [userId], word);
@@ -128,11 +118,6 @@ async function runGuessWordTransaction(this: EntityManager, userId: string, word
 
 async function runSetWordTransaction(this: EntityManager, channelId: string, text: string, userId: string) {
 	await WordRight.lock(this);
-
-	// TODO: remove after testing synchronization
-	await new Promise<void>((r) => setTimeout(() => {
-		r();
-	}, 30_000));
 
 	const rights = await WordRight.where({ channelId }, this);
 

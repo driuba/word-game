@@ -23,7 +23,7 @@ export default async function (
 		for await (const word of tryScoreOrGuessWords(channelId, userId, text)) {
 			try {
 				if (word.userIdGuesser === userId) {
-					await say(messages.currentWordGuessed({
+					await say(messages.wordGuessed({
 						score: word.score.toFixed(),
 						userIdCreator: word.userIdCreator,
 						userIdGuesser: word.userIdGuesser,

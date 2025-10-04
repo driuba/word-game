@@ -19,8 +19,7 @@ export default async function (
 	if (words.length) {
 		await respond({
 			response_type: 'in_channel',
-			// TODO: rename
-			text: messages.currentWordStatusPublic({
+			text: messages.brag({
 				count: words.length.toFixed(),
 				score: words
 					.reduce((a, w) => a + w.score, 0)
@@ -34,6 +33,6 @@ export default async function (
 
 	await respond({
 		response_type: 'ephemeral',
-		text: messages.nothingToBrag
+		text: messages.bragEmpty
 	});
 }

@@ -52,8 +52,8 @@ export default async function (
 				.toArray()
 		}))
 		.then((a) => ({
-			other: messages.checkWordsActiveOther(a.other) || false as string | false,
-			personal: messages.checkWordsActivePersonal(a.personal) || false as string | false
+			other: messages.checkWordsActiveOther(a.other) || null,
+			personal: messages.checkWordsActivePersonal(a.personal) || null
 		}));
 
 	const reportRights = await getWordRights(channelId)

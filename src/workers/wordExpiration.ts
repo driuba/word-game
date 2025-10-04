@@ -20,7 +20,7 @@ export default async function (this: typeof app) {
 
 				await this.client.chat.postMessage({
 					channel: word.channelId,
-					text: messages.currentWordExpiredPublic({
+					text: messages.wordExpired({
 						score: word.score.toFixed(),
 						userId: word.userIdCreator,
 						word: word.word
