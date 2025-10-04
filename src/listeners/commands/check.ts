@@ -59,7 +59,7 @@ export default async function (
 	const reportRights = await getWordRights(channelId)
 		.then((wrs) => wrs.reduce(
 			(a, wr) => {
-				if (wr.users.some((u) => u.userId === userId)) {
+				if (!wr.users.length || wr.users.some((u) => u.userId === userId)) {
 					if (wr.users.length === 1) {
 						a.personal++;
 					} else {

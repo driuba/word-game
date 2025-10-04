@@ -131,12 +131,12 @@ export class Word extends BaseEntity {
 		return insertEntities([this.create(value)], this, entityManager).then((ws) => ws[0]);
 	}
 
-	static where(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+	static where(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.find({ where: options })
-			: this.findBy(options);
+				.find({ where })
+			: this.findBy(where);
 	}
 
 	tryAddScore(value: number, entityManager?: EntityManager) {

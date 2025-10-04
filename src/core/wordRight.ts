@@ -47,7 +47,7 @@ async function runTryInsertWordRightsTransaction(this: EntityManager, channelIds
 	const wordRights = await WordRight.countWhereGrouped({ channelId: In(channelIds) }, this);
 
 	return await WordRight.insertMany(
-		[...new Set([...words.keys(), ...wordRights.keys()])].flatMap((ci) => {
+		channelIds.flatMap((ci) => {
 			const available =
 				config.wg.wordCountMax -
 				(words.get(ci) ?? 0) -

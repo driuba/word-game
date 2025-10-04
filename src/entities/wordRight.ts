@@ -1,6 +1,6 @@
 import type { WordRightUser } from './wordRightUser.js';
 import type { DateTime } from 'luxon';
-import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
+import type { DeepPartial, EntityManager, FindManyOptions, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, deleteEntity, insertEntities } from './utils.js';
 
@@ -80,12 +80,19 @@ export class WordRight extends BaseEntity {
 		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
 	}
 
-	static where(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+	static where(where: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+		const options = {
+			relations: {
+				users: true
+			},
+			where
+		} satisfies FindManyOptions<WordRight>;
+
 		return entityManager
 			? entityManager
 				.getRepository(this)
-				.find({ where: options })
-			: this.findBy(options);
+				.find(options)
+			: this.find(options);
 	}
 
 	delete(entityManager?: EntityManager) {
