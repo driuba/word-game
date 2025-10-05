@@ -10,11 +10,12 @@ const dateMax = DateTime.fromISO('9999-12-31T23:59:59.999') as DateTime<true>;
 export async function* expireWords() {
 	const errors: unknown[] = [];
 
+	const channelIds = await client.getChannelIds();
 	const words = await getWordsActive();
 
 	for (const word of words) {
 		try {
-			await dataSource.transaction((em) => runExpireWordTransaction.call(em, word));
+			await dataSource.transaction((em) => runExpireWordTransaction.call(em, channelIds, word));
 
 			if (isWordInactive(word)) {
 				yield word;
@@ -92,12 +93,16 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 	}
 }
 
-async function runExpireWordTransaction(this: EntityManager, word: Word) {
+async function runExpireWordTransaction(this: EntityManager, channelIds: Set<string>, word: Word) {
 	await WordRight.lock(this);
 
 	await word.trySetExpired(this);
 
 	if (isWordActive(word)) {
+		return;
+	}
+
+	if (!channelIds.has(word.channelId)) {
 		return;
 	}
 

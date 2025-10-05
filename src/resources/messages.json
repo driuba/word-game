@@ -30,9 +30,9 @@
 		"Neturiu ką parodyt. Prašikčiau, bandyti vėliau."
 	],
 	"reportActive": [
-		"  • Kanalas <#${channelId}> priklauso <@${userId}> (${count})",
-		"  • <@${userId}> turi ${count} žodžius (-į, -ių) <#${channelId}>",
-		"  • Channel: <#${channelId}>; user: <@${userId}>; count: ${count}"
+		"• Kanalas <#${channelId}> priklauso <@${userId}> (${count})",
+		"• <@${userId}> turi ${count} žodžius (-į, -ių) <#${channelId}>",
+		"• Channel: <#${channelId}>; user: <@${userId}>; count: ${count}"
 	],
 	"reportEmpty": [
 		"Tuščias raportas, niekas nežaidžia."
@@ -47,8 +47,8 @@
 		"Pst, <#${channelId}>, ${count} žodžių. Nepraleisk progos"
 	],
 	"reportRights": [
-		"  • Kanalas: <#${channelId}>; kiekis: ${count}",
-		"  • Kanale <#${channelId}> yra ${count} nepanaudotų teisių"
+		"• Kanalas: <#${channelId}>; kiekis: ${count}",
+		"• Kanale <#${channelId}> yra ${count} nepanaudotų teisių"
 	],
 	"setWordSuccess": [
 		"Sveikinimai! Tavo naujasis žodis yra *${word}*."

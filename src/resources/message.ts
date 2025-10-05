@@ -21,7 +21,7 @@ const overrides = {
 	},
 	checkWordsActiveOther(values: { count: string; userId: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.checkWordsActiveOther))
+			.map((v) => replace(messages.checkWordsActiveOther, v))
 			.join('\n');
 	},
 	checkWordsActivePersonal(values: { expiration?: string; score: string; word: string }[]) {
@@ -30,27 +30,27 @@ const overrides = {
 				...v,
 				expiration: v.expiration ?? 'su visam'
 			}))
-			.map(replace.bind(undefined, messages.checkWordsActivePersonal))
+			.map((v) => replace(messages.checkWordsActivePersonal, v))
 			.join('\n');
 	},
 	reportActive(values: { channelId: string; count: string; userId: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.reportActive))
+			.map((v) => replace(messages.reportActive, v))
 			.join('\n');
 	},
 	reportPrivateActive(values: { channelId: string; expiration: string; score: string; word: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.reportPrivateActive))
+			.map((v) => replace(messages.reportPrivateActive, v))
 			.join('\n');
 	},
 	reportPrivateRight(values: { channelId: string; count: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.reportPrivateRight))
+			.map((v) => replace(messages.reportPrivateRight, v))
 			.join('\n');
 	},
 	reportRights(values: { channelId: string; count: string }[]) {
 		return values
-			.map(replace.bind(undefined, messages.reportRights))
+			.map((v) => replace(messages.reportRights, v))
 			.join('\n');
 	},
 	setWordSuccess(values: { word: string }) {
@@ -64,7 +64,6 @@ const overrides = {
 	}
 } satisfies Partial<Record<ResourceKey, (a: never) => string>>;
 
-// TODO: review usages, cleanup resources, update naming
 export default new Proxy(messages, {
 	get(target, key: ResourceKey) {
 		if (key in overrides) {

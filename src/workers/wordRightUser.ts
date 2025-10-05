@@ -10,17 +10,11 @@ export default async function (this: typeof app) {
 
 	this.logger.info('Starting word right user update.');
 
-	let error: unknown;
-
 	try {
 		await updateWordRightUsers(...await client.getChannelIds());
-	} catch (e) {
-		error = e;
-	}
-
-	this.logger.info('Finished word right user update.');
-
-	if (error) {
+	} catch (error) {
 		throw new ApplicationError('Worker failed to update word right users.', { error });
+	} finally {
+		this.logger.info('Finished word right user update.');
 	}
 }

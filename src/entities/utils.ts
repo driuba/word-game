@@ -92,11 +92,15 @@ export async function execute<T extends BaseEntity>(
 ) {
 	const { raw: entitiesRaw } = await builder
 		.returning('*')
-		.execute() as { raw: Record<string, unknown>[] };
+		.execute() as { raw: (Record<string, unknown> | undefined)[] };
 
 	for (let i = 0; i < entities.length; i++) {
 		const entity = entities[i];
 		const entityRaw = entitiesRaw[i];
+
+		if (!entityRaw) {
+			continue;
+		}
 
 		for (const column of metadata.columns) {
 			if (column.isVirtual) {

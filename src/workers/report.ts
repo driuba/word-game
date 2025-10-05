@@ -9,7 +9,7 @@ export default async function (this: typeof app) {
 		throw new ApplicationError('Reporting chat ID is required for report worker.', 'CONFIG_INVALID');
 	}
 
-	this.logger.info('Stating report.');
+	this.logger.info('Starting report.');
 
 	const channelIds = await client.getChannelIds();
 
@@ -44,7 +44,7 @@ export default async function (this: typeof app) {
 		)
 		.then(messages.reportActive.bind(undefined));
 
-	const reportRights = await getWordRights(reportWords)
+	const reportRights = await getWordRights()
 		.then((wrs) => wrs.reduce(
 			(a, wr) => {
 				if (channelIds.has(wr.channelId)) {
@@ -76,7 +76,7 @@ export default async function (this: typeof app) {
 
 	await this.client.chat.postMessage({
 		channel: config.wg.reportingChatId,
-		text: linesReport.join('\n') || messages.reportEmpty
+		text: linesReport.join('\n\n') || messages.reportEmpty
 	});
 
 	this.logger.info('Finishing report.');

@@ -100,7 +100,7 @@ export default async function (this: typeof app) {
 			try {
 				await this.client.chat.postMessage({
 					channel: userId,
-					text: linesReport.join('\n')
+					text: linesReport.join('\n\n')
 				});
 
 				count++;
@@ -110,9 +110,9 @@ export default async function (this: typeof app) {
 		}
 	}
 
+	this.logger.info(`Finishing personal report, notified ${count.toFixed()} users.`);
+
 	if (errors.length) {
 		throw new ApplicationError('Failed to notify one or more users about expiration.', { errors });
 	}
-
-	this.logger.info(`Finishing personal report, notified ${count.toFixed()} users.`);
 }
