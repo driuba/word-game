@@ -1,8 +1,10 @@
 import 'reflect-metadata';
-import * as process from 'node:process';
+import process from 'node:process';
 import { App, LogLevel } from '@slack/bolt';
 import { Settings } from 'luxon';
+import client from '~/client.js';
 import config from '~/config.js';
+import { tryInsertWordRights } from '~/core/index.js';
 
 config.assertValid();
 
@@ -14,25 +16,27 @@ const { default: registerListeners } = await import('~/listeners/index.js');
 const { default: logger } = await import('~/logger.js');
 const { default: registerWorkers } = await import('~/workers/index.js');
 
-const app = new App({
-	logger,
+globalThis.app = new App({
 	appToken: config.slack.appToken,
 	clientId: config.slack.clientId,
 	clientSecret: config.slack.clientSecret,
 	logLevel: config.nodeEnv === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+	logger,
 	signingSecret: config.slack.signingSecret,
 	socketMode: true,
 	token: config.slack.botToken
 });
 
-registerListeners(app);
+registerListeners();
 
 try {
 	await dataSource.initialize();
 
 	await app.start(config.port);
 
-	const workers = registerWorkers(app);
+	await tryInsertWordRights(...await client.getChannelIds());
+
+	const workers = registerWorkers();
 
 	process.on('SIGINT', terminate);
 	process.on('SIGTERM', terminate);
@@ -40,10 +44,12 @@ try {
 	app.logger.info('⚡️ Word game is running! ⚡️');
 
 	function terminate() {
+		const promiseResolved = Promise.resolve();
+
 		Promise
 			.all([
 				app.stop(),
-				...workers.map(w => w.stop())
+				...workers.map((w) => w.stop() ?? promiseResolved)
 			])
 			.then(() => {
 				app.logger.info('🪦 Word game has been terminated! 🪦');

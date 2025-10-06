@@ -1,45 +1,44 @@
-import type { App } from '@slack/bolt';
-import { tryExpireWords } from '~/core/index.js';
+import client from '~/client.js';
+import { expireWords } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
-export default async function (this: App) {
-	let count = 0;
+export default async function (this: typeof app) {
+	this.logger.info('Starting word expiration.');
+
 	const errors: unknown[] = [];
+	let count = 0;
 
-	this.logger.info('Starting expiration.');
+	const channelIds = await client.getChannelIds();
 
-	const channelIds = await this.client.users
-		.conversations({
-			exclude_archived: true,
-			types: 'public_channel,private_channel'
-		})
-		.then(r => new Set(r.channels?.map(c => c.id)));
+	try {
+		for await (const word of expireWords()) {
+			try {
+				if (!channelIds.has(word.channelId)) {
+					continue;
+				}
 
-	for await (const word of tryExpireWords()) {
-		try {
-			if (!channelIds.has(word.channelId)) {
-				continue;
+				await this.client.chat.postMessage({
+					channel: word.channelId,
+					text: messages.wordExpired({
+						score: word.score.toFixed(),
+						userId: word.userIdCreator,
+						word: word.word
+					})
+				});
+			} catch (error) {
+				errors.push(error);
+			} finally {
+				count++;
 			}
-
-			await this.client.chat.postMessage({
-				channel: word.channelId,
-				text: messages.currentWordExpiredPublic({
-					score: word.score.toFixed(),
-					userId: word.userIdCreator,
-					word: word.word
-				})
-			});
-		} catch (error) {
-			errors.push(error);
-		} finally {
-			count++;
 		}
+	} catch (error) {
+		errors.push(error);
 	}
 
 	this.logger.info(`Finished expiration, expired ${count.toFixed()} words.`);
 
 	if (errors.length) {
-		throw new ApplicationError('Worker failed to send messages with errors.', { errors });
+		throw new ApplicationError('Worker failed expire words or notify users with errors.', { errors });
 	}
 }

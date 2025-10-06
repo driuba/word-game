@@ -1,6 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getStatistics, StatisticPeriod } from '~/core/index.js';
 import type { StatisticChannel, StatisticGlobal } from '~/entities/index.js';
+import { StatisticPeriod, getStatistics } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
@@ -69,7 +69,7 @@ export default async function (
 	if (!statistics.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: messages.nothingInStatistics
+			text: messages.leaderboardEmpty
 		});
 
 		return;
@@ -79,7 +79,7 @@ export default async function (
 
 	switch (inputPeriod) {
 		case StatisticPeriod.all: {
-			data = statistics.map(s => ({
+			data = statistics.map((s) => ({
 				average: s.averageAll.toFixed(2),
 				count: s.countAll.toFixed(),
 				countExpired: s.countExpiredAll.toFixed(),
@@ -92,7 +92,7 @@ export default async function (
 			break;
 		}
 		case StatisticPeriod.week: {
-			data = statistics.map(s => ({
+			data = statistics.map((s) => ({
 				average: s.averageWeek.toFixed(2),
 				count: s.countWeek.toFixed(),
 				countExpired: s.countExpiredWeek.toFixed(),
@@ -111,12 +111,12 @@ export default async function (
 
 	switch (inputFormat) {
 		case Format.full: {
-			data = data.map(d => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Count expired: ${d.countExpired}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
+			data = data.map((d) => `- ${d.userId}\n\t- Score: ${d.score}\n\t- Count: ${d.count}\n\t- Count expired: ${d.countExpired}\n\t- Average: ${d.average}\n\t- Maximum: ${d.maximum}\n\t- Guesses: ${d.guesses}`);
 
 			break;
 		}
 		case Format.short: {
-			data = data.map(d => `- ${d.score} ${d.userId}`);
+			data = data.map((d) => `- ${d.score} ${d.userId}`);
 
 			break;
 		}

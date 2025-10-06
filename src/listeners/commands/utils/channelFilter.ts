@@ -1,22 +1,19 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
+import client from '~/client.js';
 import { messages } from '~/resources/index.js';
 
 export default async function (
 	{
 		ack,
-		client,
 		next,
 		payload: {
 			channel_id: channelId
 		}
 	}: AllMiddlewareArgs & SlackCommandMiddlewareArgs
 ) {
-	const { channels } = await client.users.conversations({
-		exclude_archived: true,
-		types: 'public_channel,private_channel'
-	});
+	const channelIds = await client.getChannelIds();
 
-	if (channels?.some(c => c.id === channelId)) {
+	if (channelIds.has(channelId)) {
 		await next();
 
 		return;

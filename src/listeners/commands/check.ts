@@ -1,8 +1,8 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getWordExpiration, getWordLatest } from '~/core/index.js';
-import { isWordActive } from '~/entities/index.js';
+import { getWordExpiration, getWordRights, getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
+import { ApplicationError } from '~/utils/index.js';
 
 export default async function (
 	{
@@ -16,82 +16,95 @@ export default async function (
 ) {
 	await ack();
 
-	const word = await getWordLatest(channelId);
+	const reportWords = await getWordsActive(channelId)
+		.then(
+			(ws) => ws.reduce(
+				(a, w) => {
+					if (w.userIdCreator === userId) {
+						a.personal.push({
+							expiration: getWordExpiration(w)?.toLocaleString(DateTime.DATETIME_SHORT),
+							score: w.score.toFixed(),
+							word: w.word
+						});
+					} else {
+						a.other.set(
+							w.userIdCreator,
+							(a.other.get(w.userIdCreator) ?? 0) + 1
+						);
+					}
 
-	if (!word) {
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordUnset
-		});
+					return a;
+				},
+				{
+					other: new Map<string, number>(),
+					personal: [] as { expiration?: string; score: string; word: string }[]
+				}
+			)
+		)
+		.then((a) => ({
+			...a,
+			other: a.other
+				.entries()
+				.map(([k, v]) => ({
+					count: v.toFixed(),
+					userId: k
+				}))
+				.toArray()
+		}))
+		.then((a) => ({
+			other: messages.checkWordsActiveOther(a.other) || null,
+			personal: messages.checkWordsActivePersonal(a.personal) || null
+		}));
 
-		return;
+	const reportRights = await getWordRights(channelId)
+		.then((wrs) => wrs.reduce(
+			(a, wr) => {
+				if (!wr.users.length || wr.users.some((u) => u.userId === userId)) {
+					if (wr.users.length === 1) {
+						a.personal++;
+					} else {
+						a.shared++;
+					}
+				}
+
+				a.total++;
+
+				return a;
+			},
+			{
+				personal: 0,
+				shared: 0,
+				total: 0
+			}
+		))
+		.then((a) => ({
+			personal: a.personal.toFixed(),
+			shared: a.shared.toFixed(),
+			show: a.total > 0,
+			total: a.total.toFixed()
+		}))
+		.then((a) => a.show && messages.checkWordRights(a));
+
+	const linesReport: string[] = [];
+
+	if (reportWords.personal) {
+		linesReport.push(reportWords.personal);
 	}
 
-	if (isWordActive(word)) {
-		if (word.userIdCreator === userId) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordStatusPrivate({
-					expiration: getWordExpiration(word)?.toLocaleString(DateTime.DATETIME_SHORT),
-					score: word.score.toFixed(),
-					word: word.word
-				})
-			});
-
-			return;
-		}
-
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordHolder({
-				userId: word.userIdCreator
-			})
-		});
-
-		return;
+	if (reportWords.other) {
+		linesReport.push(reportWords.other);
 	}
 
-	if (word.expired) {
-		if (word.userIdCreator === userId) {
-			await respond({
-				response_type: 'ephemeral',
-				text: messages.currentWordExpiredPrivateMe({
-					expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
-					score: word.score.toFixed(),
-					word: word.word
-				})
-			});
-
-			return;
-		}
-
-		await respond({
-			response_type: 'ephemeral',
-			text: messages.currentWordExpiredPrivate({
-				expired: word.expired.toLocaleString(DateTime.DATETIME_SHORT),
-				score: word.score.toFixed(),
-				userId: word.userIdCreator,
-				word: word.word
-			})
-		});
-
-		return;
+	if (reportRights) {
+		linesReport.push(reportRights);
 	}
 
-	if (userId === word.userIdGuesser) {
+	if (linesReport.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: messages.currentWordSetterMe
+			text: linesReport.join('\n\n')
 		});
-
-		return;
+	} else {
+		throw new ApplicationError(`Something's not right... I can feel i-i-i-i-it!`);
 	}
-
-
-	await respond({
-		response_type: 'ephemeral',
-		text: messages.currentWordSetter({
-			userId: word.userIdGuesser
-		})
-	});
 }

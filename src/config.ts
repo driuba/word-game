@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class,@typescript-eslint/no-empty-function */
-// noinspection JSUnusedLocalSymbols
-
 import process from 'node:process';
 import { Duration } from 'luxon';
 import { ApplicationError } from '~/utils/index.js';
 
 const lazyMetadataKey = Symbol('lazy');
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Db {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get database() {
@@ -39,6 +42,21 @@ abstract class Db {
 	}
 
 	@lazy
+	static get port() {
+		if (!process.env.DB_PORT) {
+			return 5432;
+		}
+
+		const value = parseInt(process.env.DB_PORT);
+
+		if (value > 0) {
+			return value;
+		}
+
+		throw new ApplicationError('DB_PORT is invalid.', 'CONFIG_INVALID', { value: process.env.DB_PORT });
+	}
+
+	@lazy
 	static get schema() {
 		if (process.env.DB_SCHEMA) {
 			return process.env.DB_SCHEMA;
@@ -57,9 +75,15 @@ abstract class Db {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Slack {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get appToken() {
@@ -107,9 +131,15 @@ abstract class Slack {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Wg {
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get commandPrefix() {
@@ -122,12 +152,42 @@ abstract class Wg {
 	}
 
 	@lazy
+	static get wordCountMax() {
+		if (!process.env.WG_WORD_COUNT_MAX) {
+			return 1;
+		}
+
+		const value = parseInt(process.env.WG_WORD_COUNT_MAX);
+
+		if (value > 0) {
+			return value;
+		}
+
+		throw new ApplicationError('WG_WORD_COUNT_MAX is invalid.', 'CONFIG_INVALID', { value: process.env.WG_WORD_COUNT_MAX });
+	}
+
+	@lazy
+	static get wordRightTimeout() {
+		if (!process.env.WG_WORD_RIGHT_TIMEOUT) {
+			return null;
+		}
+
+		const value = Duration.fromISO(process.env.WG_WORD_RIGHT_TIMEOUT);
+
+		if (value.isValid) {
+			return value;
+		}
+
+		throw new ApplicationError('WG_WORD_RIGHT_TIMEOUT is invalid.', 'CONFIG_INVALID', { value: process.env.WG_WORD_RIGHT_TIMEOUT });
+	}
+
+	@lazy
 	static get wordScoreMax() {
 		if (!process.env.WG_WORD_SCORE_MAX) {
 			return 1;
 		}
 
-		const value = parseInt(process.env.WG_WORD_SCORE_MAX, 10);
+		const value = parseInt(process.env.WG_WORD_SCORE_MAX);
 
 		if (value > 0) {
 			return value;
@@ -185,7 +245,7 @@ abstract class Wg {
 function* getErrors(target: object) {
 	const propertyNames = Object
 		.getOwnPropertyNames(target)
-		.filter(pn => Reflect.getOwnMetadata(lazyMetadataKey, target, pn));
+		.filter((pn) => Reflect.getOwnMetadata(lazyMetadataKey, target, pn));
 
 	for (const propertyName of propertyNames) {
 		try {
@@ -210,26 +270,29 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 	return {
 		enumerable: true,
 		get: (function () {
-			let value: T;
+			const get = descriptor.get;
+			let value: T | undefined;
 
 			return function () {
-				if (typeof descriptor.get !== 'undefined') {
-					value ??= descriptor.get();
-				}
-
-				return value;
+				return value ??= get();
 			};
 		})()
-	} satisfies TypedPropertyDescriptor<T>;
+	} satisfies typeof descriptor;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class {
 	static db = Db;
 	static slack = Slack;
 	static wg = Wg;
 
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// noinspection JSUnusedLocalSymbols
 	private constructor() {
 	}
+
+	/* eslint-enable @typescript-eslint/no-empty-function */
 
 	@lazy
 	static get locale() {

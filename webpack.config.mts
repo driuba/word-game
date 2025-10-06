@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
 import type { Configuration } from 'webpack';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import packageInformation from './package.json' with { type: 'json' };
 
 export default {
@@ -12,6 +12,9 @@ export default {
 		outputModule: true
 	},
 	externals: Object.keys(packageInformation.dependencies),
+	externalsPresets: {
+		node: true
+	},
 	externalsType: 'node-commonjs',
 	module: {
 		defaultRules: [
@@ -35,23 +38,30 @@ export default {
 			}
 		]
 	},
+	node: false,
 	optimization: {
 		nodeEnv: false
 	},
 	output: {
+		chunkFormat: 'module',
 		clean: true,
+		environment: new Proxy({}, { get: () => true }),
 		filename: 'app.js',
 		module: true,
 		path: resolve(import.meta.dirname, 'dist')
 	},
 	resolve: {
 		alias: {
+			/* eslint-disable @typescript-eslint/naming-convention */
 			'~': resolve(import.meta.dirname, 'src')
+			/* eslint-enable @typescript-eslint/naming-convention */
 		},
 		extensionAlias: {
+			/* eslint-disable @typescript-eslint/naming-convention */
 			'.js': ['.ts']
+			/* eslint-enable @typescript-eslint/naming-convention */
 		},
 		extensions: ['.ts']
 	},
-	target: 'node24.4'
+	target: 'node24.9'
 } as const satisfies Configuration;

@@ -2,8 +2,8 @@
 
 ARG ALPINE_VERSION="3.22"
 ARG NODE_ENV="development"
-ARG NODE_VERSION="24.4.1"
-ARG PNPM_VERSION="10.13.1"
+ARG NODE_VERSION="24.9.0"
+ARG PNPM_VERSION="10.18.0"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -13,7 +13,9 @@ ARG PNPM_VERSION
 ENV NODE_ENV="${NODE_ENV}"
 
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
-    apk add tzdata
+    apk update
+RUN --mount=type=cache,id=apk,target=/var/cache/apk \
+    apk add tzdata=2025b-r0
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     npm install --global pnpm@${PNPM_VERSION}
 
@@ -25,6 +27,7 @@ WORKDIR /home/node/build
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
+    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
     --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile
 
@@ -44,6 +47,7 @@ WORKDIR /home/node/app
 
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
+    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
     --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile --prod
 

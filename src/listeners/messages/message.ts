@@ -1,7 +1,8 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import type { GenericMessageEvent } from '@slack/types';
-import { tryScoreOrGuessWord } from '~/core/index.js';
+import { tryScoreOrGuessWords } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
+import { ApplicationError } from '~/utils/index.js';
 
 export default async function (
 	{
@@ -17,15 +18,25 @@ export default async function (
 			user: userId
 		} = message as GenericMessageEvent;
 
-		const word = await tryScoreOrGuessWord(channelId, userId, text);
+		const errors = [];
 
-		if (word?.userIdGuesser === userId) {
-			await say(messages.currentWordGuessed({
-				score: word.score.toFixed(),
-				userIdCreator: word.userIdCreator,
-				userIdGuesser: word.userIdGuesser,
-				word: word.word
-			}));
+		for await (const word of tryScoreOrGuessWords(channelId, userId, text)) {
+			try {
+				if (word.userIdGuesser === userId) {
+					await say(messages.wordGuessed({
+						score: word.score.toFixed(),
+						userIdCreator: word.userIdCreator,
+						userIdGuesser: word.userIdGuesser,
+						word: word.word
+					}));
+				}
+			} catch (error) {
+				errors.push(error);
+			}
+		}
+
+		if (errors.length) {
+			throw new ApplicationError('Failed to notify guessed words.', { errors });
 		}
 	} catch (error) {
 		logger.error(error);

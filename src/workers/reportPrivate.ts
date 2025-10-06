@@ -1,6 +1,6 @@
-import type { App } from '@slack/bolt';
 import { DateTime } from 'luxon';
-import { getWordExpiration, getWordsActive } from '~/core/index.js';
+import client from '~/client.js';
+import { getWordExpiration, getWordRights, getWordsActive } from '~/core/index.js';
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
@@ -8,47 +8,99 @@ const dateToday = DateTime
 	.now()
 	.startOf('day');
 
-export default async function (this: App) {
+export default async function (this: typeof app) {
 	this.logger.info('Stating personal report.');
 
-	const channelIds = await this.client.users
-		.conversations({
-			exclude_archived: true,
-			types: 'public_channel,private_channel'
-		})
-		.then(r => new Set(r.channels?.map(c => c.id)));
-
+	const errors: unknown[] = [];
 	let count = 0;
 
-	if (channelIds.size) {
-		const errors: unknown[] = [];
+	const channelIds = await client.getChannelIds();
 
-		const words = await getWordsActive().then(
-			ws => ws.map(w => ({
-				channelId: w.channelId,
-				expiration: getWordExpiration(w),
-				score: w.score.toFixed(),
-				userId: w.userIdCreator,
-				word: w.word
-			}))
+	if (channelIds.size) {
+		const reportsWord = await getWordsActive()
+			.then((ws) => ws.reduce(
+				(a, w) => {
+					const expiration = getWordExpiration(w);
+
+					if (channelIds.has(w.channelId) && expiration && expiration.startOf('day') <= dateToday) {
+						const user = a.get(w.userIdCreator) ?? [];
+
+						if (!a.has(w.userIdCreator)) {
+							a.set(w.userIdCreator, user);
+						}
+
+						user.push({
+							channelId: w.channelId,
+							expiration: expiration.toLocaleString(DateTime.DATETIME_SHORT),
+							score: w.score.toFixed(),
+							word: w.word
+						});
+					}
+
+					return a;
+				},
+				new Map<string, Record<'channelId' | 'expiration' | 'score' | 'word', string>[]>()
+			))
+			.then((a) => a
+				.entries()
+				.filter(([, v]) => v.length)
+				.map(([k, v]) => ({
+					report: messages.reportPrivateActive(v),
+					userId: k
+				})));
+
+		const reportsRight = await getWordRights()
+			.then((wrs) => wrs.reduce(
+				(a, wr) => {
+					if (channelIds.has(wr.channelId)) {
+						for (const { userId } of wr.users) {
+							const user = a.get(userId) ?? new Map<string, number>();
+
+							if (!a.has(userId)) {
+								a.set(userId, user);
+							}
+
+							user.set(wr.channelId, (user.get(wr.channelId) ?? 0) + 1);
+						}
+					}
+
+					return a;
+				},
+				new Map<string, Map<string, number>>()
+			))
+			.then((a) => a
+				.entries()
+				.map(([k1, v1]) => ({
+					report: messages.reportPrivateRight(v1
+						.entries()
+						.filter(([, v2]) => v2)
+						.map(([k2, v2]) => ({ channelId: k2, count: v2.toFixed() }))
+						.toArray()),
+					userId: k1
+				})));
+
+		const reports = [...reportsWord, ...reportsRight].reduce(
+			(a, r) => {
+				if (r.report) {
+					const lines = a.get(r.userId) ?? [];
+
+					if (!a.has(r.userId)) {
+						a.set(r.userId, lines);
+					}
+
+					lines.push(r.report);
+				}
+
+				return a;
+			},
+			new Map<string, string[]>()
 		);
 
-		for (const word of words) {
+		for (const [userId, linesReport] of reports) {
 			try {
-				if (!channelIds.has(word.channelId)) {
-					continue;
-				}
-
-				if (!word.expiration || word.expiration.startOf('day') > dateToday) {
-					continue;
-				}
-
 				await this.client.chat.postMessage({
-					channel: word.userId,
-					text: messages.reportPrivate({
-						...word,
-						expiration: word.expiration.toLocaleString(DateTime.DATETIME_SHORT)
-					})
+					channel: userId,
+					text: linesReport.join('\n\n')
 				});
 
 				count++;
@@ -56,11 +108,11 @@ export default async function (this: App) {
 				errors.push(error);
 			}
 		}
-
-		if (errors.length) {
-			throw new ApplicationError('Failed to notify one or more users about expiration.', { errors });
-		}
 	}
 
 	this.logger.info(`Finishing personal report, notified ${count.toFixed()} users.`);
+
+	if (errors.length) {
+		throw new ApplicationError('Failed to notify one or more users about expiration.', { errors });
+	}
 }

@@ -7,6 +7,10 @@ export function getErrorMessage(error?: unknown) {
 	return error instanceof ApplicationError ? errorMessages[error.code] : errorMessages.UNDEFINED;
 }
 
+export function isErrorWarning(error?: unknown) {
+	return error instanceof ApplicationError && error.code !== 'UNDEFINED';
+}
+
 export class ApplicationError extends Error {
 	readonly code: ErrorCode = 'UNDEFINED';
 	readonly data?: ErrorData;

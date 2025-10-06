@@ -1,97 +1,78 @@
 import { textReplacement } from '~/utils/index.js';
 import resources from './messages.json' with { type: 'json' };
-import readme from './readme.md';
 
 type ResourceKey = keyof typeof resources;
 type ResourceRecord = Record<ResourceKey, string>;
 
-const messages = Object
-	.keys(resources)
-	.reduce(
-		(a, k) => {
-			Object.defineProperty(a, k, {
-				enumerable: true,
-				get() {
-					const values = resources[k as ResourceKey];
+const messages = new Proxy(resources, {
+	get(target, key: ResourceKey) {
+		const values = target[key];
 
-					return values[Math.floor(Math.random() * values.length)];
-				}
-			});
+		return values[Math.floor(Math.random() * values.length)];
+	}
+}) as unknown as ResourceRecord;
 
-			return a;
-		},
-		{} as ResourceRecord
-	) satisfies ResourceRecord;
+const overrides = {
+	brag(values: { count: string; score: string; userId: string }) {
+		return replace(messages.brag, values);
+	},
+	checkWordRights(values: { personal: string; shared: string; total: string }) {
+		return replace(messages.checkWordRights, values);
+	},
+	checkWordsActiveOther(values: { count: string; userId: string }[]) {
+		return values
+			.map((v) => replace(messages.checkWordsActiveOther, v))
+			.join('\n');
+	},
+	checkWordsActivePersonal(values: { expiration?: string; score: string; word: string }[]) {
+		return values
+			.map((v) => ({
+				...v,
+				expiration: v.expiration ?? 'su visam'
+			}))
+			.map((v) => replace(messages.checkWordsActivePersonal, v))
+			.join('\n');
+	},
+	reportActive(values: { channelId: string; count: string; userId: string }[]) {
+		return values
+			.map((v) => replace(messages.reportActive, v))
+			.join('\n');
+	},
+	reportPrivateActive(values: { channelId: string; expiration: string; score: string; word: string }[]) {
+		return values
+			.map((v) => replace(messages.reportPrivateActive, v))
+			.join('\n');
+	},
+	reportPrivateRight(values: { channelId: string; count: string }[]) {
+		return values
+			.map((v) => replace(messages.reportPrivateRight, v))
+			.join('\n');
+	},
+	reportRights(values: { channelId: string; count: string }[]) {
+		return values
+			.map((v) => replace(messages.reportRights, v))
+			.join('\n');
+	},
+	setWordSuccess(values: { word: string }) {
+		return replace(messages.setWordSuccess, values);
+	},
+	wordExpired(values: { score: string; userId: string; word: string }) {
+		return replace(messages.wordExpired, values);
+	},
+	wordGuessed(values: { score: string; userIdCreator: string; userIdGuesser: string; word: string }) {
+		return replace(messages.wordGuessed, values);
+	}
+} satisfies Partial<Record<ResourceKey, (a: never) => string>>;
 
-function currentWordExpiredPrivate(values: { expired: string, score: string, userId: string, word: string }) {
-	return replace(messages.currentWordExpiredPrivate, values);
-}
-
-function currentWordExpiredPrivateMe(values: { expired: string, score: string, word: string }) {
-	return replace(messages.currentWordExpiredPrivateMe, values);
-}
-
-function currentWordExpiredPublic(values: { score: string, userId: string, word: string }) {
-	return replace(messages.currentWordExpiredPublic, values);
-}
-
-function currentWordGuessed(values: { score: string, userIdGuesser: string, userIdCreator: string, word: string }) {
-	return replace(messages.currentWordGuessed, values);
-}
-
-function currentWordHolder(values: { userId: string }) {
-	return replace(messages.currentWordHolder, values);
-}
-
-function currentWordSetter(values: { userId: string }) {
-	return replace(messages.currentWordSetter, values);
-}
-
-function currentWordStatusPrivate(values: { expiration?: string, score: string, word: string }) {
-	return replace(
-		messages.currentWordStatusPrivate,
-		{
-			...values,
-			expiration: typeof values.expiration === 'undefined'
-				? 'niekada neišeis iš galiojimo'
-				: `išeis iš galiojimo ${values.expiration}`
+export default new Proxy(messages, {
+	get(target, key: ResourceKey) {
+		if (key in overrides) {
+			return overrides[key as keyof typeof overrides];
 		}
-	);
-}
 
-function currentWordStatusPublic(values: { score: string, userId: string }) {
-	return replace(messages.currentWordStatusPublic, values);
-}
-
-function report(values: { channelId: string, userId: string }[]) {
-	return values
-		.map(v => `  • ${replace(messages.report, v)}`)
-		.join('\n');
-}
-
-function reportPrivate(values: { channelId: string, expiration: string, score: string, word: string }) {
-	return replace(messages.reportPrivate, values);
-}
-
-function setWordSuccess(values: { word: string }) {
-	return replace(messages.setWordSuccess, values);
-}
-
-export default {
-	...messages,
-	readme,
-	currentWordExpiredPrivate,
-	currentWordExpiredPrivateMe,
-	currentWordExpiredPublic,
-	currentWordGuessed,
-	currentWordHolder,
-	currentWordSetter,
-	currentWordStatusPrivate,
-	currentWordStatusPublic,
-	report,
-	reportPrivate,
-	setWordSuccess
-};
+		return target[key];
+	}
+}) as ResourceRecord & typeof overrides;
 
 function replace(resource: string, values: Record<string, string>) {
 	return resource.replace(

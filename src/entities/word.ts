@@ -1,9 +1,12 @@
 import type { DateTime } from 'luxon';
+import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
-import { DateTimeValueTransformer, execute, insert, update } from './utils.js';
+import { DateTimeValueTransformer, execute, insertEntities } from './utils.js';
 
-@Entity({ name: 'Words' })
+const tableName = 'Words';
+
+@Entity({ name: tableName })
 export class Word extends BaseEntity {
 	@Column({
 		generated: true,
@@ -51,14 +54,6 @@ export class Word extends BaseEntity {
 	readonly id!: number;
 
 	@Column({
-		default: 0,
-		name: 'Score',
-		nullable: false,
-		type: 'integer'
-	})
-	score!: number;
-
-	@Column({
 		default: null,
 		generated: true,
 		insert: false,
@@ -69,6 +64,14 @@ export class Word extends BaseEntity {
 		update: false
 	})
 	readonly modified!: DateTime<true> | null;
+
+	@Column({
+		default: 0,
+		name: 'Score',
+		nullable: false,
+		type: 'integer'
+	})
+	score!: number;
 
 	@Column({
 		length: 50,
@@ -84,8 +87,8 @@ export class Word extends BaseEntity {
 		default: null,
 		length: 50,
 		name: 'UserIdGuesser',
-		type: 'character varying',
-		nullable: true
+		nullable: true,
+		type: 'character varying'
 	})
 	@Index()
 	userIdGuesser!: string | null;
@@ -98,15 +101,50 @@ export class Word extends BaseEntity {
 	})
 	readonly word!: string;
 
-	insert() {
-		return insert(this, Word);
+	static countWhere(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return entityManager
+			? entityManager
+				.getRepository(this)
+				.count({ where: options })
+			: this.countBy(options);
 	}
 
-	tryAddScore(value: number) {
+	static countWhereGrouped(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository())
+			.createQueryBuilder()
+			.select('"ChannelId"', 'channelId')
+			.addSelect('COUNT(1)', 'count')
+			.where(options)
+			.groupBy('"ChannelId"')
+			.getRawMany<{ channelId: string; count: string }>()
+			.then((rs) => rs.reduce(
+				(a, r) => {
+					a.set(r.channelId, parseInt(r.count));
+
+					return a;
+				},
+				new Map<string, number>()
+			));
+	}
+
+	static insertOne(value: DeepPartial<Word>, entityManager?: EntityManager) {
+		return insertEntities([this.create(value)], this, entityManager).then((ws) => ws[0]);
+	}
+
+	static where(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return entityManager
+			? entityManager
+				.getRepository(this)
+				.find({ where })
+			: this.findBy(where);
+	}
+
+	tryAddScore(value: number, entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					score() {
@@ -122,16 +160,17 @@ export class Word extends BaseEntity {
 						interval: config.wg.wordTimeoutScore?.toISO() ?? null
 					}
 				),
-			this,
-			Word.getRepository().metadata
-		);
+			[this],
+			repository.metadata
+		).then((ws) => ws[0]);
 	}
 
-	trySetExpired() {
+	trySetExpired(entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					expired() {
@@ -149,42 +188,35 @@ export class Word extends BaseEntity {
 						intervalUsage: config.wg.wordTimeoutUsage?.toISO() ?? null
 					}
 				),
-			this,
-			Word.getRepository().metadata
-		);
+			[this],
+			repository.metadata
+		).then((ws) => ws[0]);
 	}
 
-	trySetUserIdGuesser(value: string) {
+	trySetUserIdGuesser(value: string, entityManager?: EntityManager) {
+		const repository = entityManager?.getRepository(Word) ?? Word.getRepository();
+
 		return execute(
-			Word
+			repository
 				.createQueryBuilder()
-				.useTransaction(true)
 				.update()
 				.set({
 					userIdGuesser: value
 				})
 				.where('"Active" AND "Id" = :id', { id: this.id }),
-			this,
-			Word.getRepository().metadata
-		);
-	}
-
-	update() {
-		return update(this, Word);
+			[this],
+			repository.metadata
+		).then((ws) => ws[0]);
 	}
 }
 
-type Active = Word & { active: true, expired: null, userIdGuesser: null };
-type Inactive = Word & { active: false } & ({ expired: DateTime<true>, userIdGuesser: null } | { expired: null, userIdGuesser: string });
+type WordActive = Word & { active: true; expired: null; userIdGuesser: null };
+type WordInactive = Word & { active: false } & ({ expired: DateTime<true>; userIdGuesser: null } | { expired: null; userIdGuesser: string });
 
-export function assertWord(_word: Word): asserts _word is Active | Inactive {
-	// ignore
-}
-
-export function assertWords(_words: Word[]): asserts _words is (Active | Inactive)[] {
-	// ignore
-}
-
-export function isWordActive(word: Active | Inactive): word is Active {
+export function isWordActive(word: Word): word is WordActive {
 	return word.active;
+}
+
+export function isWordInactive(word: Word): word is WordInactive {
+	return !word.active;
 }

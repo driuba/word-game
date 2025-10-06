@@ -63,6 +63,7 @@
 				"im:write",
 				"mpim:read",
 				"mpim:write",
+				"users:read",
 				"users.profile:read"
 			]
 		}
@@ -70,6 +71,7 @@
 	"settings": {
 		"event_subscriptions": {
 			"bot_events": [
+				"member_joined_channel",
 				"message.channels",
 				"message.groups"
 			]

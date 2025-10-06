@@ -1,26 +1,25 @@
-import type { App } from '@slack/bolt';
 import type { CronJobParams, CronOnCompleteCommand } from 'cron';
 import { CronJob } from 'cron';
 import config from '~/config.js';
 import reportHandler from './report.js';
-import reportPrivateHandler from '~/workers/reportPrivate.js';
+import reportPrivateHandler from './reportPrivate.js';
 import wordExpirationHandler from './wordExpiration.js';
+import wordRightUserWorker from './wordRightUser.js';
 
-export default function (app: App) {
-	return [...getWorkers(app)];
+export default function () {
+	return getWorkers().toArray();
 }
 
-type Params = CronJobParams<CronOnCompleteCommand, App>;
+type Params = CronJobParams<CronOnCompleteCommand, typeof app>;
 
 function createJob(
-	context: App,
 	cronTime: Params['cronTime'],
 	errorHandler: (e: unknown) => void,
 	onComplete: Params['onComplete'],
 	onTick: Params['onTick']
 ) {
 	return CronJob.from({
-		context,
+		context: app,
 		cronTime,
 		errorHandler,
 		onComplete,
@@ -31,14 +30,13 @@ function createJob(
 	});
 }
 
-function* getWorkers(app: App) {
+function* getWorkers() {
 	const errorHandler = handleError.bind(app);
 
 	if (config.wg.reportingChatId) {
 		app.logger.info('Starting report worker.');
 
 		yield createJob(
-			app,
 			'0 0 9 * * 1-5',
 			errorHandler,
 			() => {
@@ -51,7 +49,6 @@ function* getWorkers(app: App) {
 	app.logger.info('Starting personal report worker.');
 
 	yield createJob(
-		app,
 		'0 0 9 * * 1-5',
 		errorHandler,
 		() => {
@@ -64,7 +61,6 @@ function* getWorkers(app: App) {
 		app.logger.info('Starting word expiration worker.');
 
 		yield createJob(
-			app,
 			'0 0 10-17 * * 1-5',
 			errorHandler,
 			() => {
@@ -73,8 +69,21 @@ function* getWorkers(app: App) {
 			wordExpirationHandler
 		);
 	}
+
+	if (config.wg.wordRightTimeout) {
+		app.logger.info('Starting word right user worker.');
+
+		yield createJob(
+			'0 0 8 * * 1-5',
+			errorHandler,
+			() => {
+				app.logger.info('Stopping word right user worker.');
+			},
+			wordRightUserWorker
+		);
+	}
 }
 
-function handleError(this: App, error: unknown) {
+function handleError(this: typeof app, error: unknown) {
 	this.logger.error(error);
 }

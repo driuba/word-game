@@ -2,8 +2,8 @@
  * Code taken as a workaround for ts-node from with inspiration from
  * https://github.com/TypeStrong/ts-node/discussions/1450#discussioncomment-1806115
  */
-import { fileURLToPath, pathToFileURL } from 'url';
 import type { NodeLoaderHooksAPI2 } from 'ts-node';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEsmHooks, register } from 'ts-node';
 import { createMatchPath, loadConfig } from 'tsconfig-paths';
 
@@ -23,22 +23,24 @@ const matchPath = createMatchPath(absoluteBaseUrl, paths);
 
 const { load: loadTsNode, resolve: resolveTsNode } = createEsmHooks(register()) as NodeLoaderHooksAPI2;
 
+// noinspection JSUnusedGlobalSymbols
 export async function load(
 	...[url, context, defaultLoad]: Parameters<NodeLoaderHooksAPI2.LoadHook>
 ): ReturnType<NodeLoaderHooksAPI2.LoadHook> {
 	if (url.endsWith(dotMd)) {
 		return {
 			format: 'module',
+			shortCircuit: true,
 			source:
 				`import { readFile } from 'fs/promises';` +
-				`export default await readFile(String.raw\`${fileURLToPath(url)}\`, 'utf8');`,
-			shortCircuit: true
+				`export default await readFile(String.raw\`${fileURLToPath(url)}\`, 'utf8');`
 		};
 	}
 
 	return await loadTsNode(url, context, defaultLoad);
 }
 
+// noinspection JSUnusedGlobalSymbols
 export function resolve(
 	...[specifier, context, defaultResolve]: Parameters<NodeLoaderHooksAPI2.ResolveHook>
 ): ReturnType<NodeLoaderHooksAPI2.ResolveHook> {
