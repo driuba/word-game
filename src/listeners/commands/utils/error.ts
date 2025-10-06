@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { getErrorMessage } from '~/utils/index.js';
+import { getErrorMessage, isErrorWarning } from '~/utils/index.js';
 
 export default async function (
 	{
@@ -11,7 +11,11 @@ export default async function (
 	try {
 		await next();
 	} catch (error) {
-		logger.error(error);
+		if (isErrorWarning(error)) {
+			logger.warn(error);
+		} else {
+			logger.error(error);
+		}
 
 		await respond({
 			response_type: 'ephemeral',

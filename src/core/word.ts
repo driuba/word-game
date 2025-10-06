@@ -15,7 +15,7 @@ export async function* expireWords() {
 
 	for (const word of words) {
 		try {
-			await dataSource.transaction((em) => runExpireWordTransaction.call(em, channelIds, word));
+			await dataSource.transaction((em) => runTryExpireWordTransaction.call(em, channelIds, word));
 
 			if (isWordInactive(word)) {
 				yield word;
@@ -86,39 +86,11 @@ export async function* tryScoreOrGuessWords(channelId: string, userId: string, t
 				Math.min(score, config.wg.wordScoreMax)
 			);
 		} else {
-			await dataSource.transaction((em) => runGuessWordTransaction.call(em, userId, word));
+			await dataSource.transaction((em) => runTryGuessWordTransaction.call(em, userId, word));
 		}
 
 		yield word;
 	}
-}
-
-async function runExpireWordTransaction(this: EntityManager, channelIds: Set<string>, word: Word) {
-	await WordRight.lock(this);
-
-	await word.trySetExpired(this);
-
-	if (isWordActive(word)) {
-		return;
-	}
-
-	if (!channelIds.has(word.channelId)) {
-		return;
-	}
-
-	const userIds = await client.getUserIds(word.channelId);
-
-	userIds.delete(word.userIdCreator);
-
-	await tryInsertWordRight(this, [...userIds], word);
-}
-
-async function runGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
-	await WordRight.lock(this);
-
-	await word.trySetUserIdGuesser(userId);
-
-	await tryInsertWordRight(this, [userId], word);
 }
 
 async function runSetWordTransaction(this: EntityManager, channelId: string, text: string, userId: string) {
@@ -161,6 +133,30 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 		userIdCreator: userId,
 		word: text
 	});
+}
+
+async function runTryExpireWordTransaction(this: EntityManager, channelIds: Set<string>, word: Word) {
+	await WordRight.lock(this);
+
+	await word.trySetExpired(this);
+
+	if (isWordActive(word) || !channelIds.has(word.channelId)) {
+		return;
+	}
+
+	const userIds = await client.getUserIds(word.channelId);
+
+	userIds.delete(word.userIdCreator);
+
+	await tryInsertWordRight(this, [...userIds], word);
+}
+
+async function runTryGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
+	await WordRight.lock(this);
+
+	await word.trySetUserIdGuesser(userId);
+
+	await tryInsertWordRight(this, [userId], word);
 }
 
 async function tryInsertWordRight(entityManager: EntityManager, userIds: string[], word: Word) {

@@ -96,18 +96,21 @@ async function runUpdateWordRightUsersTransaction(this: EntityManager, channelId
 		.all(channelIds.map<Promise<[string, Set<string>]>>(async (c) => [c, await client.getUserIds(c)]))
 		.then((rs) => new Map(rs));
 
-	await WordRightUser.insertMany(rights
-		.map((r) => {
-			const userIdsCandidate = userIds.get(r.wordRight.channelId)?.difference(r.userIds);
+	await WordRightUser.insertMany(
+		rights
+			.map((r) => {
+				const userIdsCandidate = userIds.get(r.wordRight.channelId)?.difference(r.userIds);
 
-			if (!userIdsCandidate?.size) {
-				return null;
-			}
+				if (!userIdsCandidate?.size) {
+					return null;
+				}
 
-			return {
-				userId: [...userIdsCandidate][Math.floor(Math.random() * userIdsCandidate.size)],
-				wordRightId: r.wordRight.id
-			};
-		})
-		.filter((r) => !!r), this);
+				return {
+					userId: [...userIdsCandidate][Math.floor(Math.random() * userIdsCandidate.size)],
+					wordRightId: r.wordRight.id
+				};
+			})
+			.filter((r) => !!r),
+		this
+	);
 }

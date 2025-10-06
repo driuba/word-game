@@ -102,7 +102,7 @@ export default async function (
 	if (linesReport.length) {
 		await respond({
 			response_type: 'ephemeral',
-			text: linesReport.join('\n')
+			text: linesReport.join('\n\n')
 		});
 	} else {
 		throw new ApplicationError(`Something's not right... I can feel i-i-i-i-it!`);

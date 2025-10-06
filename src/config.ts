@@ -274,9 +274,7 @@ function lazy<T>(target: object, propertyKey: string, descriptor: TypedPropertyD
 			let value: T | undefined;
 
 			return function () {
-				value ??= get();
-
-				return value;
+				return value ??= get();
 			};
 		})()
 	} satisfies typeof descriptor;
