@@ -228,3 +228,139 @@ docker image rm registry:80/word-game_migration:latest
 Notes:
 
 Migration image is configured to use `app` build cache and the same `Dockefile` just different stage, so after building the app, migration should use that and not perform redundant builds.
+
+## DB major version upgrade
+
+This is a little documentation in case I need to do this again for the general process of `pg_upgrade` of a dockerized PostgreSQL database.
+
+### Old DB preparation
+
+For 17.X -> 18.X migration I needed to enable checksums on the old database server.
+
+Before changing any configurations stop and run `db` service container **without** the database server running:  
+```shell
+docker compose -f docker-compose.build.yml --profile main run --entrypoint sh --rm db
+```
+
+and enable checksums:  
+```shell
+su -c "pg_checksums -e" postgres
+```
+
+### New DB preparation
+
+Update `db` service to use new image and volume and run the service.
+This will initialize the database identically to the first one.
+
+Change `db` volume configuration from:  
+```yaml
+services:
+  # ...
+  db:
+    # ...
+    image: "postgres:17.6-alpine3.22"
+    # ...
+    volumes:
+      - source: "db"
+        target: "/home/postgres/data"
+        type: "volume"
+volumes:
+  db:
+    driver: "local"
+    driver_opts:
+      device: "/mnt/efs/word-game/data"
+      o: "bind"
+      type: "none"
+```
+
+to:  
+```yaml
+services:
+  # ...
+  db:
+    # ...
+    image: "postgres:18.0-alpine3.22"
+    # ...
+    volumes:
+      - source: "db-18"
+        target: "/home/postgres/data"
+        type: "volume"
+volumes:
+  db-18:
+    driver: "local"
+    driver_opts:
+      device: "/mnt/efs/word-game/data-18"
+      o: "bind"
+      type: "none"
+```
+
+Run the service:  
+```shell
+docker compose -f docker-compose.build.yml --profile main up --detach --force-recreate db
+```
+
+`pg_upgrade` **will** insert roles from old database to the new one, so roles and dependent objects were dropped.
+
+Connect to the running `db` container we just started, then connect to the database:  
+```shell
+docker compose -f docker-compose.build.yml --profile main exec db sh
+
+su -c psql postgres
+```
+
+and drop `word-game` database with `wg-user`, `wg-admin` roles:  
+```postgresql
+drop database "word-game";
+
+drop role "wg-admin";
+
+drop role "wg-user";
+```
+
+The container can now be stopped:  
+```shell
+docker compose -f docker-compose.build.yml --profile main stop db
+```
+
+### Migration
+
+Migration was performed with a custom temporary image.
+`pg_upgrade` requires both new and old binaries as well as data.
+Alpine image was used to ensure permissions match for container user and group.
+
+Custom image with both binary versions:  
+```dockerfile
+FROM postgres:18.0-alpine3.22
+
+USER postgres:postgres
+
+WORKDIR /home/postgres/17
+
+COPY --from=postgres:17.6-alpine3.22 /usr/local/ ./
+
+USER root:root
+
+WORKDIR /
+```
+
+Build the image and run it (here volumes are required):  
+```shell
+docker build -t db-migration:latest ./
+
+docker run -it --entrypoint /bin/bash --mount 'type=volume,src=word-game_db,dst=/mnt/data.old' --mount 'type=volume,src=word-game_db-18,dst=/mnt/data.new' --rm db-migration:latest
+```
+
+Inside the image set permissions and run the upgrade:  
+```shell
+install --verbose --directory --owner postgres --group postgres --mode 0750 /mnt/data.new /mnt/data.old
+
+cd $(mktemp -d)
+
+chown -R postgres:postgres ./ /mnt/data.old /mnt/data.new
+
+su -c "pg_upgrade -b /home/postgres/17/bin -B /usr/local/bin -d /mnt/data.old -D /mnt/data.new" postgres
+```
+
+Now the upgrade was done.
+I double-checked new `db` service to be functional and had the data.
+Old data volume and upgrade image were deleted.
