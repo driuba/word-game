@@ -239,6 +239,8 @@ For 17.X -> 18.X migration I needed to enable checksums on the old database serv
 
 Before changing any configurations stop and run `db` service container **without** the database server running:  
 ```shell
+docker compose -f docker-compose.build.yml --profile main stop db
+
 docker compose -f docker-compose.build.yml --profile main run --entrypoint sh --rm db
 ```
 
@@ -343,7 +345,7 @@ USER root:root
 WORKDIR /
 ```
 
-Build the image and run it (here volumes are required):  
+Build the image and run it (here volumes are required, running previous commands with docker compose will have them created and ready):  
 ```shell
 docker build -t db-migration:latest ./
 
@@ -364,3 +366,5 @@ su -c "pg_upgrade -b /home/postgres/17/bin -B /usr/local/bin -d /mnt/data.old -D
 Now the upgrade was done.
 I double-checked new `db` service to be functional and had the data.
 Old data volume and upgrade image were deleted.
+
+The process may not be optimal, but it got the job done and is quite easy to follow.
