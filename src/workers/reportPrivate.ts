@@ -4,10 +4,6 @@ import { getWordExpiration, getWordRights, getWordsActive } from '~/core/index.j
 import { messages } from '~/resources/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
-const dateToday = DateTime
-	.now()
-	.startOf('day');
-
 export default async function (this: typeof app) {
 	this.logger.info('Stating personal report.');
 
@@ -17,6 +13,10 @@ export default async function (this: typeof app) {
 	const channelIds = await client.getChannelIds();
 
 	if (channelIds.size) {
+		const dateToday = DateTime
+			.now()
+			.startOf('day');
+
 		const reportsWord = await getWordsActive()
 			.then((ws) => ws.reduce(
 				(a, w) => {
