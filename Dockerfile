@@ -21,6 +21,8 @@ RUN --mount=type=cache,id=npm,target=/root/.npm \
 
 FROM base AS dependency-build
 
+ENV PNPM_HOME="/home/node/.pnpm-store"
+
 USER node:node
 
 WORKDIR /home/node/build
@@ -28,7 +30,7 @@ WORKDIR /home/node/build
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
     --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
-    --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
+    --mount=type=cache,id=pnpm,target=/home/node/.pnpm-store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile
 
 FROM dependency-build AS build
@@ -41,6 +43,8 @@ RUN pnpm run build:${NODE_ENV}
 
 FROM base AS dependency-deploy
 
+ENV PNPM_HOME="/home/node/.pnpm-store"
+
 USER node:node
 
 WORKDIR /home/node/app
@@ -48,7 +52,7 @@ WORKDIR /home/node/app
 RUN --mount=type=bind,source=package.json,target=package.json,ro \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml,ro \
     --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml,ro \
-    --mount=type=cache,id=pnpm,target=/home/node/.local/share/pnpm/store,uid=1000,gid=1000 \
+    --mount=type=cache,id=pnpm,target=/home/node/.pnpm-store,uid=1000,gid=1000 \
     pnpm install --frozen-lockfile --prod
 
 FROM dependency-deploy AS deploy
