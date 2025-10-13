@@ -114,8 +114,10 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 
 		if (
 			!right ||
-			(candidate.users.length === 1 && right.users.length === 0) ||
-			candidate.users.length < right.users.length ||
+			(
+				candidate.users.length > 0 &&
+				(right.users.length === 0 || candidate.users.length < right.users.length)
+			) ||
 			(candidate.users.length === right.users.length && candidate.created < right.created)
 		) {
 			right = candidate;
