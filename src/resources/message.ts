@@ -48,7 +48,7 @@ const overrides = {
 			.map((v) => replace(messages.reportPrivateRight, v))
 			.join('\n');
 	},
-	reportRights(values: { channelId: string; count: string }[]) {
+	reportRights(values: { channelId: string; global: string; personal: string; shared: string }[]) {
 		return values
 			.map((v) => replace(messages.reportRights, v))
 			.join('\n');
