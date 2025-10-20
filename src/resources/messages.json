@@ -47,8 +47,8 @@
 		"Pst, <#${channelId}>, ${count} žodžių. Nepraleisk progos"
 	],
 	"reportRights": [
-		"• Kanalas: <#${channelId}>; kiekis: ${count}",
-		"• Kanale <#${channelId}> yra ${count} nepanaudotų teisių"
+		"• Kanalas: <#${channelId}>; privačios: ${personal}, bendros: ${shared}, globalios: ${global}",
+		"• Kanale <#${channelId}> yra ${personal}:${shared}:${global} nepanaudotų teisių"
 	],
 	"setWordSuccess": [
 		"Sveikinimai! Tavo naujasis žodis yra *${word}*."

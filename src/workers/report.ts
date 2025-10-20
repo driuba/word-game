@@ -48,18 +48,36 @@ export default async function (this: typeof app) {
 		.then((wrs) => wrs.reduce(
 			(a, wr) => {
 				if (channelIds.has(wr.channelId)) {
-					a.set(wr.channelId, (a.get(wr.channelId) ?? 0) + 1);
+					const rights = a.get(wr.channelId) ?? {
+						global: 0,
+						personal: 0,
+						shared: 0
+					};
+
+					if (!a.has(wr.channelId)) {
+						a.set(wr.channelId, rights);
+					}
+
+					if (wr.users.length === 0) {
+						rights.global++;
+					} else if (wr.users.length === 1) {
+						rights.personal++;
+					} else {
+						rights.shared++;
+					}
 				}
 
 				return a;
 			},
-			new Map<string, number>()
+			new Map<string, Record<'global' | 'personal' | 'shared', number>>()
 		))
 		.then((a) => a
 			.entries()
 			.map(([k, v]) => ({
 				channelId: k,
-				count: v.toFixed()
+				global: v.global.toFixed(),
+				personal: v.personal.toFixed(),
+				shared: v.shared.toFixed()
 			}))
 			.toArray())
 		.then(messages.reportRights.bind(undefined));
