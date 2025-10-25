@@ -48,7 +48,7 @@
 	],
 	"reportRights": [
 		"• Kanalas: <#${channelId}>; privačios: ${personal}, bendros: ${shared}, globalios: ${global}",
-		"• Kanale <#${channelId}> yra ${personal}:${shared}:${global} nepanaudotų teisių"
+		"• Kanale <#${channelId}> yra ${personal} : ${shared} : ${global} nepanaudotų teisių"
 	],
 	"setWordSuccess": [
 		"Sveikinimai! Tavo naujasis žodis yra *${word}*."
