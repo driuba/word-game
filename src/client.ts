@@ -38,6 +38,13 @@ export default abstract class {
 		return channelIds;
 	}
 
+	@cache({ hours: 1 })
+	static async getIsBot(userId: string) {
+		const { user: { is_bot = false } = {} } = await app.client.users.info({ user: userId });
+
+		return is_bot;
+	}
+
 	@cache()
 	static async getUserIds(channelId: string) {
 		const userIds = new Set<string>();
@@ -60,13 +67,6 @@ export default abstract class {
 		} while (cursor);
 
 		return userIds;
-	}
-
-	@cache({ hours: 1 })
-	private static async getIsBot(userId: string) {
-		const { user: { is_bot = false } = {} } = await app.client.users.info({ user: userId });
-
-		return is_bot;
 	}
 }
 
