@@ -11,6 +11,7 @@ export default async function (
 	}: AllMiddlewareArgs & SlackEventMiddlewareArgs<'message'>
 ) {
 	const {
+		bot_id: botId,
 		user: userId
 	} = message as GenericMessageEvent;
 
@@ -18,7 +19,7 @@ export default async function (
 		return;
 	}
 
-	if (await client.getIsBot(userId)) {
+	if (botId || await client.getIsBot(userId)) {
 		return;
 	}
 
