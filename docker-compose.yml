@@ -8,7 +8,7 @@ services:
     env_file:
       - ".env"
       - ".env.${NODE_ENV:?error}"
-    image: "registry:80/word-game_app:latest"
+    image: "registry:5000/word-game_app:latest"
     init: true
     secrets:
       - source: "app"
