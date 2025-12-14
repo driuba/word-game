@@ -39,11 +39,11 @@ services:
       args:
         NODE_ENV: "${NODE_ENV:?error}"
       cache_from:
-        - "registry:5000/word-game_app:latest"
+        - "registry.local:5000/word-game_app:latest"
       target: "build"
     command: "migrate:${NODE_ENV:?error}"
     entrypoint: "pnpm run"
-    image: "registry:5000/word-game_migration:latest"
+    image: "registry.local:5000/word-game_migration:latest"
     init: true
     profiles:
       - "migration"
