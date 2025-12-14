@@ -15,7 +15,7 @@ ENV NODE_ENV="${NODE_ENV}"
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
     apk update
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
-    apk add tzdata=2025b-r0
+    apk add tzdata=2025c-r0
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     npm install --global pnpm@${PNPM_VERSION}
 
