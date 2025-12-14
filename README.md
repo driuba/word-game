@@ -130,7 +130,7 @@ Database migration then can be performed (**only with a running database service
 
 ```shell
 docker compose -f docker-compose.build.yml --profile migration run --build --rm migration
-docker image rm registry:80/word-game_migration:latest
+docker image rm registry.local:5000/word-game_migration:latest
 ```
 
 The migration requires connection to `db` service so it must be running, and it's network must be attachable for migrations to work.
@@ -146,7 +146,7 @@ Working with deployment assumes there is a configured location to check out the 
 ### Build
 
 Built image registry is required for deployment into stack.
-Build compose configuration assumes existence of local swarm registry running on `registry` domain name, `80` port.
+Build compose configuration assumes existence of local swarm registry running on `registry.local` domain name, `5000` port.
 
 ```shell
 docker compose -f docker-compose.build.yml --profile main build --push
@@ -221,8 +221,8 @@ Due to these issues built image is run by itself via `docker run` as this CLI se
 
 ```shell
 docker compose -f docker-compose.build.yml --profile migration build migration
-docker run --init --network=word-game_default --rm registry:80/word-game_migration:latest pnpm run migrate:${NODE_ENV}
-docker image rm registry:80/word-game_migration:latest
+docker run --init --network=word-game_default --rm registry.local:5000/word-game_migration:latest pnpm run migrate:${NODE_ENV}
+docker image rm registry.local:5000/word-game_migration:latest
 ```
 
 Notes:
