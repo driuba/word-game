@@ -2,36 +2,36 @@
 	"$schema": "https://json.schemastore.org/package.json",
 	"author": "Andrius Andrikonis",
 	"dependencies": {
-		"@slack/bolt": "^4.5.0",
-		"cron": "^4.3.3",
+		"@slack/bolt": "^4.6.0",
+		"cron": "^4.4.0",
 		"luxon": "^3.7.2",
-		"pg": "^8.16.3",
+		"pg": "^8.17.1",
 		"reflect-metadata": "^0.2.2",
-		"typeorm": "^0.3.27",
-		"winston": "^3.18.3"
+		"typeorm": "^0.3.28",
+		"winston": "^3.19.0"
 	},
 	"description": "Word game for your slack word game needs",
 	"devDependencies": {
-		"@eslint/js": "^9.37.0",
+		"@eslint/js": "^9.39.2",
 		"@slack/cli-hooks": "^1.2.1",
-		"@slack/types": "^2.17.0",
-		"@stylistic/eslint-plugin": "^5.4.0",
+		"@slack/types": "^2.19.0",
+		"@stylistic/eslint-plugin": "^5.7.0",
 		"@types/luxon": "^3.7.1",
-		"@types/node": "^24.7.2",
-		"eslint": "^9.37.0",
+		"@types/node": "^25.0.9",
+		"eslint": "^9.39.2",
 		"eslint-import-resolver-typescript": "^4.4.4",
 		"eslint-plugin-import": "^2.32.0",
 		"ts-loader": "^9.5.4",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.46.0",
-		"webpack": "^5.102.1",
+		"typescript-eslint": "^8.53.0",
+		"webpack": "^5.104.1",
 		"webpack-cli": "^6.0.1"
 	},
 	"engines": {
-		"node": "^24.10.0",
-		"pnpm": "^10.18.2"
+		"node": "^25.3.0",
+		"pnpm": "^10.28.0"
 	},
 	"keywords": [
 		"word-game",
@@ -40,6 +40,7 @@
 	"license": "GPL-3.0-or-later",
 	"main": "dist/app.js",
 	"name": "word-game",
+	"private": true,
 	"scripts": {
 		"build:development": "webpack build --config webpack.config.mts --mode development",
 		"build:production": "webpack build --config webpack.config.mts --mode production",
