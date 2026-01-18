@@ -76,7 +76,7 @@ export class WordRight extends BaseEntity {
 	}
 
 	static lock(entityManager: EntityManager) {
-		// TODO: performace optimization, migrate to advisory lock by channel id
+		// TODO: performance optimization, migrate to advisory lock by channel id
 		return entityManager.query(`LOCK "${tableName}" IN SHARE ROW EXCLUSIVE MODE`);
 	}
 

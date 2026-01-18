@@ -1,4 +1,5 @@
 import type { FindManyOptions } from 'typeorm';
+import { MoreThan } from 'typeorm';
 import { StatisticChannel, StatisticGlobal } from '~/entities/index.js';
 import { ApplicationError } from '~/utils/index.js';
 
@@ -14,9 +15,7 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 		take: 10
 	};
 
-	if (channelId) {
-		(options as FindManyOptions<StatisticChannel>).where = { channelId };
-	}
+	const filter = channelId ? { channelId } : undefined;
 
 	switch (period) {
 		case StatisticPeriod.all: {
@@ -24,19 +23,23 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 		}
 		case StatisticPeriod.week: {
 			options.order = {
-				countExpiredWeek: {
-					direction: 'ASC',
-					nulls: 'LAST'
-				},
-				guessesWeek: {
-					direction: 'DESC',
-					nulls: 'LAST'
-				},
-				scoreWeek: {
-					direction: 'DESC',
-					nulls: 'LAST'
-				}
+				/* eslint-disable sort-keys */
+				scoreWeek: 'DESC',
+				guessesWeek: 'DESC',
+				countWeek: 'ASC',
+				countExpiredWeek: 'ASC'
+				/* eslint-enable sort-keys */
 			};
+			options.where = [
+				{
+					...filter,
+					guessesWeek: MoreThan(0)
+				},
+				{
+					...filter,
+					countWeek: MoreThan(0)
+				}
+			];
 
 			break;
 		}
@@ -44,6 +47,8 @@ export function getStatistics(period: StatisticPeriod, channelId?: string) {
 			throw new ApplicationError('Unhandled statistics period.', { period });
 		}
 	}
+
+	options.where ??= filter;
 
 	return (channelId ? StatisticChannel : StatisticGlobal).find(options);
 }

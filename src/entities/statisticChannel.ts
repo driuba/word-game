@@ -35,7 +35,8 @@ import { Word } from './word.js';
 			.leftJoin(scoresWeek, 'sw', '"sw"."ChannelId" = "cu"."ChannelId" AND "sw"."UserId" = "cu"."UserId"')
 			.orderBy('"sa"."Score"', 'DESC', 'NULLS LAST')
 			.addOrderBy('"ga"."Guesses"', 'DESC', 'NULLS LAST')
-			.addOrderBy('"sa"."CountExpired"', 'ASC', 'NULLS LAST');
+			.addOrderBy('"sa"."Count"', 'ASC', 'NULLS FIRST')
+			.addOrderBy('"sa"."CountExpired"', 'ASC', 'NULLS FIRST');
 	},
 	name: 'StatisticsChannel'
 })
