@@ -23,7 +23,9 @@ import { FloatValueTransformer, IntValueTransformer } from './utils.js';
 			.addSelect('"s"."MaximumAll"')
 			.addSelect('"s"."GuessesAll"')
 			.orderBy('"s"."ScoreAll"', 'DESC', 'NULLS LAST')
-			.addOrderBy('"s"."GuessesAll"', 'DESC', 'NULLS LAST');
+			.addOrderBy('"s"."GuessesAll"', 'DESC', 'NULLS LAST')
+			.addOrderBy('"s"."CountAll"', 'ASC', 'NULLS FIRST')
+			.addOrderBy('"s"."CountExpiredAll"', 'ASC', 'NULLS FIRST');
 	},
 	name: 'StatisticsGlobal'
 })

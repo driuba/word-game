@@ -49,8 +49,8 @@ export class IntValueTransformer implements ValueTransformer {
 		return parseInt(value);
 	}
 
-	to() {
-		throw new Error('Not implemented.');
+	to(value: number) {
+		return value.toFixed();
 	}
 }
 

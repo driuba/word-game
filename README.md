@@ -15,7 +15,7 @@ Premise of the game:
 
 #### Node
 
-For node, I use [nvm for windows](https://github.com/coreybutler/nvm-windows) (or [zsh-nvm](https://github.com/lukechilds/zsh-nvm) on my linux machine).
+For node, I use [nvm for windows](https://github.com/coreybutler/nvm-windows) (or [zsh-nvm](https://github.com/lukechilds/zsh-nvm) on my Linux machine).
 
 Install is simple, just check the version in `package.json` and install that. E.g:
 
@@ -38,7 +38,7 @@ Keep in mind that actual versions of the engine and package manager are maintain
 Secrets are configurable via `.env` files.
 Any environment files with `.local` suffix are excluded from git and will be used by the application if present.
 
-For database a local instance of **postgresql** should be used (set up and configured).
+For database a local instance of **PostgreSQL** should be used (set up and configured).
 An init script is in the *./db* directory, passwords may be adjusted.
 Database credentials should be configured in `.local` environment files.
 Once database is initialized migrations can be performed by running:
@@ -152,7 +152,7 @@ Build compose configuration assumes existence of local swarm registry running on
 docker compose -f docker-compose.build.yml --profile main build --push
 ```
 
-This command builds and pushes `app` image to registry, `db` service does not build and uses *postgresql* image from public registry.
+This command builds and pushes `app` image to registry, `db` service does not build and uses *PostgreSQL* image from public registry.
 
 Notable consideration: [additional cleanup for untagged images may be required](https://stackoverflow.com/questions/29802202/docker-registry-2-0-how-to-delete-unused-images).
 

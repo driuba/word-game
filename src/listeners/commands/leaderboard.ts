@@ -37,7 +37,7 @@ export default async function (
 
 	inputPeriod = inputPeriod
 		?.trim()
-		.toLowerCase() || StatisticPeriod.all;
+		.toLowerCase() || StatisticPeriod.week;
 
 	inputScope = inputScope
 		?.trim()
