@@ -54,7 +54,7 @@ export default {
 	plugins: [
 		new webpack.DefinePlugin({
 			/* eslint-disable @typescript-eslint/naming-convention */
-			'process.env.VERSION': `'${packageInformation.version}'`
+			'process.env.VERSION': packageInformation.version ? `'${packageInformation.version}'` : 'undefined'
 			/* eslint-enable @typescript-eslint/naming-convention */
 		})
 	],
