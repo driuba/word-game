@@ -8,7 +8,8 @@
 	"brag": [
 		"<@${userId}> nori pasigirti, kad jų žodžiai, kurių yra _${count}_, surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau…",
 		"Perduodu pagyrą: <@${userId}>; ${count} žodžiai; ${score} taškai.",
-		"Rožės raudonos,\nŽibutės mėlynos,\n<@${userId}> ${count} žodžiais taškos,\nSurinkęs ${score} taškus."
+		"Rožės raudonos,\nŽibutės mėlynos,\n<@${userId}> ${count} žodžiais taškos,\nSurinkęs ${score} taškus.",
+		":loveparrot: Jetus, jūs nepatikėsit, mūsų šaunuolis (-ė) <@${userId}> turi susirinkęs (-usi) _${score} / ${count}_! :loveparrot:"
 	],
 	"bragEmpty": [
 		"Nėr ko girtis, grybe tu.",
@@ -69,12 +70,12 @@
 	"wordExpired": [
 		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius — <@${userId}>, o žodis buvo — *${word}*, jis surinko — ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus *<@${userId}>*, tau negalima.",
 		"Susirinkome šią valandą pagerbti kritusio žodžio _${word}_. Siunčiame užuojantą <@${userId}> ir jo šeimandai. Niekada nepamiršsime tų _${score}_ taškų. Lauksime naujo savanorio užimti paliktą tuštumą.",
-		"<@${userId}>, tavo žodis *${word}* yra pašalinamas iš žaidimo, nes jau `[REDACTED]` :trimmed-spongebob:. Pasiimk savo _${score}_ taškus ir vyniok iš mano žaidimo."
+		"<@${userId}>, tavo žodis *${word}* yra pašalinamas iš žaidimo, nes jau `[REDACTED]` :trimmed-spongebob: tu mane. Pasiimk savo _${score}_ taškus ir vyniok iš mano žaidimo."
 	],
 	"wordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
 		"Ir tada <@${userIdGuesser}> tarė: *${word}*! <@${userIdCreator}> liko prie _${score}_ suskilusių geldų.",
-		"<@${userIdCreator}> tavo žodis `${word}` buvo išaiškintas. <@${userIdGuesser}> išmušė tavo valanda!\n P.S.:\n Žodžio rezultatas: *${score}*.",
+		"<@${userIdCreator}> tavo žodis `${word}` buvo išaiškintas. <@${userIdGuesser}> išmušė tavo valanda!\nP.S.:\n	Žodžio rezultatas: *${score}*.",
 		"Karalius <@${userIdCreator}> mirė! Jo paskutinis įsakymas buvo _${word}×${score}_! Tegyvuoja karalius <@${userIdGuesser}>!"
 	]
 }
