@@ -3,20 +3,26 @@
 		"Ujuj... Panašu buvau blogai sukonfigūruotas... Pranešk mano kūrėjui arba _pataisyk pats_ :wink:"
 	],
 	"INPUT_INVALID": [
-		"RTFM, Jesus..."
+		"RTFM, Jesus...",
+		"Kai vedi komandą, yra hint, kaip naudotis.",
+		"Padaryk man paslaugą `/wg-readme`..."
 	],
 	"OPERATION_INVALID": [
 		"Ei! Ką čia darai!?",
 		"FU! Negalima!",
-		"Baigi..."
+		"Baigi...",
+		"`[REDACTED]` :trimmed-spongebob:"
 	],
 	"UNDEFINED": [
-		"Oi! Įvyko kompiuterinė klaida."
+		"Oi! Įvyko kompiuterinė klaida.",
+		"Error, `[REDACTED]` :trimmed-spongebob:"
 	],
 	"USER_INVALID": [
-		"Ne tau, Martynai, mėlynas dangus..."
+		"Ne tau, Martynai, mėlynas dangus...",
+		"Deja, turiu jus nuvilti, šis veiksmas *jums* negalimas."
 	],
 	"WORD_INVALID": [
-		"Gal geriau normalų žodelį sugalvok?"
+		"Gal geriau normalų žodelį sugalvok?",
+		"Žodį sudaro raidės (lietuviškos ir ne tik). Simboliai ir skaičiai yra negalimi."
 	]
 }
