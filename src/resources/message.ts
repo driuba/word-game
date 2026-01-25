@@ -56,6 +56,9 @@ const overrides = {
 	setWordSuccess(values: { word: string }) {
 		return replace(messages.setWordSuccess, values);
 	},
+	version(values: { version: string }) {
+		return replace(messages.version, values);
+	},
 	wordExpired(values: { score: string; userId: string; word: string }) {
 		return replace(messages.wordExpired, values);
 	},

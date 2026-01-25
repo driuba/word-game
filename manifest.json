@@ -45,6 +45,10 @@
 				"command": "/wg-set-word",
 				"description": "Jei tapai laiminguoju, išrinktuoju laimėtoju, galėsi nustatyti žodį!",
 				"usage_hint": "*word*"
+			},
+			{
+				"command": "/wg-version",
+				"description": "Parodys dabartinę versiją"
 			}
 		]
 	},

@@ -53,6 +53,11 @@
 	"setWordSuccess": [
 		"Sveikinimai! Tavo naujasis žodis yra *${word}*."
 	],
+	"version": [
+		"Dabartinė versija ${version}",
+		"`${version}`",
+		"Paskutinis atnaujinimas: `${version}`."
+	],
 	"wordExpired": [
 		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius — <@${userId}>, o žodis buvo — *${word}*, jis surinko — ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus *<@${userId}>*, tau negalima."
 	],
