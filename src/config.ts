@@ -324,6 +324,11 @@ export default abstract class {
 		return process.env.TZ ?? 'Europe/Vilnius';
 	}
 
+	@lazy
+	static get version() {
+		return process.env.VERSION ?? '0.0.0';
+	}
+
 	static assertValid() {
 		const errors = [
 			...getErrors(this),

@@ -180,5 +180,5 @@ function selectWordsInactiveWeek(dataSource: DataSource) {
 	return dataSource
 		.createQueryBuilder()
 		.from(wordsInactiveAll, 'wia')
-		.where(`"wia"."Created" >= date_trunc('week', now())`);
+		.where(`COALESCE("wia"."Modified", "wia"."Created") >= date_trunc('week', now())`);
 }

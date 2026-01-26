@@ -2,6 +2,7 @@
 
 import type { Configuration } from 'webpack';
 import { resolve } from 'node:path';
+import webpack from 'webpack';
 import packageInformation from './package.json' with { type: 'json' };
 
 export default {
@@ -50,6 +51,13 @@ export default {
 		module: true,
 		path: resolve(import.meta.dirname, 'dist')
 	},
+	plugins: [
+		new webpack.DefinePlugin({
+			/* eslint-disable @typescript-eslint/naming-convention */
+			'process.env.VERSION': packageInformation.version ? `'${packageInformation.version}'` : 'undefined'
+			/* eslint-enable @typescript-eslint/naming-convention */
+		})
+	],
 	resolve: {
 		alias: {
 			/* eslint-disable @typescript-eslint/naming-convention */
@@ -63,5 +71,5 @@ export default {
 		},
 		extensions: ['.ts']
 	},
-	target: 'node25.3'
+	target: 'node25.4'
 } as const satisfies Configuration;

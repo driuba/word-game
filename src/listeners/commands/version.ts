@@ -1,5 +1,6 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { readme } from '~/resources/index.js';
+import config from '~/config.js';
+import { messages } from '~/resources/index.js';
 
 export default function (
 	{
@@ -8,6 +9,8 @@ export default function (
 ) {
 	return ack({
 		response_type: 'ephemeral',
-		text: readme
+		text: messages.version({
+			version: config.version
+		})
 	});
 }

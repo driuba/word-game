@@ -5,6 +5,7 @@ import leaveHandler from './leave.js';
 import readmeHandler from './readme.js';
 import setWordHandler from './setWord.js';
 import { channelFilterHandler, errorHandler } from './utils/index.js';
+import versionHandler from './version.js';
 
 export default function (prefix: string) {
 	app.command(`/${prefix}-brag`, errorHandler, channelFilterHandler, bragHandler);
@@ -13,4 +14,5 @@ export default function (prefix: string) {
 	app.command(`/${prefix}-leave`, errorHandler, channelFilterHandler, leaveHandler);
 	app.command(`/${prefix}-readme`, errorHandler, readmeHandler);
 	app.command(`/${prefix}-set-word`, errorHandler, channelFilterHandler, setWordHandler);
+	app.command(`/${prefix}-version`, errorHandler, versionHandler);
 }
