@@ -75,7 +75,7 @@
 	"wordGuessed": [
 		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
 		"Ir tada <@${userIdGuesser}> tarė: *${word}*! <@${userIdCreator}> liko prie _${score}_ suskilusių geldų.",
-		"<@${userIdCreator}> tavo žodis `${word}` buvo išaiškintas. <@${userIdGuesser}> išmušė tavo valanda!\nP.S.:\n	Žodžio rezultatas: *${score}*.",
+		"<@${userIdCreator}> tavo žodis `${word}` buvo išaiškintas. <@${userIdGuesser}> išmušė tavo valanda!\nP.S.:\nŽodžio rezultatas: *${score}*.",
 		"Karalius <@${userIdCreator}> mirė! Jo paskutinis įsakymas buvo _${word}×${score}_! Tegyvuoja karalius <@${userIdGuesser}>!"
 	]
 }
