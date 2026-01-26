@@ -1,15 +1,21 @@
 {
 	"botNotInChat": [
 		"Beep bop, I'm not in this chat. 𝙿̍𝚕́𝚎̷𝚊̤𝚜ͦ𝚎͙ͯ,̰͓ ̙ͩ𝚒ͪ̕𝚗ͣ̔𝚟͓͈͐𝚒̝̄͂𝚝̹́ͭ𝚎̠͆̐.̰ͩ̄.̫͕̒͝.̗̻̆̓ ͉̆̿́𝙼̴͖̱̆𝙴̤̺͚̫",
-		"Sorry, nebuvau pakviestas."
+		"Sorry, nebuvau pakviestas.",
+		"Noriu informuoti, kad nepriklausau šiai grupei, tad negaliu vesti mūsų žaidimo.",
+		"Pakviesk mane į kanalą ir galėsim pažaisti :isdykelis:"
 	],
 	"brag": [
-		"<@${userId}> nori pasigirti, kad jų žodžiai, kurių yra _${count}_, surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau…"
+		"<@${userId}> nori pasigirti, kad jų žodžiai, kurių yra _${count}_, surinko net *${score}* taškus. Jei nebūtų toks pagyrūnas, gal suriktų daugiau…",
+		"Perduodu pagyrą: <@${userId}>; ${count} žodžiai; ${score} taškai.",
+		"Rožės raudonos,\nŽibutės mėlynos,\n<@${userId}> ${count} žodžiais taškos,\nSurinkęs ${score} taškus.",
+		":loveparrot: Jetus, jūs nepatikėsit, mūsų šaunuolis (-ė) <@${userId}> turi susirinkęs (-usi) _${score} / ${count}_! :loveparrot:"
 	],
 	"bragEmpty": [
 		"Nėr ko girtis, grybe tu.",
 		"Labiau pasistenk.",
-		"ne"
+		"ne",
+		"Git gud, pleb"
 	],
 	"checkWordRights": [
 		"Nenustatyti žodžiai: ${total}; bendri, kuriais gali pasinaudoti tu ir kažkas kitas: ${shared}; asmeniniai: ${personal}.",
@@ -44,14 +50,17 @@
 	],
 	"reportPrivateRight": [
 		"Hey, <#${channelId}> turi *${count}* laisvų žodžių. Paskubėk, o tai nespėsi pasinaudoti teisėmis.",
-		"Pst, <#${channelId}>, ${count} žodžių. Nepraleisk progos"
+		"Pst, <#${channelId}>, ${count} žodžių. Nepraleisk progos",
+		"<#${channelId}> kanale gali nustatyti ${count} žodžius."
 	],
 	"reportRights": [
 		"• Kanalas: <#${channelId}>; privačios: ${personal}, bendros: ${shared}, globalios: ${global}",
 		"• Kanale <#${channelId}> yra ${personal} : ${shared} : ${global} nepanaudotų teisių"
 	],
 	"setWordSuccess": [
-		"Sveikinimai! Tavo naujasis žodis yra *${word}*."
+		"Sveikinimai! Tavo naujasis žodis yra *${word}*.",
+		"${word} ${word} ${word} ${word} ${word} ${word} ${word} _${word}_ *${word}*",
+		"Lydekai paliepus, man panorėjus, tavo žodis yra `${word}`"
 	],
 	"version": [
 		"Dabartinė versija ${version}",
@@ -59,9 +68,14 @@
 		"Paskutinis atnaujinimas: `${version}`."
 	],
 	"wordExpired": [
-		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius — <@${userId}>, o žodis buvo — *${word}*, jis surinko — ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus *<@${userId}>*, tau negalima."
+		"Su liūdesiu turiu pranešti, kad niekas neatspėjo žodžio. Jo autorius — <@${userId}>, o žodis buvo — *${word}*, jis surinko — ${score}.\nO dabar padarom taip, _*kas pirmesnis, tas gudresnis*_!\nIšskyrus *<@${userId}>*, tau negalima.",
+		"Susirinkome šią valandą pagerbti kritusio žodžio _${word}_. Siunčiame užuojantą <@${userId}> ir jo šeimandai. Niekada nepamiršsime tų _${score}_ taškų. Lauksime naujo savanorio užimti paliktą tuštumą.",
+		"<@${userId}>, tavo žodis *${word}* yra pašalinamas iš žaidimo, nes jau `[REDACTED]` :trimmed-spongebob: tu mane. Pasiimk savo _${score}_ taškus ir vyniok iš mano žaidimo."
 	],
 	"wordGuessed": [
-		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!"
+		"Sveikinimai <@${userIdGuesser}> atspėjai žodį *${word}*, kurį buvo nustatęs <@${userIdCreator}>! Žodis surinko ${score} `taškas`. Pasinaudok galimybe ir nustatyk naują žodį :catgroove:!",
+		"Ir tada <@${userIdGuesser}> tarė: *${word}*! <@${userIdCreator}> liko prie _${score}_ suskilusių geldų.",
+		"<@${userIdCreator}> tavo žodis `${word}` buvo išaiškintas. <@${userIdGuesser}> išmušė tavo valanda!\nP.S.:\n	Žodžio rezultatas: *${score}*.",
+		"Karalius <@${userIdCreator}> mirė! Jo paskutinis įsakymas buvo _${word}×${score}_! Tegyvuoja karalius <@${userIdGuesser}>!"
 	]
 }
