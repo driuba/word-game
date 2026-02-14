@@ -2,8 +2,8 @@
 
 ARG ALPINE_VERSION="3.23"
 ARG NODE_ENV="development"
-ARG NODE_VERSION="25.4.0"
-ARG PNPM_VERSION="10.28.1"
+ARG NODE_VERSION="25.6.1"
+ARG PNPM_VERSION="10.29.3"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -11,6 +11,7 @@ ARG NODE_ENV
 ARG PNPM_VERSION
 
 ENV NODE_ENV="${NODE_ENV}"
+ENV PNPM_HOME="/home/node/.pnpm-store"
 
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
     apk update
@@ -19,11 +20,9 @@ RUN --mount=type=cache,id=apk,target=/var/cache/apk \
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     npm install --global pnpm@${PNPM_VERSION}
 
-FROM base AS dependency-build
-
-ENV PNPM_HOME="/home/node/.pnpm-store"
-
 USER node:node
+
+FROM base AS dependency-build
 
 WORKDIR /home/node/build
 
@@ -35,17 +34,11 @@ RUN --mount=type=bind,source=package.json,target=package.json,ro \
 
 FROM dependency-build AS build
 
-USER node:node
-
 COPY ./ ./
 
-RUN pnpm run build:${NODE_ENV}
+RUN pnpm run build:$NODE_ENV
 
 FROM base AS dependency-deploy
-
-ENV PNPM_HOME="/home/node/.pnpm-store"
-
-USER node:node
 
 WORKDIR /home/node/app
 
@@ -56,8 +49,6 @@ RUN --mount=type=bind,source=package.json,target=package.json,ro \
     pnpm install --frozen-lockfile --prod
 
 FROM dependency-deploy AS deploy
-
-USER node:node
 
 COPY --from=build /home/node/build/dist/ ./
 
