@@ -6,7 +6,6 @@ import { configs as tsConfigs } from 'typescript-eslint';
 
 export default defineConfig(
 	eslint.configs.recommended,
-	// @ts-expect-error after a recent update the types for stylistic plugin and eslint core seem to be misaligned, it still works tho
 	stylistic.configs.customize({
 		arrowParens: true,
 		braceStyle: '1tbs',
