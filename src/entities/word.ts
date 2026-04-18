@@ -1,12 +1,19 @@
 import type { DateTime } from 'luxon';
 import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Check, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
 import { DateTimeValueTransformer, execute, insertEntities } from './utils.js';
 
 const tableName = 'Words';
 
 @Entity({ name: tableName })
+@Index(
+	['channelId', 'userIdCreator', 'word'],
+	{
+		unique: true,
+		where: '"Active"'
+	}
+)
 export class Word extends BaseEntity {
 	@Column({
 		generated: true,
@@ -93,6 +100,7 @@ export class Word extends BaseEntity {
 	@Index()
 	userIdGuesser!: string | null;
 
+	@Check(`"Word" ~ '^[[:alpha:]]+$'`)
 	@Column({
 		name: 'Word',
 		nullable: false,

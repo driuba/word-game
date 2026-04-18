@@ -50,6 +50,8 @@
 		"migrate:production": "pnpm run typeorm:production --transaction each migration:run",
 		"node:development": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.development --env-file-if-exists .env.development.local",
 		"node:production": "node --enable-source-maps --env-file-if-exists .env --env-file-if-exists .env.local --env-file-if-exists .env.production --env-file-if-exists .env.production.local",
+		"revert:development": "pnpm run typeorm:development --transaction each migration:revert",
+		"revert:production": "pnpm run typeorm:production --transaction each migration:revert",
 		"start:development": "pnpm run build:development && pnpm run node:development ./dist/app.js",
 		"start:production": "pnpm run build:production && pnpm run node:production ./dist/app.js",
 		"typeorm:development": "pnpm run node:development --import ./ts-node/register.ts ./node_modules/typeorm/cli.js --dataSource ./src/entities/index.ts",
