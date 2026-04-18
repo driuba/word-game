@@ -130,11 +130,14 @@ async function runSetWordTransaction(this: EntityManager, channelId: string, tex
 
 	await right.delete(this);
 
-	return await Word.insertOne({
-		channelId,
-		userIdCreator: userId,
-		word: text
-	});
+	return await Word.insertOne(
+		{
+			channelId,
+			userIdCreator: userId,
+			word: text
+		},
+		this
+	);
 }
 
 async function runTryExpireWordTransaction(this: EntityManager, channelIds: Set<string>, word: Word) {
@@ -156,7 +159,7 @@ async function runTryExpireWordTransaction(this: EntityManager, channelIds: Set<
 async function runTryGuessWordTransaction(this: EntityManager, userId: string, word: Word) {
 	await WordRight.lock(this);
 
-	await word.trySetUserIdGuesser(userId);
+	await word.trySetUserIdGuesser(userId, this);
 
 	await tryInsertWordRight(this, [userId], word);
 }
