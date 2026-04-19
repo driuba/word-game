@@ -100,7 +100,7 @@ export class Word extends BaseEntity {
 	@Index()
 	userIdGuesser!: string | null;
 
-	@Check(`"Word" ~ '^[[:alpha:]]+$'`)
+	@Check(`"Word" ~ '^[[:alpha:]]+$' COLLATE "default"`)
 	@Column({
 		collation: 'lt-LT_ci',
 		name: 'Word',
