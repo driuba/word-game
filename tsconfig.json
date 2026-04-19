@@ -17,7 +17,9 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "es2025",
-		"types": ["node"],
+		"types": [
+			"node"
+		],
 		"verbatimModuleSyntax": true
 	},
 	"display": "word-game",
