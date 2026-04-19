@@ -102,6 +102,7 @@ export class Word extends BaseEntity {
 
 	@Check(`"Word" ~ '^[[:alpha:]]+$'`)
 	@Column({
+		collation: 'lt-LT_ci',
 		name: 'Word',
 		nullable: false,
 		type: 'character varying',
