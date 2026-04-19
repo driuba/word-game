@@ -1,6 +1,6 @@
 import type { WordRightUser } from './wordRightUser.js';
 import type { DateTime } from 'luxon';
-import type { DeepPartial, EntityManager, FindManyOptions, FindOptionsWhere } from 'typeorm';
+import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DateTimeValueTransformer, deleteEntity, insertEntities } from './utils.js';
 
@@ -41,20 +41,16 @@ export class WordRight extends BaseEntity {
 	})
 	readonly users!: WordRightUser[];
 
-	static countWhere(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
-		return entityManager
-			? entityManager
-				.getRepository(this)
-				.count({ where: options })
-			: this.countBy(options);
+	static countWhere(where: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository()).countBy(where);
 	}
 
-	static countWhereGrouped(options: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
+	static countWhereGrouped(where: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
 		return (entityManager?.getRepository(this) ?? this.getRepository())
 			.createQueryBuilder()
 			.select('"ChannelId"', 'channelId')
 			.addSelect('COUNT(1)', 'count')
-			.where(options)
+			.where(where)
 			.groupBy('"ChannelId"')
 			.getRawMany<{ channelId: string; count: string }>()
 			.then((rs) => rs.reduce(
@@ -80,18 +76,12 @@ export class WordRight extends BaseEntity {
 	}
 
 	static where(where: FindOptionsWhere<WordRight>, entityManager?: EntityManager) {
-		const options = {
+		return (entityManager?.getRepository(this) ?? this.getRepository()).find({
 			relations: {
 				users: true
 			},
 			where
-		} satisfies FindManyOptions<WordRight>;
-
-		return entityManager
-			? entityManager
-				.getRepository(this)
-				.find(options)
-			: this.find(options);
+		});
 	}
 
 	delete(entityManager?: EntityManager) {

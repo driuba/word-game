@@ -21,6 +21,11 @@
 		"Ne tau, Martynai, mėlynas dangus...",
 		"Deja, turiu jus nuvilti, šis veiksmas *jums* negalimas."
 	],
+	"WORD_DUPLICATED": [
+		"Turim tokį.",
+		"O kažką originaliau?",
+		"`[REDACTED]` :trimmed-spongebob:, turi tu jau šitą žodį!"
+	],
 	"WORD_INVALID": [
 		"Gal geriau normalų žodelį sugalvok?",
 		"Žodį sudaro raidės (lietuviškos ir ne tik). Simboliai ir skaičiai yra negalimi."
