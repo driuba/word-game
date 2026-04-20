@@ -16,7 +16,7 @@ export default {
 	externalsPresets: {
 		node: true
 	},
-	externalsType: 'node-commonjs',
+	externalsType: 'module-import',
 	module: {
 		defaultRules: [
 			{
@@ -71,5 +71,5 @@ export default {
 		},
 		extensions: ['.ts']
 	},
-	target: 'node25.4'
+	target: 'node25.9'
 } as const satisfies Configuration;

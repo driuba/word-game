@@ -4,7 +4,7 @@ export class Init1745769778358 implements MigrationInterface {
     name = 'Init1745769778358'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "Words" ("ChannelId" character varying(50) NOT NULL, "Created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "Id" SERIAL NOT NULL, "Score" integer NOT NULL DEFAULT '0', "Modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "UserIdCreator" character varying(50) NOT NULL, "UserIdGuesser" character varying(50), "Word" character varying NOT NULL, CONSTRAINT "PK_c407d0d6a998bc4d704b2852ad6" PRIMARY KEY ("Id"))`);
+        await queryRunner.query(`CREATE TABLE "Words" ("ChannelId" character varying(50) NOT NULL, "Created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "Id" SERIAL NOT NULL, "Score" integer NOT NULL DEFAULT '0', "Modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "UserIdCreator" character varying(50) NOT NULL, "UserIdGuesser" character varying(50), "Word" character varying COLLATE "lt-LT_ci" NOT NULL, CONSTRAINT "PK_c407d0d6a998bc4d704b2852ad6" PRIMARY KEY ("Id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_7a5fe03f7122fb5ca505e56c12" ON "Words" ("ChannelId") `);
         await queryRunner.query(`CREATE INDEX "IDX_5f3a1c9ea3160648b5afdf369d" ON "Words" ("UserIdCreator") `);
         await queryRunner.query(`CREATE INDEX "IDX_01f4cba697b9581dad8ac459d5" ON "Words" ("UserIdGuesser") `);

@@ -19,7 +19,8 @@ Taisyklės žodžiams:
   1. Žodžiai privalo būti sudaryti tik iš raidžių, skaičiai negalimi;
   2. Žodžiai ignoruoja didžiąsias ir mažąsias raides;
   3. Žodžiai gali turėti lietuviškas raides (ir kitas Unicode raides) ir privalo sutapti tiek pelnant taškus, tiek aspėjant;
-  4. Žodžiai yra atskiriami bet kokiu simboliu kuris nėra raidė (skyryba, tarpai ir pan.), *išskyrus skaičius* — skaičiai nėra traktuojami kaip ribos nors ir negali būti nustatomo žodžio dalis;
+  4. Aktyvūs žodžiai negali kartotis tam pačiam kanale, tam pačiam žaidėjui;
+  5. Žodžiai yra atskiriami bet kokiu simboliu kuris nėra raidė (skyryba, tarpai ir pan.), *išskyrus skaičius* — skaičiai nėra traktuojami kaip ribos nors ir negali būti nustatomo žodžio dalis;
 
 Komandos:
 
@@ -30,6 +31,7 @@ Komandos:
   • `/wg-leave` — išmeta botą iš kanalo (reikalinga viešiems kanalams, privačiuose kanaluose galima tiesiog naudoti `/kick @Word game`).
   • `/wg-readme` — parodo šią pagalbą.
   • `/wg-set-word` — nustato žodį, jei žaidėjas turi tokią teisę.
+  • `/wg-version` — parodo veikiančio kodo versiją.
 
 Komandos su parametrais:
 

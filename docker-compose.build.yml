@@ -26,6 +26,7 @@ services:
       service: "app"
     profiles:
       - "main"
+    pull_policy: "never"
   db:
     extends:
       file: "docker-compose.yml"
@@ -40,6 +41,8 @@ services:
         NODE_ENV: "${NODE_ENV:?error}"
       cache_from:
         - "registry.local:5000/word-game_app:latest"
+#      cache_to:
+#        - "registry.local:5000/word-game_app:latest"
       target: "build"
     command: "migrate:${NODE_ENV:?error}"
     entrypoint: "pnpm run"
@@ -47,6 +50,7 @@ services:
     init: true
     profiles:
       - "migration"
+    pull_policy: "never"
     secrets:
       - source: "migration"
         target: "/home/node/build/.env.local"

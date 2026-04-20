@@ -1,29 +1,26 @@
 # syntax=docker/dockerfile:1
 
 ARG ALPINE_VERSION="3.23"
-ARG NODE_ENV="development"
-ARG NODE_VERSION="25.4.0"
-ARG PNPM_VERSION="10.28.1"
+ARG NODE_VERSION="25.9.0"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
 
-ARG NODE_ENV
-ARG PNPM_VERSION
+ARG NODE_ENV="development"
+ARG PNPM_VERSION="10.33.0"
 
 ENV NODE_ENV="${NODE_ENV}"
+ENV PNPM_HOME="/home/node/.pnpm-store"
 
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
     apk update
 RUN --mount=type=cache,id=apk,target=/var/cache/apk \
-    apk add tzdata=2025c-r0
+    apk add tzdata
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     npm install --global pnpm@${PNPM_VERSION}
 
-FROM base AS dependency-build
-
-ENV PNPM_HOME="/home/node/.pnpm-store"
-
 USER node:node
+
+FROM base AS dependency-build
 
 WORKDIR /home/node/build
 
@@ -35,17 +32,11 @@ RUN --mount=type=bind,source=package.json,target=package.json,ro \
 
 FROM dependency-build AS build
 
-USER node:node
-
-COPY ./ ./
+COPY --chown=node:node --link ./ ./
 
 RUN pnpm run build:${NODE_ENV}
 
 FROM base AS dependency-deploy
-
-ENV PNPM_HOME="/home/node/.pnpm-store"
-
-USER node:node
 
 WORKDIR /home/node/app
 
@@ -57,9 +48,7 @@ RUN --mount=type=bind,source=package.json,target=package.json,ro \
 
 FROM dependency-deploy AS deploy
 
-USER node:node
-
-COPY --from=build /home/node/build/dist/ ./
+COPY --chown=node:node --from=build --link /home/node/build/dist/ ./
 
 ENTRYPOINT ["node", "--enable-source-maps", "--env-file-if-exists", ".env.local"]
 

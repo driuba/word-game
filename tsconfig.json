@@ -1,9 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig.json",
-	"_version": "23.0.0",
 	"compilerOptions": {
 		"allowArbitraryExtensions": true,
-		"baseUrl": "./src",
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"module": "node20",
@@ -11,15 +9,17 @@
 		"outDir": "./dist",
 		"paths": {
 			"~/*": [
-				"./*"
+				"./src/*"
 			]
 		},
 		"resolveJsonModule": true,
 		"rootDir": "./src",
 		"sourceMap": true,
 		"strict": true,
-		// esnext is used as a temp fix for set instance method support. When es2025 target is defined this should be changed to that specific version
-		"target": "esnext",
+		"target": "es2025",
+		"types": [
+			"node"
+		],
 		"verbatimModuleSyntax": true
 	},
 	"display": "word-game",

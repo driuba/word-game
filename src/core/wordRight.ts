@@ -68,7 +68,7 @@ async function runUpdateWordRightUsersTransaction(this: EntityManager, channelId
 	await WordRight.lock(this);
 
 	const rights = await WordRight
-		.where({ channelId: In(channelIds) })
+		.where({ channelId: In(channelIds) }, this)
 		.then((wrs) => wrs
 			.map((wr) => ({
 				...wr.users.reduce<{ modified?: DateTime<true>; userIds: Set<string> }>(

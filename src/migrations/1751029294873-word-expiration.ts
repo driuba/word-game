@@ -4,16 +4,11 @@ export class WordExpiration1751029294873 implements MigrationInterface {
     name = 'WordExpiration1751029294873'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        const { default: dataSource } = await import('~/entities/index.js');
-        await dataSource.manager.query(`REINDEX DATABASE "word-game"`);
-        await queryRunner.query(`ALTER DATABASE "word-game" SET TIME ZONE 'Europe/Vilnius'`);
-        await queryRunner.query(`ALTER DATABASE "word-game" REFRESH COLLATION VERSION`);
         await queryRunner.query(`ALTER TABLE "Words" ADD "Expired" TIMESTAMP WITH TIME ZONE`);
         await queryRunner.query(`ALTER TABLE "Words" ADD "Active" BOOLEAN NOT NULL GENERATED ALWAYS AS ("Expired" IS NULL AND "UserIdGuesser" IS NULL) STORED`);
         await queryRunner.query(`ALTER TABLE "Words" ALTER COLUMN "Modified" DROP NOT NULL`);
         await queryRunner.query(`ALTER TABLE "Words" ALTER COLUMN "Modified" DROP DEFAULT`);
-        await queryRunner.query(
-String.raw`CREATE FUNCTION modified() RETURNS trigger AS
+        await queryRunner.query(String.raw`CREATE FUNCTION modified() RETURNS trigger AS
 $modified$
 BEGIN
 	NEW."Modified" := now();

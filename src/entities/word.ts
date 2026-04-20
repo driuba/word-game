@@ -1,12 +1,19 @@
 import type { DateTime } from 'luxon';
 import type { DeepPartial, EntityManager, FindOptionsWhere } from 'typeorm';
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Check, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import config from '~/config.js';
 import { DateTimeValueTransformer, execute, insertEntities } from './utils.js';
 
 const tableName = 'Words';
 
 @Entity({ name: tableName })
+@Index(
+	['channelId', 'userIdCreator', 'word'],
+	{
+		unique: true,
+		where: '"Active"'
+	}
+)
 export class Word extends BaseEntity {
 	@Column({
 		generated: true,
@@ -93,7 +100,9 @@ export class Word extends BaseEntity {
 	@Index()
 	userIdGuesser!: string | null;
 
+	@Check(`"Word" ~ '^[[:alpha:]]+$' COLLATE "default"`)
 	@Column({
+		collation: 'lt-LT_ci',
 		name: 'Word',
 		nullable: false,
 		type: 'character varying',
@@ -101,20 +110,16 @@ export class Word extends BaseEntity {
 	})
 	readonly word!: string;
 
-	static countWhere(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
-		return entityManager
-			? entityManager
-				.getRepository(this)
-				.count({ where: options })
-			: this.countBy(options);
+	static countWhere(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository()).countBy(where);
 	}
 
-	static countWhereGrouped(options: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+	static countWhereGrouped(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
 		return (entityManager?.getRepository(this) ?? this.getRepository())
 			.createQueryBuilder()
 			.select('"ChannelId"', 'channelId')
 			.addSelect('COUNT(1)', 'count')
-			.where(options)
+			.where(where)
 			.groupBy('"ChannelId"')
 			.getRawMany<{ channelId: string; count: string }>()
 			.then((rs) => rs.reduce(
@@ -127,16 +132,16 @@ export class Word extends BaseEntity {
 			));
 	}
 
+	static existsWhere(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
+		return (entityManager?.getRepository(this) ?? this.getRepository()).existsBy(where);
+	}
+
 	static insertOne(value: DeepPartial<Word>, entityManager?: EntityManager) {
 		return insertEntities([this.create(value)], this, entityManager).then((ws) => ws[0]);
 	}
 
 	static where(where: FindOptionsWhere<Word>, entityManager?: EntityManager) {
-		return entityManager
-			? entityManager
-				.getRepository(this)
-				.find({ where })
-			: this.findBy(where);
+		return (entityManager?.getRepository(this) ?? this.getRepository()).findBy(where);
 	}
 
 	tryAddScore(value: number, entityManager?: EntityManager) {
